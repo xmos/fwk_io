@@ -8,7 +8,6 @@ then
         "lib_i2c"
         "lib_i2s"
         "lib_spi"
-        #"lib_qspi_io"
         )
 else
     declare -a hil_test_libs=(

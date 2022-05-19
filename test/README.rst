@@ -7,9 +7,7 @@ The HIL module tests are designed to regression test behavior for the following 
 - i2c
 - i2s
 - spi
-- qspi
-
-These tests should be run whenever the code or submodules in ``modules\hil`` is changed.
+- uart
 
 **************
 Hardware Setup

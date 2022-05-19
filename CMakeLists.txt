@@ -44,4 +44,7 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
             sdk::hil::lib_i2s
     )
     add_library(sdk::hil_audio ALIAS xcore_sdk_hil_audio)
+
+    add_library( sdk::hil::lib_mic_array ALIAS lib_mic_array)
+
 endif()

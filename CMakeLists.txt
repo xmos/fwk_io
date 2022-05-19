@@ -13,7 +13,7 @@ project(framework_io)
 enable_language(CXX C ASM)
 
 ## Setup a framework root path
-SET(FRAMEWORK_IO_ROOT_PATH ${PROJECT_SOURCE_DIR}
+SET(FRAMEWORK_IO_ROOT_PATH ${PROJECT_SOURCE_DIR})
 
 add_subdirectory(i2c)
 add_subdirectory(i2s)

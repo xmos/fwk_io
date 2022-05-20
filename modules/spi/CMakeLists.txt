@@ -27,24 +27,24 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     list(APPEND LIB_PRIVATE_SOURCES ${${CMAKE_SYSTEM_NAME}_SOURCES})
 
     ## Create library target
-    add_library(xcore_sdk_hil_lib_spi STATIC)
-    target_sources(xcore_sdk_hil_lib_spi
+    add_library(framework_io_spi STATIC)
+    target_sources(framework_io_spi
         PUBLIC
             ${LIB_PUBLIC_SOURCES}
         PRIVATE
             ${LIB_PRIVATE_SOURCES}
     )
-    target_include_directories(xcore_sdk_hil_lib_spi
+    target_include_directories(framework_io_spi
         PUBLIC
             ${LIB_PUBLIC_INCLUDES}
         PRIVATE
             ${LIB_PRIVATE_INCLUDES}
     )
-    target_compile_options(xcore_sdk_hil_lib_spi
+    target_compile_options(framework_io_spi
         PRIVATE
             ${LIB_COMPILE_FLAGS}
     )
 
     ## Create an alias
-    add_library(sdk::hil::lib_spi ALIAS xcore_sdk_hil_lib_spi)
+    add_library(io::spi ALIAS framework_io_spi)
 endif()

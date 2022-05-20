@@ -57,22 +57,22 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
 
     ## Create library target
     ## INTERFACE because we depend on the board target supplied usb tile and core speed
-    add_library(xcore_sdk_hil_lib_xud INTERFACE)
-    target_sources(xcore_sdk_hil_lib_xud
+    add_library(framework_io_xud INTERFACE)
+    target_sources(framework_io_xud
         INTERFACE
             ${LIB_PUBLIC_SOURCES}
             ${LIB_PRIVATE_SOURCES}
     )
-    target_include_directories(xcore_sdk_hil_lib_xud
+    target_include_directories(framework_io_xud
         INTERFACE
             ${LIB_PUBLIC_INCLUDES}
             ${LIB_PRIVATE_INCLUDES}
     )
-    target_link_libraries(xcore_sdk_hil_lib_xud
+    target_link_libraries(framework_io_xud
         INTERFACE
-            sdk::legacy_compat
+            core::legacy_compat
     )
 
     ## Create an alias
-    add_library(sdk::hil::lib_xud ALIAS xcore_sdk_hil_lib_xud)
+    add_library(sdk::hil::lib_xud ALIAS framework_io_xud)
 endif()

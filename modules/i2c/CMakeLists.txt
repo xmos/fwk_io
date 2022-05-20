@@ -13,7 +13,7 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     set(XCORE_XS3A_SOURCES ${LIB_ASM_SOURCES})
 
     ## Set any local library compile options
-    set(LIB_COMPILE_FLAGS "-O2")
+    set(LIB_COMPILE_FLAGS "-Os")
 
     ## Includes files
     set(LIB_PUBLIC_INCLUDES  api)
@@ -27,28 +27,24 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     list(APPEND LIB_PRIVATE_SOURCES ${${CMAKE_SYSTEM_NAME}_SOURCES})
 
     ## Create library target
-    add_library(xcore_sdk_hil_lib_qspi_io STATIC)
-    target_sources(xcore_sdk_hil_lib_qspi_io
+    add_library(framework_io_i2c STATIC)
+    target_sources(framework_io_i2c
         PUBLIC
             ${LIB_PUBLIC_SOURCES}
         PRIVATE
             ${LIB_PRIVATE_SOURCES}
     )
-    target_include_directories(xcore_sdk_hil_lib_qspi_io
+    target_include_directories(framework_io_i2c
         PUBLIC
             ${LIB_PUBLIC_INCLUDES}
         PRIVATE
             ${LIB_PRIVATE_INCLUDES}
     )
-    target_compile_options(xcore_sdk_hil_lib_qspi_io
+    target_compile_options(framework_io_i2c
         PRIVATE
             ${LIB_COMPILE_FLAGS}
     )
-    target_link_libraries(xcore_sdk_hil_lib_qspi_io
-        PUBLIC
-            sdk::utils
-    )
 
     ## Create an alias
-    add_library(sdk::hil::lib_qspi_io ALIAS xcore_sdk_hil_lib_qspi_io)
+    add_library(io::i2c ALIAS framework_io_i2c)
 endif()

@@ -13,10 +13,10 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     set(XCORE_XS3A_SOURCES ${LIB_ASM_SOURCES})
 
     ## Set any local library compile options
-    set(LIB_COMPILE_FLAGS "-Os")
+    set(LIB_COMPILE_FLAGS "-O2")
 
     ## Includes files
-    set(LIB_PUBLIC_INCLUDES  api src)
+    set(LIB_PUBLIC_INCLUDES  api)
     set(LIB_PRIVATE_INCLUDES src)
 
     ## Gather library sources
@@ -27,24 +27,28 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     list(APPEND LIB_PRIVATE_SOURCES ${${CMAKE_SYSTEM_NAME}_SOURCES})
 
     ## Create library target
-    add_library(xcore_sdk_hil_lib_uart STATIC)
-    target_sources(xcore_sdk_hil_lib_uart
+    add_library(framework_io_qspi_io STATIC)
+    target_sources(framework_io_qspi_io
         PUBLIC
             ${LIB_PUBLIC_SOURCES}
         PRIVATE
             ${LIB_PRIVATE_SOURCES}
     )
-    target_include_directories(xcore_sdk_hil_lib_uart
+    target_include_directories(framework_io_qspi_io
         PUBLIC
             ${LIB_PUBLIC_INCLUDES}
         PRIVATE
             ${LIB_PRIVATE_INCLUDES}
     )
-    target_compile_options(xcore_sdk_hil_lib_uart
+    target_compile_options(framework_io_qspi_io
         PRIVATE
             ${LIB_COMPILE_FLAGS}
     )
+    target_link_libraries(framework_io_qspi_io
+        PUBLIC
+            core::utils
+    )
 
     ## Create an alias
-    add_library(sdk::hil::lib_uart ALIAS xcore_sdk_hil_lib_uart)
+    add_library(io::qspi_io ALIAS framework_io_qspi_io)
 endif()

@@ -1,8 +1,8 @@
 [submodule "mic_array"]
-	path = mic_array
+	path = modules/mic_array
 	url = git@github.com:xmos/lib_mic_array.git
 [submodule "xud"]
-	path = xud/lib_xud
+	path = modules/xud/lib_xud
 	url = git@github.com:xmos/lib_xud.git
 [submodule "xmos_cmake_toolchain"]
 	path = xmos_cmake_toolchain

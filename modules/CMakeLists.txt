@@ -11,7 +11,7 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     ## Alias the mic array repo library target
     add_library(io::mic_array ALIAS lib_mic_array)
 
-    ## Create an aggregate of framework_io libraries
+    ## Create an aggregate of framework_io general libraries
     add_library(framework_io_general INTERFACE)
     target_link_libraries(framework_io_general
         INTERFACE
@@ -31,4 +31,13 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
             io::mic_array
     )
     add_library(io::audio ALIAS framework_io_audio)
+
+    ## Create an aggregate of all framework_io libraries
+    add_library(framework_io_all INTERFACE)
+    target_link_libraries(framework_io_all
+        INTERFACE
+            io::general
+            io::audio
+    )
+    add_library(io::all ALIAS framework_io_all)
 endif()

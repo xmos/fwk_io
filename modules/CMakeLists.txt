@@ -9,6 +9,10 @@ add_subdirectory(uart)
 
 if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS2A))
     ## Alias the mic array repo library target
+    
+    ## TEMPORARY hack until lib_mic_array repo is updated
+    add_library(xcore_sdk_lib_xs3_math ALIAS framework_core_xs3_math)
+
     add_library(io::mic_array ALIAS lib_mic_array)
 
     ## Create an aggregate of framework_io general libraries

@@ -74,5 +74,5 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     )
 
     ## Create an alias
-    add_library(sdk::hil::lib_xud ALIAS framework_io_xud)
+    add_library(io::xud ALIAS framework_io_xud)
 endif()

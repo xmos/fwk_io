@@ -1,0 +1,134 @@
+# YAML schema for GitHub Actions:
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions
+#
+# Helpful YAML parser to clarify YAML syntax:
+# https://yaml-online-parser.appspot.com/
+#
+# This workflow uses actions that are not certified by GitHub. They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support documentation.
+#
+# This file contains the workflows that are run prior to merging a pull request.
+
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+  # Allow manually triggering of the workflow.
+  workflow_dispatch: {}
+
+env:
+  SDK_BUILDER_IMAGE: 'ghcr.io/xmos/sdk_app_builder:develop'
+
+jobs:
+  # JOB to run change detection
+  changes:
+    name: Change detection
+    runs-on: ubuntu-latest
+    # Set job outputs to values from filter step
+    outputs:
+      i2c: ${{ steps.filter.outputs.i2c }}
+      i2s: ${{ steps.filter.outputs.i2s }}
+      spi: ${{ steps.filter.outputs.spi }}
+      uart: ${{ steps.filter.outputs.uart }}
+    steps:
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          i2c:
+            - 'modules/i2c/**'
+            - 'test/lib_i2c/**'
+          i2s:
+            - 'modules/i2s/**'
+            - 'test/lib_i2s/**'
+          spi:
+            - 'modules/spi/**'
+            - 'test/lib_spi/**'
+          uart:
+            - 'modules/uart/**'
+            - 'test/lib_uart/**'
+            
+  i2ctests:
+    name: I2C tests
+    needs: changes
+    if: ${{ needs.changes.outputs.i2c == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull SDK builder image
+        run: |
+          docker pull ${SDK_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2c
+
+  i2stests:
+    name: I2S tests
+    needs: changes
+    if: ${{ needs.changes.outputs.i2s == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull SDK builder image
+        run: |
+          docker pull ${SDK_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2s
+
+  spitests:
+    name: SPI tests
+    needs: changes
+    if: ${{ needs.changes.outputs.spi == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull SDK builder image
+        run: |
+          docker pull ${SDK_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_spi
+
+
+  uarttests:
+    name: UART tests
+    needs: changes
+    if: ${{ needs.changes.outputs.uart == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull SDK builder image
+        run: |
+          docker pull ${SDK_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_uart

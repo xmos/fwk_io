@@ -7,3 +7,6 @@
 [submodule "xmos_cmake_toolchain"]
 	path = xmos_cmake_toolchain
 	url = git@github.com:xmos/xmos_cmake_toolchain.git
+[submodule "test/modules/test_support"]
+	path = test/modules/test_support
+	url = https://github.com/ACascarino/test_support.git

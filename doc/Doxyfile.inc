@@ -9,6 +9,7 @@ PREDEFINED += __attribute__((weak))=
 PREDEFINED += C_API= MA_C_API= C_API_START= C_API_END= EXTERN_C=
 
 # library APIs
+INPUT += ../modules/uart/api
 INPUT += ../modules/i2c/api
 INPUT += ../modules/i2s/api
 INPUT += ../modules/qspi_io/api

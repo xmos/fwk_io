@@ -12,6 +12,7 @@ Peripherals
    :maxdepth: 1
    :includehidden:
 
+   doc/uart/uart.rst
    doc/i2c/i2c.rst
    doc/i2s/i2s.rst
    doc/spi/spi.rst

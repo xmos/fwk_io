@@ -1,0 +1,19 @@
+############
+IO Framework
+############
+
+Framework of peripheral IO libraries for XCORE.AI.
+
+***********
+Peripherals
+***********
+
+.. toctree::
+   :maxdepth: 1
+   :includehidden:
+
+   doc/i2c/i2c.rst
+   doc/i2s/i2s.rst
+   doc/spi/spi.rst
+   doc/qspi/qspi.rst
+   modules/mic_array/doc/index.rst

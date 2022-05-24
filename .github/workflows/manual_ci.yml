@@ -23,7 +23,7 @@ jobs:
 
       - name: Run tests
         run: |
-          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2c
+          docker run --user $(id -u):$(id -g) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2c
 
   i2stests:
     name: I2S tests
@@ -40,7 +40,7 @@ jobs:
 
       - name: Run tests
         run: |
-          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2s
+          docker run --user $(id -u):$(id -g) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2s
 
   spitests:
     name: SPI tests
@@ -57,7 +57,7 @@ jobs:
 
       - name: Run tests
         run: |
-          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_spi
+          docker run --user $(id -u):$(id -g) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_spi
 
 
   uarttests:
@@ -75,4 +75,4 @@ jobs:
 
       - name: Run tests
         run: |
-          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_uart
+          docker run --user $(id -u):$(id -g) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_uart

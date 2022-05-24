@@ -12,14 +12,10 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - develop
-      #- main
   pull_request:
     branches:
       - develop
-      #- main
+      - main
 
   # Allow manually triggering of the workflow.
   workflow_dispatch: {}
@@ -30,8 +26,8 @@ env:
 jobs:
   # JOB to run change detection
   changes:
-    name: Change detection
     runs-on: ubuntu-latest
+    name: Change detection
     # Set job outputs to values from filter step
     outputs:
       i2c: ${{ steps.filter.outputs.i2c }}
@@ -57,8 +53,8 @@ jobs:
             - 'test/lib_uart/**'
             
   i2ctests:
-    name: I2C tests
     needs: changes
+    name: I2C tests
     if: ${{ needs.changes.outputs.i2c == 'true' }}
     runs-on: ubuntu-latest
     steps:

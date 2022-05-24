@@ -113,7 +113,7 @@ then
 "test_hil_uart_tx_test_BUFFERED_9600_5_EVEN_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 "test_hil_uart_tx_test_BUFFERED_9600_5_EVEN_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 "test_hil_uart_tx_test_BUFFERED_9600_5_ODD_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
-"test_hil_uart_tx_test_BUFFERED_9600_5_ODD_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake" 
+"test_hil_uart_tx_test_BUFFERED_9600_5_ODD_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 
 
 ################################### UART RX ############################################################
@@ -246,9 +246,9 @@ do_build () {
    (cd ${path}; mkdir -p  build_ci_${application}_${board})
    if [ "$parallel" == "0" ]
    then
-        (cd ${path}/build_ci_${application}_${board}; log_errors cmake ../ -DCMAKE_TOOLCHAIN_FILE=${toolchain_file} -DBOARD=${board} -DXCORE_SDK_CI_TESTING=ON; log_errors make ${application} -j)
+        (cd ${path}/build_ci_${application}_${board}; log_errors cmake ../ -DCMAKE_TOOLCHAIN_FILE=${toolchain_file} -DBOARD=${board} -DFWK_IO_TESTS=ON; log_errors make ${application} -j)
    else
-        (cd ${path}/build_ci_${application}_${board}; log_errors cmake ../ -DCMAKE_TOOLCHAIN_FILE=${toolchain_file} -DBOARD=${board} -DXCORE_SDK_CI_TESTING=ON; log_errors make ${application}) 
+        (cd ${path}/build_ci_${application}_${board}; log_errors cmake ../ -DCMAKE_TOOLCHAIN_FILE=${toolchain_file} -DBOARD=${board} -DFWK_IO_TESTS=ON; log_errors make ${application})
    fi
    (cd ${path}; rm -rf build_ci_${application}_${board})
 }

@@ -53,7 +53,7 @@ foreach(i RANGE 1 ${num_pairs})
                 SMOKE=${test_level}
         )
         target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS})
-        target_link_libraries(${TARGET_NAME} PUBLIC sdk::hil::lib_i2s)
+        target_link_libraries(${TARGET_NAME} PUBLIC io::i2s core::utils)
         target_link_options(${TARGET_NAME} PRIVATE ${APP_LINK_OPTIONS})
         set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
         unset(TARGET_NAME)

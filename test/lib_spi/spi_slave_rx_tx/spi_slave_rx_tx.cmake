@@ -71,7 +71,7 @@ foreach(load ${FULL_LOAD})
                             IN_PLACE_TRANSACTION=${in_place}
                     )
                     target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS})
-                    target_link_libraries(${TARGET_NAME} PUBLIC sdk::hil::lib_spi)
+                    target_link_libraries(${TARGET_NAME} PUBLIC  io::spi core::utils)
                     target_link_options(${TARGET_NAME} PRIVATE ${APP_LINK_OPTIONS})
                     set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
                     unset(TARGET_NAME)

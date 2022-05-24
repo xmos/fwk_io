@@ -7,7 +7,7 @@ source ${FRAMEWORK_IO_ROOT}/tools/ci/helper_functions.sh
 
 # perform builds
 ## TODO replace with build and running tests
-path="${FRAMEWORK_IO_ROOT}/test/hil"
+path="${FRAMEWORK_IO_ROOT}/test"
 
 echo '******************************************************'
 echo '* Building HIL Tests'

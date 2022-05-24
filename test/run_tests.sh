@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+git config --global url.ssh://git@github.com/.insteadOf https://github.com/
+
 if [ -z "$1" ] || [ "$1" == "all" ]
 then
     declare -a hil_test_libs=(

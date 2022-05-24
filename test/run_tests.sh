@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 
-git config --global url.ssh://git@github.com/.insteadOf https://github.com/
+git config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+git config --unset-all url.https://github.com/.insteadOf
+git config --add url.https://github.com/.insteadOf git@github.com:
+git config --add url.https://github.com/.insteadOf org-292931@github.com:
 
 if [ -z "$1" ] || [ "$1" == "all" ]
 then

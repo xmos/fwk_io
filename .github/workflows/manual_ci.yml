@@ -1,0 +1,78 @@
+name: Manual CI
+
+on:
+  # Only allow manually triggering of the workflow.
+  workflow_dispatch: {}
+
+env:
+  SDK_BUILDER_IMAGE: 'ghcr.io/xmos/sdk_app_builder:develop'
+
+jobs:
+  i2ctests:
+    name: I2C tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull SDK builder image
+        run: |
+          docker pull ${SDK_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2c
+
+  i2stests:
+    name: I2S tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull SDK builder image
+        run: |
+          docker pull ${SDK_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2s
+
+  spitests:
+    name: SPI tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull SDK builder image
+        run: |
+          docker pull ${SDK_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_spi
+
+
+  uarttests:
+    name: UART tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull SDK builder image
+        run: |
+          docker pull ${SDK_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --user $(id -u) --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_uart

@@ -36,15 +36,15 @@ typedef enum uart_parity_t {
  * Enum type representing the callback error codes.
  *
  */
+#define UART_START_BIT_ERROR_VAL 2
 typedef enum {
-    UART_RX_COMPLETE = 0x00,
-    UART_TX_EMPTY,
-    UART_START_BIT_ERROR,
-    UART_PARITY_ERROR,
-    UART_FRAMING_ERROR,
-    UART_OVERRUN_ERROR,
-    UART_UNDERRUN_ERROR,
-} uart_callback_t;
+    UART_RX_COMPLETE        = 0,
+    UART_UNDERRUN_ERROR     = 1,  //Buffered Tx Error only (buffer empty)
+    UART_START_BIT_ERROR    = UART_START_BIT_ERROR_VAL,     //Rx Only
+    UART_PARITY_ERROR       = UART_START_BIT_ERROR_VAL + 1, //Rx Only
+    UART_FRAMING_ERROR      = UART_START_BIT_ERROR_VAL + 2, //Rx Only
+    UART_OVERRUN_ERROR      = UART_START_BIT_ERROR_VAL + 3, //Buffered Rx only
+} uart_callback_code_t;
 
 /**
  * Enum type representing the different states
@@ -64,7 +64,8 @@ typedef enum {
  * provided by the application. It ensures the correct stack usage
  * is calculated.
  */
-#define UART_CALLBACK_ATTR __attribute__((fptrgroup("uart_callback")))
+#define HIL_UART_TX_CALLBACK_ATTR __attribute__((fptrgroup("hil_uart_tx_callback")))
+#define HIL_UART_RX_CALLBACK_ATTR __attribute__((fptrgroup("hil_uart_rx_callback")))
 
 
 /**
@@ -84,7 +85,9 @@ typedef struct {
     uint8_t uart_data;
     uint8_t stop_bits;
     uint8_t current_stop_bit;
-    UART_CALLBACK_ATTR void(*uart_callback_fptr)(uart_callback_t callback_info);
+
+    HIL_UART_TX_CALLBACK_ATTR void(*uart_tx_empty_callback_fptr)(void* app_data);
+    void *app_data;
     hwtimer_t tmr;
     uart_buffer_t buffer;
 } uart_tx_t;
@@ -106,7 +109,11 @@ typedef struct {
     uint8_t uart_data;
     uint8_t stop_bits;
     uint8_t current_stop_bit;
-    UART_CALLBACK_ATTR void(*uart_callback_fptr)(uart_callback_t callback_info);
+
+    uart_callback_code_t cb_code;
+    HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_complete_callback_arg)(void* app_data);
+    HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_error_callback_arg)(void* app_data);
+    void *app_data;
     hwtimer_t tmr;
     uart_buffer_t buffer;
 } uart_rx_t;
@@ -127,8 +134,11 @@ typedef struct {
  *                      UART will run in blocking mode. If initialised to a
  *                      valid buffer, the UART will be interrupt driven.
  * \param buffer_size   Size of the buffer if enabled in tx_buff.
- * \param callback_info Callback function pointer for UART buffer empty in 
- *                      buffered mode.
+ * \param uart_tx_empty_callback_fptr Callback function pointer for UART buffer 
+ *                      empty in buffered mode.
+ * \param app_data      A pointer to application specific data provided
+ *                      by the application. Used to share data between
+ *                      this callback function and the application.
  */
 void uart_tx_init(
         uart_tx_t *uart,
@@ -141,7 +151,8 @@ void uart_tx_init(
         hwtimer_t tmr,
         uint8_t *tx_buff,
         size_t buffer_size,
-        void(*uart_callback_fptr)(uart_callback_t callback_info)
+        void(*uart_tx_empty_callback_fptr)(void* app_data),
+        void *app_data
         );
 
 
@@ -206,8 +217,13 @@ void uart_tx_deinit(
  *                      UART will run in blocking mode. If initialised to a
  *                      valid buffer, the UART will be interrupt driven.
  * \param buffer_size   Size of the buffer if enabled in tx_buff.
- * \param callback_info Callback function pointer for UART rx errors and also
- *                      data received in buffered mode.
+ * \param uart_rx_complete_callback_fptr Callback function pointer for UART rx
+ *                      complete (one word) in buffered mode.
+ * \param uart_rx_error_callback_fptr Callback function pointer for UART rx errors 
+ *                      when in buffered mode. The error is contained in cb_code
+ * \param app_data      A pointer to application specific data provided
+ *                      by the application. Used to share data between
+ *                      this callback function and the application.
  */
 void uart_rx_init(
         uart_rx_t *uart,
@@ -220,7 +236,9 @@ void uart_rx_init(
         hwtimer_t tmr,
         uint8_t *rx_buff,
         size_t buffer_size,
-        void(*uart_callback_fptr)(uart_callback_t callback_info)
+        void(*uart_rx_complete_callback_fptr)(void *app_data),
+        void(*uart_rx_error_callback_fptr)(void *app_data),
+        void *app_data
         );
 
 

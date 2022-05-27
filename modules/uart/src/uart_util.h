@@ -28,6 +28,6 @@ unsigned get_buffer_fill_level(uart_buffer_t *uart_cfg);
 uart_buffer_error_t push_byte_into_buffer(uart_buffer_t *buff_cfg, uint8_t data);
 uart_buffer_error_t pop_byte_from_buffer(uart_buffer_t *buff_cfg, uint8_t *data);
 
-static int buffer_used(uart_buffer_t *buff_cfg){
+inline int buffer_used(uart_buffer_t *buff_cfg){
     return((buff_cfg->size && buff_cfg->buffer != NULL));
 }

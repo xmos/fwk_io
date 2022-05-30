@@ -78,11 +78,11 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
 
 
 #if TEST_BUFFER
-    uart_rx_init(&uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
-        buffer, sizeof(buffer), rx_complete_callback, rx_error_callback, &uart);
+    uart_rx_init(   &uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
+                    buffer, sizeof(buffer), rx_complete_callback, rx_error_callback, &uart);
 #else
-    uart_rx_init(&uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
-        NULL, 0, rx_complete_callback, rx_error_callback, &uart);
+    uart_rx_blocking_init(  &uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
+                            rx_error_callback, &uart);
 #endif
 
     //Tester waits until it can see the tx_port driven to idle by other task

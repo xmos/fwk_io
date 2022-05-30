@@ -16,6 +16,21 @@ static inline uint32_t get_current_time(uart_rx_t *uart_cfg){
     return get_reference_time();
 }
 
+void uart_rx_blocking_init(
+        uart_rx_t *uart_cfg,
+        port_t rx_port,
+        uint32_t baud_rate,
+        uint8_t num_data_bits,
+        uart_parity_t parity,
+        uint8_t stop_bits,
+        hwtimer_t tmr,
+        void(*uart_rx_error_callback_fptr)(void *app_data),
+        void *app_data){
+
+    uart_rx_init(uart_cfg, rx_port, baud_rate, num_data_bits, parity, stop_bits, tmr,
+        NULL, 0, NULL, uart_rx_error_callback_fptr, app_data);
+}
+
 void uart_rx_init(
         uart_rx_t *uart_cfg,
         port_t rx_port,

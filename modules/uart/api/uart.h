@@ -157,9 +157,9 @@ void uart_tx_init(
 
 
 /**
- * Initializes a UART Tx I/O interface. The mode is hard wired to
+ * Initializes a UART Tx I/O interface. The API is hard wired to
  * blocking mode where the call to uart_tx will return at the end of
- * the stop bit.
+ * sending the stop bit.
  *
  * \param uart          The uart_tx_t context to initialise.
  * \param tx_port       The port used transmit the UART frames.
@@ -218,9 +218,9 @@ void uart_tx_deinit(
  *                      valid buffer, the UART will be interrupt driven.
  * \param buffer_size   Size of the buffer if enabled in tx_buff.
  * \param uart_rx_complete_callback_fptr Callback function pointer for UART rx
- *                      complete (one word) in buffered mode.
+ *                      complete (one word) in buffered mode only. Optionally NULL.
  * \param uart_rx_error_callback_fptr Callback function pointer for UART rx errors 
- *                      when in buffered mode. The error is contained in cb_code
+ *                      The error is contained in cb_code in the uart_rx_t struct.
  * \param app_data      A pointer to application specific data provided
  *                      by the application. Used to share data between
  *                      this callback function and the application.
@@ -241,6 +241,36 @@ void uart_rx_init(
         void *app_data
         );
 
+/**
+ * Initializes a UART Rx I/O interface. This API is fixed to blocking mode
+ * which is where the call to uart_rx returns as soon as the stop bit has
+ * been sampled.
+ *
+ * \param uart          The uart_rx_t context to initialise.
+ * \param rx_port       The port used receive the UART frames.
+ * \param baud_rate     The baud rate of the UART in bits per second.
+ * \param data_bits     The number of data bits per frame sent.
+ * \param parity        The type of parity used. See uart_parity_t above.
+ * \param stop_bits     The number of stop bits asserted at the of the frame.
+ * \param tmr           The resource id of the timer to be used. Polling mode
+ *                      will be used if set to 0.
+ * \param uart_rx_error_callback_fptr Callback function pointer for UART rx errors 
+ *                      The error is contained in cb_code in the uart_rx_t struct.
+ * \param app_data      A pointer to application specific data provided
+ *                      by the application. Used to share data between
+ *                      the error callback function and the application.
+ */
+void uart_rx_blocking_init(
+        uart_rx_t *uart,
+        port_t rx_port,
+        uint32_t baud_rate,
+        uint8_t data_bits,
+        uart_parity_t parity,
+        uint8_t stop_bits,
+        hwtimer_t tmr,
+        void(*uart_rx_error_callback_fptr)(void *app_data),
+        void *app_data
+        );
 
 /**
  * Receives a single UART frame with parameters as specified in uart_rx_init()

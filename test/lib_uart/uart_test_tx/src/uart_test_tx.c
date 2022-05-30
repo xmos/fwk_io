@@ -16,9 +16,9 @@
 
 volatile unsigned tx_empty = 0;
 
-UART_CALLBACK_ATTR void tx_callback(uart_callback_t callback_info){
+HIL_UART_TX_CALLBACK_ATTR void tx_callback(uart_callback_code_t callback_info){
     switch(callback_info){
-        case UART_TX_EMPTY:
+        case UART_UNDERRUN_ERROR:
             tx_empty = 1;
             break;
         case UART_START_BIT_ERROR:
@@ -33,11 +33,8 @@ UART_CALLBACK_ATTR void tx_callback(uart_callback_t callback_info){
         case UART_OVERRUN_ERROR:
             printstrln("UART_OVERRUN_ERROR");
             break;
-        case UART_UNDERRUN_ERROR:
-            printstrln("UART_UNDERRUN_ERROR");
-            break;
         case UART_RX_COMPLETE:
-            printstrln("UART_UNDERRUN_ERROR");
+            printstrln("UART_RX_COMPLETE");
             break;
     }
 }

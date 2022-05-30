@@ -24,11 +24,11 @@ port_t p_uart_rx = XS1_PORT_1B;
 volatile unsigned bytes_received = 0;
 volatile unsigned test_abort = 0;
 
-UART_CALLBACK_ATTR void rx_callback(uart_callback_t callback_info){
+HIL_UART_RX_CALLBACK_ATTR void rx_error_callback(void *app_data){
+    uart_rx_t *uart = (uart_rx_t *)app_data;
+    uart_callback_code_t callback_info = uart->cb_code;
+
     switch(callback_info){
-        case UART_TX_EMPTY:
-            printstrln("UART_TX_EMPTY");
-            break;
         case UART_START_BIT_ERROR:
             printstrln("UART_START_BIT_ERROR");
             break;
@@ -45,9 +45,24 @@ UART_CALLBACK_ATTR void rx_callback(uart_callback_t callback_info){
         case UART_UNDERRUN_ERROR:
             printstrln("UART_UNDERRUN_ERROR");
             break;
+        default:
+            printstr("Unexpected callback code: ");
+            printintln(callback_info);
+    }
+}
+
+HIL_UART_RX_CALLBACK_ATTR void rx_complete_callback(void *app_data){
+    uart_rx_t *uart = (uart_rx_t *)app_data;
+    uart_callback_code_t callback_info = uart->cb_code;
+
+    switch(callback_info){
         case UART_RX_COMPLETE:
             bytes_received += 1;
             break;
+
+        default:
+            printstr("Unexpected callback code: ");
+            printintln(callback_info);
     }
 }
 
@@ -64,10 +79,10 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
 
 #if TEST_BUFFER
     uart_rx_init(&uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
-        buffer, sizeof(buffer), rx_callback);
+        buffer, sizeof(buffer), rx_complete_callback, rx_error_callback, &uart);
 #else
     uart_rx_init(&uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
-        NULL, 0, rx_callback);
+        NULL, 0, rx_complete_callback, rx_error_callback, &uart);
 #endif
 
     //Tester waits until it can see the tx_port driven to idle by other task

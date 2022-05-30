@@ -2,6 +2,7 @@
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <xs1.h>
 #include <stdio.h>
+#include <print.h>
 #include <string.h>
 #include <stdlib.h>
 #include <xcore/parallel.h>
@@ -16,27 +17,8 @@
 
 volatile unsigned tx_empty = 0;
 
-HIL_UART_TX_CALLBACK_ATTR void tx_callback(uart_callback_code_t callback_info){
-    switch(callback_info){
-        case UART_UNDERRUN_ERROR:
-            tx_empty = 1;
-            break;
-        case UART_START_BIT_ERROR:
-            printstrln("UART_START_BIT_ERROR");
-            break;
-        case UART_PARITY_ERROR:
-            printstrln("UART_PARITY_ERROR");
-            break;
-        case UART_FRAMING_ERROR:
-            printstrln("UART_FRAMING_ERROR");
-            break;
-        case UART_OVERRUN_ERROR:
-            printstrln("UART_OVERRUN_ERROR");
-            break;
-        case UART_RX_COMPLETE:
-            printstrln("UART_RX_COMPLETE");
-            break;
-    }
+HIL_UART_TX_CALLBACK_ATTR void tx_callback(void *app_data){
+        tx_empty = 1;
 }
 
 port_t p_uart_tx = XS1_PORT_1A;
@@ -45,14 +27,13 @@ port_t p_uart_tx = XS1_PORT_1A;
 DEFINE_INTERRUPT_PERMITTED(UART_TX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     uint8_t tx_data[] = {0xff, 0x00, 0x08, 0x55};
 
-    uint8_t buffer[64];
-
     uart_tx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
     // printf("UART setting: %d %d %d %d\n", TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
 
 #if TEST_BUFFER
-    uart_tx_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, buffer, sizeof(buffer), tx_callback);
+    uint8_t buffer[64] = {0};
+    uart_tx_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, buffer, sizeof(buffer), tx_callback, &uart);
 #else
     uart_tx_blocking_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr);
 #endif

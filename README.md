@@ -1,5 +1,40 @@
 # IO Framework Repository
 
+This repository is a collection of C/C++ peripheral IO libraries used to develop for XCore:
+
+Supported peripherals include:
+
+- UART
+- I2C
+- I2S
+- SPI
+- QSPI flash
+- PDM microphones
+- USB
+
+This repository can be used standalone.  However, it is meant to be used as part of the [XCore SDK](https://github.com/xmos/xcore_sdk).
+
+## Build Status
+
+Build Type       |    Status     |
+-----------      | --------------|
+CI (Linux)       | ![CI](https://github.com/xmos/fwk_io/actions/workflows/ci.yml/badge.svg?branch=develop&event=push) |
+Docs             | ![CI](https://github.com/xmos/fwk_io/actions/workflows/docs.yml/badge.svg?branch=develop&event=push) |
+
+## Cloning
+
+Some dependent components are included as git submodules. These can be obtained by cloning this repository with the following command:
+
+    $ git clone --recurse-submodules https://github.com/xmos/fwk_io.git
+
+## Testing
+
+Information on running tests can be found in the tests [README](https://github.com/xmos/fwk_io/blob/develop/test/README.rst).
+
+## Documentation
+
+Information on building the documentation can be found in the docs [README](https://github.com/xmos/fwk_io/blob/develop/doc/README.rst).
+
 ## License
 
-This Software is subject to the terms of the [XMOS Public Licence: Version 1](https://github.com/xmos/xcore_sdk/blob/develop/LICENSE.rst)
+This Software is subject to the terms of the [XMOS Public Licence: Version 1](https://github.com/xmos/fwk_io/blob/develop/LICENSE.rst)

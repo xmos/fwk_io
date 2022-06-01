@@ -128,6 +128,6 @@ PAR_JOBS(PJOB(producer, (&fifo)),
         exit(1);
     }
 
-    printf("PASS\n")
+    printf("PASS\n");
     return 0;
 }

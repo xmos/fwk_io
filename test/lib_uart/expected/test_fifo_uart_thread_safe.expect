@@ -1,0 +1,5 @@
+producer start, 2000 pushes into FIFO of size: 17
+consumer start, 2000 pops from FIFO of size: 17
+producer finished
+consumer finished
+PASS

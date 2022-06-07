@@ -77,6 +77,7 @@ typedef enum {
 typedef struct {
     uart_state_t state;
     port_t tx_port;
+    uint32_t pin_number;
     uint32_t bit_time_ticks;
     uint32_t next_event_time_ticks;
     uart_parity_t parity;
@@ -90,6 +91,7 @@ typedef struct {
     void *app_data;
     hwtimer_t tmr;
     uart_buffer_t buffer;
+    lock_t lock;
 } uart_tx_t;
 
 /**
@@ -101,6 +103,7 @@ typedef struct {
 typedef struct {
     uart_state_t state;
     port_t rx_port;
+    uint32_t pin_number;
     uint32_t bit_time_ticks;
     uint32_t next_event_time_ticks;
     uart_parity_t parity;
@@ -116,6 +119,7 @@ typedef struct {
     void *app_data;
     hwtimer_t tmr;
     uart_buffer_t buffer;
+    lock_t lock;
 } uart_rx_t;
 
 /**
@@ -152,7 +156,9 @@ void uart_tx_init(
         uint8_t *tx_buff,
         size_t buffer_size,
         void(*uart_tx_empty_callback_fptr)(void* app_data),
-        void *app_data
+        void *app_data,
+        lock_t lock,
+        unsigned pin_number
         );
 
 
@@ -177,7 +183,9 @@ void uart_tx_blocking_init(
         uint8_t num_data_bits,
         uart_parity_t parity,
         uint8_t stop_bits,
-        hwtimer_t tmr);
+        hwtimer_t tmr,
+        lock_t lock,
+        unsigned pin_number);
 
 
 /**

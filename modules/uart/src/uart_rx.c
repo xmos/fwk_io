@@ -7,8 +7,8 @@
 #include "uart.h"
 
 // #define PORT_IN(port)  (port_in(port) & 0x1)
-#define PORT_IN(port)  pin_in(port, uart_cfg->pin_number, uart_cfg->lock)
-#define PORT_IN_WHEN_PINSEQ(port, val) pin_in_when_pinseq(port, uart_cfg->pin_number, uart_cfg->lock, val);
+#define PORT_IN(port)  pin_in(port, uart_cfg->bit_mask, uart_cfg->lock)
+#define PORT_IN_WHEN_PINSEQ(port, val) pin_in_when_pinseq(port, uart_cfg->bit_mask, uart_cfg->lock, val);
 
 DECLARE_INTERRUPT_CALLBACK(uart_rx_handle_event, callback_info);
 
@@ -55,7 +55,7 @@ void uart_rx_init(
         ){
 
     uart_cfg->rx_port = rx_port;
-    uart_cfg->pin_number = pin_number;
+    uart_cfg->bit_mask = (1 << pin_number);
     uart_cfg->bit_time_ticks = XS1_TIMER_HZ / baud_rate;
     uart_cfg->lock = lock;
     uart_cfg->next_event_time_ticks = 0;

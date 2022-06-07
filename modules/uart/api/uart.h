@@ -77,7 +77,6 @@ typedef enum {
 typedef struct {
     uart_state_t state;
     port_t tx_port;
-    uint32_t pin_number;
     uint32_t bit_time_ticks;
     uint32_t next_event_time_ticks;
     uart_parity_t parity;
@@ -86,6 +85,7 @@ typedef struct {
     uint8_t uart_data;
     uint8_t stop_bits;
     uint8_t current_stop_bit;
+    uint8_t bit_mask;
 
     HIL_UART_TX_CALLBACK_ATTR void(*uart_tx_empty_callback_fptr)(void* app_data);
     void *app_data;
@@ -103,7 +103,6 @@ typedef struct {
 typedef struct {
     uart_state_t state;
     port_t rx_port;
-    uint32_t pin_number;
     uint32_t bit_time_ticks;
     uint32_t next_event_time_ticks;
     uart_parity_t parity;
@@ -112,6 +111,7 @@ typedef struct {
     uint8_t uart_data;
     uint8_t stop_bits;
     uint8_t current_stop_bit;
+    uint8_t bit_mask;
 
     uart_callback_code_t cb_code;
     HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_complete_callback_arg)(void* app_data);

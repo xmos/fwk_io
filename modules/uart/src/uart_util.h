@@ -37,14 +37,14 @@ inline int buffer_used(uart_buffer_t *buff_cfg){
 }
 
 __attribute__((always_inline))
-inline void pin_out(port_t port, unsigned bit, lock_t lock, unsigned value){
+inline void pin_out(port_t port, uint32_t mask, lock_t lock, unsigned value){
     if(lock){
         lock_acquire(lock);
         uint32_t curr_val = port_peek(port);
         if(value){
-            curr_val |= (1 << bit);
+            curr_val |= mask;
         } else {
-            curr_val &= ~(1 << bit);
+            curr_val &= ~mask;
         }
         port_out(port, curr_val);
         lock_release(lock);
@@ -54,12 +54,11 @@ inline void pin_out(port_t port, unsigned bit, lock_t lock, unsigned value){
 }
 
 __attribute__((always_inline))
-inline unsigned pin_in(port_t port, unsigned bit, lock_t lock){
+inline unsigned pin_in(port_t port, uint32_t mask, lock_t lock){
     if(lock){
         lock_acquire(lock);
         uint32_t port_val = port_in(port);
         lock_release(lock);
-        uint32_t mask = (1 << bit);
         return ((port_val & mask) == mask);
     } else {
         return port_in(port);
@@ -67,11 +66,10 @@ inline unsigned pin_in(port_t port, unsigned bit, lock_t lock){
 }
 
 __attribute__((always_inline))
-inline void pin_in_when_pinseq(port_t port, unsigned bit, lock_t lock, unsigned val){
+inline void pin_in_when_pinseq(port_t port, uint32_t mask, lock_t lock, unsigned val){
     if(lock){
         /* We have no way of easily event waiting on multiple pins in a port so we poll */ 
-        uint32_t mask = (1 << bit);
-        uint32_t eq_val = (val << bit);
+        uint32_t eq_val = val ? mask : 0;
         uint32_t port_val;
         do{
             lock_acquire(lock);

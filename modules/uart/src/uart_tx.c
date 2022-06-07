@@ -8,8 +8,7 @@
 
 DECLARE_INTERRUPT_CALLBACK(uart_tx_handle_event, callback_info);
 
-// #define PORT_OUT(port, val)  port_out(port, val)
-#define PORT_OUT(port, val)  pin_out(port, uart_cfg->pin_number, uart_cfg->lock, val)
+#define PORT_OUT(port, val)  pin_out(port, uart_cfg->bit_mask, uart_cfg->lock, val)
 
 void uart_tx_blocking_init(
         uart_tx_t *uart_cfg,
@@ -46,7 +45,7 @@ void uart_tx_init(
         ){
 
     uart_cfg->tx_port = tx_port;
-    uart_cfg->pin_number = pin_number;
+    uart_cfg->bit_mask = (1 << pin_number);
     uart_cfg->bit_time_ticks = XS1_TIMER_HZ / baud_rate;
     uart_cfg->lock = lock;
 

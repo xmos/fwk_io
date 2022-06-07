@@ -143,6 +143,9 @@ typedef struct {
  * \param app_data      A pointer to application specific data provided
  *                      by the application. Used to share data between
  *                      this callback function and the application.
+ * \param lock          The resource id of the lock to be used if the UART 
+ *                      shares a >1b port. Set to 0 if the port is not shared.
+ * \param pin_number    The pin index of the UART port if a >1b port it used.
  */
 void uart_tx_init(
         uart_tx_t *uart,
@@ -157,6 +160,7 @@ void uart_tx_init(
         size_t buffer_size,
         void(*uart_tx_empty_callback_fptr)(void* app_data),
         void *app_data,
+
         lock_t lock,
         unsigned pin_number
         );
@@ -175,6 +179,9 @@ void uart_tx_init(
  * \param stop_bits     The number of stop bits asserted at the of the frame.
  * \param tmr           The resource id of the timer to be used. Polling mode
  *                      will be used if set to 0.
+ * \param lock          The resource id of the lock to be used if the UART 
+ *                      shares a >1b port. Set to 0 if the port is not shared.
+ * \param pin_number    The pin index of the UART port if a >1b port it used.
  */
 void uart_tx_blocking_init(
         uart_tx_t *uart_cfg,
@@ -232,6 +239,9 @@ void uart_tx_deinit(
  * \param app_data      A pointer to application specific data provided
  *                      by the application. Used to share data between
  *                      this callback function and the application.
+ * \param lock          The resource id of the lock to be used if the UART 
+ *                      shares a >1b port. Set to 0 if the port is not shared.
+ * \param pin_number    The pin index of the UART port if a >1b port it used.
  */
 void uart_rx_init(
         uart_rx_t *uart,
@@ -246,7 +256,10 @@ void uart_rx_init(
         size_t buffer_size,
         void(*uart_rx_complete_callback_fptr)(void *app_data),
         void(*uart_rx_error_callback_fptr)(void *app_data),
-        void *app_data
+        void *app_data,
+
+        lock_t lock,
+        unsigned pin_number
         );
 
 /**
@@ -267,6 +280,9 @@ void uart_rx_init(
  * \param app_data      A pointer to application specific data provided
  *                      by the application. Used to share data between
  *                      the error callback function and the application.
+ * \param lock          The resource id of the lock to be used if the UART 
+ *                      shares a >1b port. Set to 0 if the port is not shared.
+ * \param pin_number    The pin index of the UART port if a >1b port it used.
  */
 void uart_rx_blocking_init(
         uart_rx_t *uart,
@@ -277,7 +293,9 @@ void uart_rx_blocking_init(
         uint8_t stop_bits,
         hwtimer_t tmr,
         void(*uart_rx_error_callback_fptr)(void *app_data),
-        void *app_data
+        void *app_data,
+        lock_t lock,
+        unsigned pin_number
         );
 
 /**

@@ -6,6 +6,9 @@
 
 #include "uart.h"
 
+// #define PORT_IN(port)  (port_in(port) & 0x1)
+#define PORT_IN(port)  pin_in(port, uart_cfg->pin_number, uart_cfg->lock)
+#define PORT_IN_WHEN_PINSEQ(port, val) pin_in_when_pinseq(port, uart_cfg->pin_number, uart_cfg->lock, val);
 
 DECLARE_INTERRUPT_CALLBACK(uart_rx_handle_event, callback_info);
 
@@ -25,10 +28,12 @@ void uart_rx_blocking_init(
         uint8_t stop_bits,
         hwtimer_t tmr,
         void(*uart_rx_error_callback_fptr)(void *app_data),
-        void *app_data){
+        void *app_data,
+        lock_t lock,
+        unsigned pin_number){
 
     uart_rx_init(uart_cfg, rx_port, baud_rate, num_data_bits, parity, stop_bits, tmr,
-        NULL, 0, NULL, uart_rx_error_callback_fptr, app_data);
+        NULL, 0, NULL, uart_rx_error_callback_fptr, app_data, lock, pin_number);
 }
 
 void uart_rx_init(
@@ -44,11 +49,15 @@ void uart_rx_init(
         size_t buffer_size,
         void(*uart_rx_complete_callback_fptr)(void *app_data),
         void(*uart_rx_error_callback_fptr)(void *app_data),
-        void *app_data
+        void *app_data,
+        lock_t lock,
+        unsigned pin_number
         ){
 
     uart_cfg->rx_port = rx_port;
+    uart_cfg->pin_number = pin_number;
     uart_cfg->bit_time_ticks = XS1_TIMER_HZ / baud_rate;
+    uart_cfg->lock = lock;
     uart_cfg->next_event_time_ticks = 0;
     xassert(num_data_bits <= 8 && num_data_bits >= 5);
     uart_cfg->num_data_bits = num_data_bits;
@@ -82,7 +91,7 @@ void uart_rx_init(
 
         //Setup interrupts
         interrupt_mask_all();
-        port_in(rx_port); //Ensure port is input and clear trigger
+        PORT_IN(rx_port); //Ensure port is input and clear trigger
         port_set_trigger_in_equal(rx_port, 0); //Trigger on low (start of start bit)
         triggerable_setup_interrupt_callback(rx_port, uart_cfg, INTERRUPT_CALLBACK(uart_rx_handle_event) );
 
@@ -105,7 +114,7 @@ static inline void sleep_until_start_transition(uart_rx_t *uart_cfg){
         port_in_when_pinseq(uart_cfg->rx_port, PORT_UNBUFFERED, 0);
     }else{
         //Poll the port
-        while(port_in(uart_cfg->rx_port) & 0x1);
+        while(PORT_IN(uart_cfg->rx_port));
     }
     uart_cfg->next_event_time_ticks = get_current_time(uart_cfg);
 }
@@ -135,7 +144,7 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
                 uart_cfg->next_event_time_ticks = get_current_time(uart_cfg);
             }
             //Double check line still low
-            uint32_t pin = port_in(uart_cfg->rx_port) & 0x1;
+            uint32_t pin = PORT_IN(uart_cfg->rx_port);
             if(pin != 0){
                 uart_cfg->cb_code = UART_START_BIT_ERROR;
                 (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->app_data);
@@ -155,7 +164,7 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         }
 
         case UART_START: {
-            uint32_t pin = port_in(uart_cfg->rx_port) & 0x1;
+            uint32_t pin = PORT_IN(uart_cfg->rx_port);
             if(pin != 0){
                 uart_cfg->cb_code = UART_START_BIT_ERROR;
                 (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->app_data);
@@ -171,7 +180,7 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         }
 
         case UART_DATA: { 
-            uint32_t pin = port_in(uart_cfg->rx_port) & 0x1;
+            uint32_t pin = PORT_IN(uart_cfg->rx_port);
             uart_cfg->uart_data |= pin << uart_cfg->current_data_bit;
             uart_cfg->current_data_bit += 1;
 
@@ -190,7 +199,7 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         }
 
         case UART_PARITY: {
-            uint32_t pin = port_in(uart_cfg->rx_port) & 0x1;
+            uint32_t pin = PORT_IN(uart_cfg->rx_port);
             uint32_t parity_setting = (uart_cfg->parity == UART_PARITY_EVEN) ? 0 : 1;
             uint32_t parity = (unsigned)uart_cfg->uart_data;
             // crc32(parity, parity_setting, 1); //http://bugzilla/show_bug.cgi?id=18663
@@ -209,7 +218,7 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         }
      
         case UART_STOP: {   
-            uint32_t pin = port_in(uart_cfg->rx_port) & 0x1;
+            uint32_t pin = PORT_IN(uart_cfg->rx_port);
             if(pin != 1){
                 uart_cfg->cb_code = UART_FRAMING_ERROR;
                 (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->app_data);

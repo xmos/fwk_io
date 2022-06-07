@@ -70,6 +70,7 @@ HIL_UART_RX_CALLBACK_ATTR void rx_complete_callback(void *app_data){
 DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     uart_rx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
+    lock_t lock = lock_alloc();
 
     char buffer[64];
     char test_rx[NUM_RX_WORDS];
@@ -79,10 +80,10 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
 
 #if TEST_BUFFER
     uart_rx_init(   &uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
-                    buffer, sizeof(buffer), rx_complete_callback, rx_error_callback, &uart);
+                    buffer, sizeof(buffer), rx_complete_callback, rx_error_callback, &uart, lock, 0);
 #else
     uart_rx_blocking_init(  &uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
-                            rx_error_callback, &uart);
+                            rx_error_callback, &uart, lock, 0);
 #endif
 
     //Tester waits until it can see the tx_port driven to idle by other task
@@ -100,6 +101,7 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
 
     uart_rx_deinit(&uart);
     hwtimer_free(tmr);
+    lock_free(lock);
 
     exit(0);
 }

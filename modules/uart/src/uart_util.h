@@ -58,10 +58,29 @@ inline unsigned pin_in(port_t port, unsigned bit, lock_t lock){
     if(lock){
         lock_acquire(lock);
         uint32_t port_val = port_in(port);
-        uint32_t mask = (1 << bit);
         lock_release(lock);
+        uint32_t mask = (1 << bit);
         return ((port_val & mask) == mask);
     } else {
         return port_in(port);
     }
 }
+
+__attribute__((always_inline))
+inline void pin_in_when_pinseq(port_t port, unsigned bit, lock_t lock, unsigned val){
+    if(lock){
+        /* We have no way of easily event waiting on multiple pins in a port so we poll */ 
+        uint32_t mask = (1 << bit);
+        uint32_t eq_val = (val << bit);
+        uint32_t port_val;
+        do{
+            lock_acquire(lock);
+            port_val = port_in(port);
+            lock_release(lock);
+        } while((port_val & mask) != eq_val);
+    } else {
+        /* Use event mechanism */
+        port_in_when_pinseq(port, PORT_UNBUFFERED, val);
+    }
+}
+

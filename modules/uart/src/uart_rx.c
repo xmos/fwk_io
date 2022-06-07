@@ -83,6 +83,11 @@ void uart_rx_init(
         xassert(0);    
     }
 
+    //Assert if buffer is used and a lock is specified. This is not supported as we need a 1b port for ISR/buffered mode
+    if(buffer_used(&uart_cfg->buffer) && !tmr){
+        xassert(0);    
+    }
+
     port_enable(rx_port);
 
     //TODO work out if buffer can be used without HW timer

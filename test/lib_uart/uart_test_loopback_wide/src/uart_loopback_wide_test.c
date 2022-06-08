@@ -61,6 +61,10 @@ void tx_task(unsigned task_num){
 
     uart_tx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
+
+    if(task_num != 0){
+        hwtimer_delay(tmr, uart.bit_time_ticks); //Wait one bit time to allow instance 0 to start first
+    }
     
     uart_tx_blocking_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, lock_tx, task_num);
     

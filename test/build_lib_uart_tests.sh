@@ -18,6 +18,11 @@ then
 "test_hil_uart_fifo_test XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 "test_hil_uart_fifo_thread_safe_test XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 
+###################################  UART LOOPBACK WIDE  ###############################################
+"test_hil_uart_loopback_wide_test_2_115200 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+"test_hil_uart_loopback_wide_test_1_115200 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+
+
 ################################### UART TX ############################################################
 "test_hil_uart_tx_test_UNBUFFERED_921600_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 "test_hil_uart_tx_test_UNBUFFERED_921600_8_NONE_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"

@@ -8,7 +8,7 @@
 
 // #define PORT_IN(port)  (port_in(port) & 0x1)
 #define PORT_IN(port)  pin_in(port, uart_cfg->bit_mask, uart_cfg->lock)
-#define PORT_IN_WHEN_PINSEQ(port, val) pin_in_when_pinseq(port, uart_cfg->bit_mask, uart_cfg->lock, val);
+#define PORT_IN_WHEN_PINSEQ(port, mode, val) pin_in_when_pinseq(port, uart_cfg->bit_mask, uart_cfg->lock, val);
 
 DECLARE_INTERRUPT_CALLBACK(uart_rx_handle_event, callback_info);
 
@@ -116,7 +116,7 @@ void uart_rx_init(
 static inline void sleep_until_start_transition(uart_rx_t *uart_cfg){
     if(uart_cfg->tmr){
         //Wait on a port transition to low
-        port_in_when_pinseq(uart_cfg->rx_port, PORT_UNBUFFERED, 0);
+        PORT_IN_WHEN_PINSEQ(uart_cfg->rx_port, PORT_UNBUFFERED, 0);
     }else{
         //Poll the port
         while(PORT_IN(uart_cfg->rx_port));

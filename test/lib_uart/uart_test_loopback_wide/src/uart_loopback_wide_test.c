@@ -19,7 +19,7 @@
 #define TEST_BAUD               115200
 #include "uart_test_common.h"
 
-#define NUMBER_TEST_BYTES  16
+#define NUMBER_TEST_BYTES       4
 
 uint8_t tx_data[NUMBER_TEST_BYTES] = {0};
 
@@ -30,7 +30,6 @@ lock_t lock_rx = 0;
 
 volatile unsigned bytes_received[TEST_NUM_UARTS] = {0};
 volatile unsigned task_finished[TEST_NUM_UARTS] = {0};
-volatile unsigned synch[TEST_NUM_UARTS] = {0};
 
 HIL_UART_RX_CALLBACK_ATTR void rx_error_callback(uart_callback_code_t callback_code, void *app_data){
     switch(callback_code){
@@ -62,12 +61,12 @@ void tx_task(unsigned task_num){
 
     uart_tx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
-
-    printf("TX UART setting - bit: %d baud: %d bits: %d parity: %d stop: %d\n", task_num, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
     
     uart_tx_blocking_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, lock_tx, task_num);
-    synch[task_num] = 1;
+    
+    hwtimer_delay(tmr, uart.bit_time_ticks * 2); //Wait two bit times to start so we have a good idle before starting the test
 
+    // printf("TX UART setting - bit: %d baud: %d bits: %d parity: %d stop: %d\n", task_num, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
 
     for(int i = 0; i < NUMBER_TEST_BYTES; i++){
         uart_tx(&uart, tx_data[i]);
@@ -87,12 +86,10 @@ void rx_task(unsigned task_num){
 
     uint8_t test_rx[NUMBER_TEST_BYTES] = {0};
 
-    printf("RX UART setting - bit: %d baud: %d bits: %d parity: %d stop: %d\n", task_num, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
-
     uart_rx_blocking_init(  &uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
                             rx_error_callback, &uart, lock_rx, task_num);
 
-    while(synch[task_num] == 0);
+    // printf("RX UART setting - bit: %d baud: %d bits: %d parity: %d stop: %d\n", task_num, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
 
     for(int i = 0; i < NUMBER_TEST_BYTES; i++){
         test_rx[i] = uart_rx(&uart);
@@ -107,7 +104,7 @@ void rx_task(unsigned task_num){
     }
 
     if(test_passed){
-        printf("RX UART: %d PASSED\n", task_num);
+        printf("RX UART Task %d PASSED\n", task_num);
     }
 
     uart_rx_deinit(&uart);
@@ -142,6 +139,11 @@ void make_test_vect(void){
         pseudo_rand_uint32(&random);
         tx_data[i] = (uint8_t)random;
     }
+    // Some fixed bytes for easy viewing in the VCD
+    // tx_data[0] = 0x00;
+    // tx_data[1] = 0x7f;
+    // tx_data[2] = 0x55;
+    // tx_data[3] = 0xff;
 }
 
 

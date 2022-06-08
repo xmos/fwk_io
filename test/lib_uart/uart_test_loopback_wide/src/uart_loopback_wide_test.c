@@ -25,9 +25,12 @@ uint8_t tx_data[NUMBER_TEST_BYTES] = {0};
 
 port_t p_uart_tx = XS1_PORT_4A;
 port_t p_uart_rx = XS1_PORT_4B;
+lock_t lock_tx = 0;
+lock_t lock_rx = 0;
 
 volatile unsigned bytes_received[TEST_NUM_UARTS] = {0};
 volatile unsigned task_finished[TEST_NUM_UARTS] = {0};
+volatile unsigned synch[TEST_NUM_UARTS] = {0};
 
 HIL_UART_RX_CALLBACK_ATTR void rx_error_callback(void *app_data){
     uart_rx_t *uart = (uart_rx_t *)app_data;
@@ -62,11 +65,11 @@ void tx_task(unsigned task_num){
 
     uart_tx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
-    lock_t lock = lock_alloc();
-    
-    uart_tx_blocking_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, lock, 0);
 
     printf("TX UART setting - bit: %d baud: %d bits: %d parity: %d stop: %d\n", task_num, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
+    
+    uart_tx_blocking_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, lock_tx, task_num);
+    synch[task_num] = 1;
 
 
     for(int i = 0; i < NUMBER_TEST_BYTES; i++){
@@ -76,7 +79,6 @@ void tx_task(unsigned task_num){
     uart_tx_deinit(&uart);
 
     hwtimer_free(tmr);
-    lock_free(lock);
 }
 
 
@@ -85,14 +87,15 @@ void rx_task(unsigned task_num){
 
     uart_rx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
-    lock_t lock = lock_alloc();
 
     uint8_t test_rx[NUMBER_TEST_BYTES] = {0};
 
     printf("RX UART setting - bit: %d baud: %d bits: %d parity: %d stop: %d\n", task_num, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
 
     uart_rx_blocking_init(  &uart, p_uart_rx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr,
-                            rx_error_callback, &uart, lock, task_num);
+                            rx_error_callback, &uart, lock_rx, task_num);
+
+    while(synch[task_num] == 0);
 
     for(int i = 0; i < NUMBER_TEST_BYTES; i++){
         test_rx[i] = uart_rx(&uart);
@@ -112,7 +115,6 @@ void rx_task(unsigned task_num){
 
     uart_rx_deinit(&uart);
     hwtimer_free(tmr);
-    lock_free(lock);
 
     task_finished[task_num] = 1;
 }
@@ -124,7 +126,7 @@ void burn(void) {
     while(!all_finished){ //Exit when all finished
         all_finished = 1;
         for(int i = 0; i < TEST_NUM_UARTS; i++){
-            if(task_finished[i] = 0){
+            if(task_finished[i] == 0){
                 all_finished = 0;
             }
         }
@@ -149,6 +151,9 @@ void make_test_vect(void){
 
 int main(void) {
     make_test_vect();
+    lock_tx = lock_alloc();
+    lock_rx = lock_alloc();
+
     PAR_JOBS (
         PJOB(rx_task, (0)),
         PJOB(tx_task, (0)),
@@ -174,6 +179,8 @@ int main(void) {
         PJOB(burn, ())
 #endif
     );
+    lock_free(lock_tx);
+    lock_free(lock_rx);
 
     printf("Exit..\n");
     return 0;

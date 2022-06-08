@@ -112,7 +112,7 @@ typedef struct {
 
     uart_callback_code_t cb_code;
     HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_complete_callback_arg)(void* app_data);
-    HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_error_callback_arg)(void* app_data);
+    HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_error_callback_arg)(uart_callback_code_t callback_code, void* app_data);
     void *app_data;
     hwtimer_t tmr;
     uart_buffer_t buffer;

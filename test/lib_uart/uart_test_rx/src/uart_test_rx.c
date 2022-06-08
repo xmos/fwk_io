@@ -24,11 +24,9 @@ port_t p_uart_rx = XS1_PORT_1B;
 volatile unsigned bytes_received = 0;
 volatile unsigned test_abort = 0;
 
-HIL_UART_RX_CALLBACK_ATTR void rx_error_callback(void *app_data){
-    uart_rx_t *uart = (uart_rx_t *)app_data;
-    uart_callback_code_t callback_info = uart->cb_code;
-
-    switch(callback_info){
+HIL_UART_RX_CALLBACK_ATTR void rx_error_callback(uart_callback_code_t callback_code, void *app_data){
+    
+    switch(callback_code){
         case UART_START_BIT_ERROR:
             printstrln("UART_START_BIT_ERROR");
             break;
@@ -47,7 +45,7 @@ HIL_UART_RX_CALLBACK_ATTR void rx_error_callback(void *app_data){
             break;
         default:
             printstr("Unexpected callback code: ");
-            printintln(callback_info);
+            printintln(callback_code);
     }
 }
 

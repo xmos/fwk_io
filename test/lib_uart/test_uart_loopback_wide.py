@@ -13,17 +13,18 @@ num_args = {        "ONE"   : 1,
                     }
 
 speed_args = {
-              "9600 baud": 9600,
+              "57600 baud": 57600,
               "115200 baud": 115200,
-              "576000 baud": 576000,
+              "230400 baud": 230400,
               }
 
-
+# num_args = {   "ONE" : 1, "TWO" : 2, "THREE" : 3 }
 # num_args = {   "ONE" : 1}
 # num_args = {   "TWO" : 2}
-num_args = {   "ONE" : 1, "TWO" : 2}
-speed_args = {"115200 baud": 115200}
-# speed_args = {"576000 baud": 576000}
+# num_args = {   "THREE" : 3}
+num_args = {   "FOUR" : 4}
+# speed_args = {"115200 baud": 115200}
+speed_args = {"57600 baud": 57600}
 # speed_args = {"115200 baud": 115200}
 # speed_args = {"9600 baud": 9600}
 
@@ -44,10 +45,10 @@ def test_loopback_wide(request, capfd, num_args, baud):
                                         ordered = False, #Important because tasks may complete in any order
                                         ignore = ["Exit.*", "Generating"])
 
-    # simargs = ["--trace-to", "trace.txt", "--vcd-tracing", "-tile tile[0] -ports -ports-detailed -cores -instructions -o trace.vcd",
-    #             "--plugin", "LoopbackPort.dll", "-port tile[0] XS1_PORT_4A 4 0 -port tile[0] XS1_PORT_4B 4 0"]
     simargs = ["--plugin", "LoopbackPort.dll", "-port tile[0] XS1_PORT_4A 4 0 -port tile[0] XS1_PORT_4B 4 0"]#for speed when not debugging
-    px.run_with_pyxsim(binary, simthreads = [], simargs = simargs)
+    simargs_dbg = ["--trace-to", "trace.txt", "--vcd-tracing", "-tile tile[0] -ports -ports-detailed -cores -instructions -o trace.vcd",
+                "--plugin", "LoopbackPort.dll", "-port tile[0] XS1_PORT_4A 4 0 -port tile[0] XS1_PORT_4B 4 0"]
+    px.run_with_pyxsim(binary, simthreads = [], simargs = simargs_dbg)
     capture = capfd.readouterr().out[:-1] #Tester appends an extra line feed which we don't need
 
     tester.run(capture)

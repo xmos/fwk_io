@@ -220,12 +220,26 @@ then
 elif [ "$1" == "smoke" ]
 then
     applications=(
+        "test_hil_uart_loopback_wide_test_2_230400 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_uart_loopback_wide_test_1_230400 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+
+
+        # "test_hil_uart_loopback_wide_test_4_115200 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_uart_loopback_wide_test_3_115200 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_uart_loopback_wide_test_2_115200 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_uart_loopback_wide_test_1_115200 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+
+        "test_hil_uart_loopback_wide_test_4_57600 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_uart_loopback_wide_test_3_57600 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_uart_loopback_wide_test_2_57600 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_uart_loopback_wide_test_1_57600 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+
         #Pick the fastest options to test (good for runtime too). One vanilla 8b N 1 and one funky one
         # "test_hil_uart_rx_test_BUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
         # "test_hil_uart_rx_test_UNBUFFERED_921600_5_EVEN_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 
-        "test_hil_uart_tx_test_BUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
-        "test_hil_uart_tx_test_UNBUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        # "test_hil_uart_tx_test_BUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        # "test_hil_uart_tx_test_UNBUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
         # "test_hil_uart_tx_test_UNBUFFERED_921600_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
         # "test_hil_uart_tx_test_UNBUFFERED_921600_5_EVEN_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 

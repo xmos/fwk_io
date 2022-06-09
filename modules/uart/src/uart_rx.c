@@ -6,7 +6,6 @@
 
 #include "uart.h"
 
-// #define PORT_IN(port)  (port_in(port) & 0x1)
 #define PORT_IN(port)  pin_in(port, uart_cfg->bit_mask, uart_cfg->lock)
 #define PORT_IN_WHEN_PINSEQ(port, mode, val) pin_in_when_pinseq(port, uart_cfg->bit_mask, uart_cfg->lock, val);
 
@@ -47,7 +46,7 @@ void uart_rx_init(
         hwtimer_t tmr,
         uint8_t *buffer,
         size_t buffer_size,
-        void(*uart_rx_complete_callback_fptr)(void *app_data),
+        void(*uart_rx_complete_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
         void(*uart_rx_error_callback_fptr)(void *app_data),
         void *app_data,
         lock_t lock,

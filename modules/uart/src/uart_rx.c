@@ -24,7 +24,7 @@ void uart_rx_blocking_init(
         uart_parity_t parity,
         uint8_t stop_bits,
         hwtimer_t tmr,
-        void(*uart_rx_error_callback_fptr)(void *app_data),
+        void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
         void *app_data){
 
     uart_rx_init(uart_cfg, rx_port, baud_rate, num_data_bits, parity, stop_bits, tmr,
@@ -43,7 +43,7 @@ void uart_rx_init(
         uint8_t *buffer,
         size_t buffer_size,
         void(*uart_rx_complete_callback_fptr)(void *app_data),
-        void(*uart_rx_error_callback_fptr)(void *app_data),
+        void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
         void *app_data
         ){
 

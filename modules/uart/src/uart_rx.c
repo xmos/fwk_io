@@ -16,6 +16,21 @@ static inline uint32_t get_current_time(uart_rx_t *uart_cfg){
     return get_reference_time();
 }
 
+void uart_rx_blocking_init(
+        uart_rx_t *uart_cfg,
+        port_t rx_port,
+        uint32_t baud_rate,
+        uint8_t num_data_bits,
+        uart_parity_t parity,
+        uint8_t stop_bits,
+        hwtimer_t tmr,
+        void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
+        void *app_data){
+
+    uart_rx_init(uart_cfg, rx_port, baud_rate, num_data_bits, parity, stop_bits, tmr,
+        NULL, 0, NULL, uart_rx_error_callback_fptr, app_data);
+}
+
 void uart_rx_init(
         uart_rx_t *uart_cfg,
         port_t rx_port,
@@ -27,7 +42,9 @@ void uart_rx_init(
         hwtimer_t tmr,
         uint8_t *buffer,
         size_t buffer_size,
-        void(*uart_callback_fptr)(uart_callback_t callback_info)
+        void(*uart_rx_complete_callback_fptr)(void *app_data),
+        void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
+        void *app_data
         ){
 
     uart_cfg->rx_port = rx_port;
@@ -46,7 +63,11 @@ void uart_rx_init(
     uart_cfg->tmr = tmr;
 
     init_buffer(&uart_cfg->buffer, buffer, buffer_size);
-    uart_cfg->uart_callback_fptr = uart_callback_fptr;
+
+    uart_cfg->cb_code = UART_RX_COMPLETE;
+    uart_cfg->uart_rx_complete_callback_arg = uart_rx_complete_callback_fptr;
+    uart_cfg->uart_rx_error_callback_arg = uart_rx_error_callback_fptr;
+    uart_cfg->app_data = app_data;
 
     //Assert if buffer is used but no timer as we need the timer for buffered mode 
     if(buffer_used(&uart_cfg->buffer) && !tmr){
@@ -116,7 +137,8 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
             //Double check line still low
             uint32_t pin = port_in(uart_cfg->rx_port) & 0x1;
             if(pin != 0){
-                (*uart_cfg->uart_callback_fptr)(UART_START_BIT_ERROR);
+                uart_cfg->cb_code = UART_START_BIT_ERROR;
+                (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->cb_code, uart_cfg->app_data);
             }
             uart_cfg->next_event_time_ticks += uart_cfg->bit_time_ticks >> 1; //Halfway through start bit
             uart_cfg->state = UART_START;
@@ -135,7 +157,8 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         case UART_START: {
             uint32_t pin = port_in(uart_cfg->rx_port) & 0x1;
             if(pin != 0){
-                (*uart_cfg->uart_callback_fptr)(UART_START_BIT_ERROR);
+                uart_cfg->cb_code = UART_START_BIT_ERROR;
+                (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->cb_code, uart_cfg->app_data);
             }
             uart_cfg->state = UART_DATA;
             uart_cfg->uart_data = 0;
@@ -174,7 +197,8 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
             asm volatile("crc32 %0, %2, %3" : "=r" (parity) : "0" (parity), "r" (parity_setting), "r" (1));
             parity &= 1;
             if(pin != parity){
-                (*uart_cfg->uart_callback_fptr)(UART_PARITY_ERROR);
+                uart_cfg->cb_code = UART_PARITY_ERROR;
+                (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->cb_code, uart_cfg->app_data);
             }
             uart_cfg->state = UART_STOP;
             uart_cfg->next_event_time_ticks += uart_cfg->bit_time_ticks;
@@ -187,9 +211,13 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         case UART_STOP: {   
             uint32_t pin = port_in(uart_cfg->rx_port) & 0x1;
             if(pin != 1){
-                (*uart_cfg->uart_callback_fptr)(UART_FRAMING_ERROR);
-            } else if(buffer_used(&uart_cfg->buffer)){
-                (*uart_cfg->uart_callback_fptr)(UART_RX_COMPLETE);
+                uart_cfg->cb_code = UART_FRAMING_ERROR;
+                (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->cb_code, uart_cfg->app_data);
+            } else {
+                uart_cfg->cb_code = UART_RX_COMPLETE;
+            }
+            if(buffer_used(&uart_cfg->buffer) && uart_cfg->uart_rx_complete_callback_arg != NULL){
+                (*uart_cfg->uart_rx_complete_callback_arg)(uart_cfg->app_data);
             }
             uart_cfg->state = UART_IDLE;
 
@@ -197,7 +225,8 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
             if(buffer_used(&uart_cfg->buffer)){
                 uart_buffer_error_t err = push_byte_into_buffer(&uart_cfg->buffer, uart_cfg->uart_data);
                 if(err == UART_BUFFER_FULL){
-                    (*uart_cfg->uart_callback_fptr)(UART_OVERRUN_ERROR);
+                    uart_cfg->cb_code = UART_OVERRUN_ERROR;
+                    (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->cb_code, uart_cfg->app_data);
                 }
                 hwtimer_clear_trigger_time(uart_cfg->tmr);
                 triggerable_set_trigger_enabled(uart_cfg->tmr, 0);
@@ -221,7 +250,8 @@ uint8_t uart_rx(uart_rx_t *uart_cfg){
         uint8_t rx_data = 0;
         uart_buffer_error_t err = pop_byte_from_buffer(&uart_cfg->buffer, &rx_data);
         if(err == UART_BUFFER_EMPTY){
-            (*uart_cfg->uart_callback_fptr)(UART_UNDERRUN_ERROR);
+            uart_cfg->cb_code = UART_UNDERRUN_ERROR;
+            (*uart_cfg->uart_rx_error_callback_arg)(uart_cfg->cb_code, uart_cfg->app_data);
         }
         return rx_data;
     } else {

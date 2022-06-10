@@ -16,6 +16,7 @@ then
 
 ###################################  FIFO  #############################################################
 "test_hil_uart_fifo_test XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+"test_hil_uart_fifo_thread_safe_test XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 
 ################################### UART TX ############################################################
 "test_hil_uart_tx_test_UNBUFFERED_921600_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
@@ -225,6 +226,9 @@ then
 
         "test_hil_uart_tx_test_BUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
         "test_hil_uart_tx_test_UNBUFFERED_921600_5_EVEN_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+
+        "test_hil_uart_fifo_test XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_uart_fifo_thread_safe_test XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
     )
 else
     echo "Argument $1 not a supported configuration!"
@@ -263,7 +267,7 @@ for ((i = 0; i < ${#applications[@]}; i += 1)); do
     else
         do_build "$i" &
         pids[${i}]=$!
-        sleep 0.1 #Limit rate of spawning a bit to make life easier for host
+        sleep 3 #Limit rate of spawning a bit to make life easier for host
     fi
 done
 

@@ -18,7 +18,7 @@ void uart_tx_blocking_init(
         hwtimer_t tmr){
 
     uart_tx_init(uart_cfg, tx_port, baud_rate, num_data_bits, parity, stop_bits, tmr,
-                 NULL, 0, NULL);
+                 NULL, 0, NULL, NULL);
 }
 
 void uart_tx_init(
@@ -32,11 +32,13 @@ void uart_tx_init(
         hwtimer_t tmr,
         uint8_t *buffer,
         size_t buffer_size,
-        void(*uart_callback_fptr)(uart_callback_t callback_info)
+        void(*uart_tx_empty_callback_fptr)(void* app_data),
+        void *app_data
         ){
 
     uart_cfg->tx_port = tx_port;
     uart_cfg->bit_time_ticks = XS1_TIMER_HZ / baud_rate;
+
     uart_cfg->next_event_time_ticks = 0;
     xassert(num_data_bits <= 8);
     uart_cfg->num_data_bits = num_data_bits;
@@ -60,7 +62,8 @@ void uart_tx_init(
     //TODO work out if buffer can be used without HW timer
     if(buffer_used(&uart_cfg->buffer)){
         //Setup interrupt
-        uart_cfg->uart_callback_fptr = uart_callback_fptr;
+        uart_cfg->uart_tx_empty_callback_fptr = uart_tx_empty_callback_fptr;
+        uart_cfg->app_data = app_data;
         triggerable_setup_interrupt_callback(tmr, uart_cfg, INTERRUPT_CALLBACK(uart_tx_handle_event) );
         interrupt_unmask_all();
     }
@@ -183,7 +186,7 @@ DEFINE_INTERRUPT_CALLBACK(UART_TX_INTERRUPTABLE_FUNCTIONS, uart_tx_handle_event,
             buffered_uart_tx_char_finished(uart_cfg);
             if(uart_cfg->state == UART_IDLE){
                 triggerable_disable_trigger(uart_cfg->tmr);
-                (*uart_cfg->uart_callback_fptr)(UART_TX_EMPTY);
+                (*uart_cfg->uart_tx_empty_callback_fptr)(uart_cfg->app_data);
             }
             break;
         }
@@ -212,7 +215,7 @@ void uart_tx(uart_tx_t *uart_cfg, uint8_t data){
             sleep_until_next_transition(uart_cfg);//Set event for now
             triggerable_enable_trigger(uart_cfg->tmr);
         } else {//Transaction already underway
-            uart_buffer_error_t err = push_byte_into_buffer(&uart_cfg->buffer, data);
+            push_byte_into_buffer(&uart_cfg->buffer, data);
         }
     } else {
         uart_cfg->uart_data = data;

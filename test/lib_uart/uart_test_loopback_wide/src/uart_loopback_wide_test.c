@@ -16,7 +16,10 @@
 #ifndef TEST_NUM_UARTS
 #define TEST_NUM_UARTS          2
 #endif
+#ifndef TEST_BAUD
 #define TEST_BAUD               115200
+#endif
+
 #include "uart_test_common.h"
 
 #define NUMBER_TEST_BYTES       4
@@ -154,8 +157,12 @@ void make_test_vect(void){
 
 int main(void) {
     make_test_vect();
+
     lock_tx = lock_alloc();
     lock_rx = lock_alloc();
+
+    port_enable(p_uart_tx);
+    port_enable(p_uart_rx);
 
     PAR_JOBS (
         PJOB(rx_task, (0)),
@@ -182,6 +189,10 @@ int main(void) {
         PJOB(burn, ())
 #endif
     );
+
+    port_disable(p_uart_tx);
+    port_disable(p_uart_rx);
+
     lock_free(lock_tx);
     lock_free(lock_rx);
 

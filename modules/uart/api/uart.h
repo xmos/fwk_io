@@ -128,6 +128,7 @@ typedef struct {
  *
  * \param uart          The uart_tx_t context to initialise.
  * \param tx_port       The port used transmit the UART frames.
+ *                      The port must be pre-enabled by the application.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.
@@ -173,6 +174,7 @@ void uart_tx_init(
  *
  * \param uart          The uart_tx_t context to initialise.
  * \param tx_port       The port used transmit the UART frames.
+ *                      The port must be pre-enabled by the application.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.
@@ -222,6 +224,7 @@ void uart_tx_deinit(
  *
  * \param uart          The uart_rx_t context to initialise.
  * \param rx_port       The port used receive the UART frames.
+ *                      The port must be pre-enabled by the application.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.
@@ -269,6 +272,7 @@ void uart_rx_init(
  *
  * \param uart          The uart_rx_t context to initialise.
  * \param rx_port       The port used receive the UART frames.
+ *                      The port must be pre-enabled by the application.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.

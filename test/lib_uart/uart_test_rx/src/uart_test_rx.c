@@ -69,6 +69,7 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     uart_rx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
     lock_t lock = lock_alloc();
+    port_enable(p_uart_rx);
 
     char buffer[64];
     char test_rx[NUM_RX_WORDS];
@@ -100,6 +101,7 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     uart_rx_deinit(&uart);
     hwtimer_free(tmr);
     lock_free(lock);
+    port_disable(rx_port);
 
     exit(0);
 }

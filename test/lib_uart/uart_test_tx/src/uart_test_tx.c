@@ -30,6 +30,7 @@ DEFINE_INTERRUPT_PERMITTED(UART_TX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     uart_tx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
     lock_t lock = lock_alloc();
+    port_enable(p_uart_tx);
     // printf("UART setting: %d %d %d %d\n", TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
 
 #if TEST_BUFFER
@@ -51,6 +52,7 @@ DEFINE_INTERRUPT_PERMITTED(UART_TX_INTERRUPTABLE_FUNCTIONS, void, test, void){
 
     hwtimer_free(tmr);
     lock_free(lock);
+    port_disable(p_uart_tx);
     exit(0);
 }
 

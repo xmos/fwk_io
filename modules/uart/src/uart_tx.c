@@ -78,9 +78,6 @@ void uart_tx_init(
         interrupt_unmask_all();
     }
 
-    if(pin_number == 0 && !lock){
-        port_enable(tx_port);
-    }
     PORT_OUT(tx_port, 1); //Set to idle
 }
 

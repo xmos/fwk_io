@@ -46,8 +46,8 @@ void uart_rx_init(
         hwtimer_t tmr,
         uint8_t *buffer,
         size_t buffer_size,
-        void(*uart_rx_complete_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
-        void(*uart_rx_error_callback_fptr)(void *app_data),
+        void(*uart_rx_complete_callback_fptr)(void *app_data),
+        void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code,void *app_data),
         void *app_data,
         lock_t lock,
         unsigned pin_number
@@ -86,8 +86,6 @@ void uart_rx_init(
     if(buffer_used(&uart_cfg->buffer) && !tmr){
         xassert(0);    
     }
-
-    port_enable(rx_port);
 
     //TODO work out if buffer can be used without HW timer
     if(buffer_used(&uart_cfg->buffer)){

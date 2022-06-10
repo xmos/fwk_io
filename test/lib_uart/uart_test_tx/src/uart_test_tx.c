@@ -29,13 +29,15 @@ DEFINE_INTERRUPT_PERMITTED(UART_TX_INTERRUPTABLE_FUNCTIONS, void, test, void){
 
     uart_tx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
+    lock_t lock = lock_alloc();
+    port_enable(p_uart_tx);
     // printf("UART setting: %d %d %d %d\n", TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
 
 #if TEST_BUFFER
     uint8_t buffer[64] = {0};
-    uart_tx_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, buffer, sizeof(buffer), tx_callback, &uart);
+    uart_tx_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, buffer, sizeof(buffer), tx_callback, &uart, lock, 0);
 #else
-    uart_tx_blocking_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr);
+    uart_tx_blocking_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, lock, 0);
 #endif
 
     for(int i = 0; i < sizeof(tx_data); i++){
@@ -49,6 +51,8 @@ DEFINE_INTERRUPT_PERMITTED(UART_TX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     uart_tx_deinit(&uart);
 
     hwtimer_free(tmr);
+    lock_free(lock);
+    port_disable(p_uart_tx);
     exit(0);
 }
 

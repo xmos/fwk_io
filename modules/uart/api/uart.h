@@ -85,11 +85,13 @@ typedef struct {
     uint8_t uart_data;
     uint8_t stop_bits;
     uint8_t current_stop_bit;
+    uint8_t bit_mask;
 
     HIL_UART_TX_CALLBACK_ATTR void(*uart_tx_empty_callback_fptr)(void* app_data);
     void *app_data;
     hwtimer_t tmr;
     uart_buffer_t buffer;
+    lock_t lock;
 } uart_tx_t;
 
 /**
@@ -109,6 +111,7 @@ typedef struct {
     uint8_t uart_data;
     uint8_t stop_bits;
     uint8_t current_stop_bit;
+    uint8_t bit_mask;
 
     uart_callback_code_t cb_code;
     HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_complete_callback_arg)(void* app_data);
@@ -116,6 +119,7 @@ typedef struct {
     void *app_data;
     hwtimer_t tmr;
     uart_buffer_t buffer;
+    lock_t lock;
 } uart_rx_t;
 
 /**
@@ -124,6 +128,7 @@ typedef struct {
  *
  * \param uart          The uart_tx_t context to initialise.
  * \param tx_port       The port used transmit the UART frames.
+ *                      The port must be pre-enabled by the application.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.
@@ -139,6 +144,9 @@ typedef struct {
  * \param app_data      A pointer to application specific data provided
  *                      by the application. Used to share data between
  *                      this callback function and the application.
+ * \param lock          The resource id of the lock to be used if the UART 
+ *                      shares a >1b port. Set to 0 if the port is not shared.
+ * \param pin_number    The pin index of the UART port if a >1b port it used.
  */
 void uart_tx_init(
         uart_tx_t *uart,
@@ -152,7 +160,10 @@ void uart_tx_init(
         uint8_t *tx_buff,
         size_t buffer_size,
         void(*uart_tx_empty_callback_fptr)(void* app_data),
-        void *app_data
+        void *app_data,
+
+        lock_t lock,
+        unsigned pin_number
         );
 
 
@@ -163,12 +174,16 @@ void uart_tx_init(
  *
  * \param uart          The uart_tx_t context to initialise.
  * \param tx_port       The port used transmit the UART frames.
+ *                      The port must be pre-enabled by the application.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.
  * \param stop_bits     The number of stop bits asserted at the of the frame.
  * \param tmr           The resource id of the timer to be used. Polling mode
  *                      will be used if set to 0.
+ * \param lock          The resource id of the lock to be used if the UART 
+ *                      shares a >1b port. Set to 0 if the port is not shared.
+ * \param pin_number    The pin index of the UART port if a >1b port it used.
  */
 void uart_tx_blocking_init(
         uart_tx_t *uart_cfg,
@@ -177,7 +192,9 @@ void uart_tx_blocking_init(
         uint8_t num_data_bits,
         uart_parity_t parity,
         uint8_t stop_bits,
-        hwtimer_t tmr);
+        hwtimer_t tmr,
+        lock_t lock,
+        unsigned pin_number);
 
 
 /**
@@ -207,6 +224,7 @@ void uart_tx_deinit(
  *
  * \param uart          The uart_rx_t context to initialise.
  * \param rx_port       The port used receive the UART frames.
+ *                      The port must be pre-enabled by the application.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.
@@ -224,6 +242,9 @@ void uart_tx_deinit(
  * \param app_data      A pointer to application specific data provided
  *                      by the application. Used to share data between
  *                      this callback function and the application.
+ * \param lock          The resource id of the lock to be used if the UART 
+ *                      shares a >1b port. Set to 0 if the port is not shared.
+ * \param pin_number    The pin index of the UART port if a >1b port it used.
  */
 void uart_rx_init(
         uart_rx_t *uart,
@@ -238,7 +259,10 @@ void uart_rx_init(
         size_t buffer_size,
         void(*uart_rx_complete_callback_fptr)(void *app_data),
         void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
-        void *app_data
+        void *app_data,
+
+        lock_t lock,
+        unsigned pin_number
         );
 
 /**
@@ -248,6 +272,7 @@ void uart_rx_init(
  *
  * \param uart          The uart_rx_t context to initialise.
  * \param rx_port       The port used receive the UART frames.
+ *                      The port must be pre-enabled by the application.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.
@@ -259,6 +284,9 @@ void uart_rx_init(
  * \param app_data      A pointer to application specific data provided
  *                      by the application. Used to share data between
  *                      the error callback function and the application.
+ * \param lock          The resource id of the lock to be used if the UART 
+ *                      shares a >1b port. Set to 0 if the port is not shared.
+ * \param pin_number    The pin index of the UART port if a >1b port it used.
  */
 void uart_rx_blocking_init(
         uart_rx_t *uart,
@@ -269,7 +297,9 @@ void uart_rx_blocking_init(
         uint8_t stop_bits,
         hwtimer_t tmr,
         void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
-        void *app_data
+        void *app_data,
+        lock_t lock,
+        unsigned pin_number
         );
 
 /**

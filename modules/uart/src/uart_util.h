@@ -8,6 +8,9 @@
 #pragma once
 #include <stddef.h>
 #include <stdint.h>
+#include <xcore/lock.h>
+#include <xcore/port.h>
+
 
 typedef enum {
     UART_BUFFER_OK = 0,
@@ -28,6 +31,61 @@ unsigned get_buffer_fill_level(uart_buffer_t *uart_cfg);
 uart_buffer_error_t push_byte_into_buffer(uart_buffer_t *buff_cfg, uint8_t data);
 uart_buffer_error_t pop_byte_from_buffer(uart_buffer_t *buff_cfg, uint8_t *data);
 
+__attribute__((always_inline))
 inline int buffer_used(uart_buffer_t *buff_cfg){
     return((buff_cfg->size && buff_cfg->buffer != NULL));
 }
+
+__attribute__((always_inline))
+inline void pin_out(port_t port, uint32_t mask, lock_t lock, unsigned value){
+    if(lock){
+        lock_acquire(lock);
+        uint32_t curr_val = port_peek(port);
+        if(value){
+            curr_val |= mask;
+        } else {
+            curr_val &= ~mask;
+        }
+        port_out(port, curr_val);
+        lock_release(lock);
+    } else {
+        port_out(port, value ? mask : 0);
+    }
+}
+
+__attribute__((always_inline))
+inline unsigned pin_in(port_t port, uint32_t mask, lock_t lock){
+    if(lock){
+        lock_acquire(lock);
+        uint32_t port_val = port_in(port);
+        lock_release(lock);
+        return ((port_val & mask) == mask);
+    } else {
+        return ((port_in(port) & mask) == mask);
+    }
+}
+
+__attribute__((always_inline))
+inline void pin_in_when_pinseq(port_t port, uint32_t mask, lock_t lock, unsigned val){
+    if(lock){
+        /* We have no way of easily event waiting on multiple pins in a port so we poll */ 
+        uint32_t eq_val = val ? mask : 0;
+        uint32_t port_val;
+        do{
+            lock_acquire(lock);
+            port_val = port_in(port);
+            lock_release(lock);
+        } while((port_val & mask) != eq_val);
+    } else {
+        /* Use event mechanism */
+        uint32_t port_val = port_in(port);
+        /* Assume that no other bits in port change and just look for port + new val.. */
+        if(val){
+            port_val |= mask;
+        } else {
+            port_val &= ~mask;
+        }
+        port_in_when_pinseq(port, PORT_UNBUFFERED, port_val);
+    }
+}
+

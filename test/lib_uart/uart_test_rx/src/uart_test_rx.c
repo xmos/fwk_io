@@ -101,7 +101,7 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     uart_rx_deinit(&uart);
     hwtimer_free(tmr);
     lock_free(lock);
-    port_disable(rx_port);
+    port_disable(p_uart_rx);
 
     exit(0);
 }

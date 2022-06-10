@@ -25,8 +25,9 @@ speed_args = {
 # num_args = {   "FOUR" : 4}
 # speed_args = {"115200 baud": 115200}
 # speed_args = {"57600 baud": 57600}
-speed_args = {"230400  baud": 230400 }
-# speed_args = {"9600 baud": 9600}
+# speed_args = {"230400  baud": 230400 }
+# speed_args = {"576000  baud": 576000 }
+# speed_args = {"921600 baud": 921600}
 
 @pytest.mark.parametrize("num_args", num_args.values(), ids=num_args.keys())
 @pytest.mark.parametrize("baud", speed_args.values(), ids=speed_args.keys())

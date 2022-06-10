@@ -55,7 +55,7 @@ HIL_UART_RX_CALLBACK_ATTR void rx_error_callback(uart_callback_code_t callback_c
             printstr("Unexpected callback code: ");
             printintln(callback_code);
     }
-    // exit(-1);
+    exit(-1);
 }
 
 

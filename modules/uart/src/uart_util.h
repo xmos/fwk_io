@@ -49,7 +49,7 @@ inline void pin_out(port_t port, uint32_t mask, lock_t lock, unsigned value){
         port_out(port, curr_val);
         lock_release(lock);
     } else {
-        port_out(port, value);
+        port_out(port, value ? mask : 0);
     }
 }
 
@@ -61,7 +61,7 @@ inline unsigned pin_in(port_t port, uint32_t mask, lock_t lock){
         lock_release(lock);
         return ((port_val & mask) == mask);
     } else {
-        return port_in(port);
+        return ((port_in(port) & mask) == mask);
     }
 }
 
@@ -78,7 +78,14 @@ inline void pin_in_when_pinseq(port_t port, uint32_t mask, lock_t lock, unsigned
         } while((port_val & mask) != eq_val);
     } else {
         /* Use event mechanism */
-        port_in_when_pinseq(port, PORT_UNBUFFERED, val);
+        uint32_t port_val = port_in(port);
+        /* Assume that no other bits in port change and just look for port + new val.. */
+        if(val){
+            port_val |= mask;
+        } else {
+            port_val &= ~mask;
+        }
+        port_in_when_pinseq(port, PORT_UNBUFFERED, port_val);
     }
 }
 

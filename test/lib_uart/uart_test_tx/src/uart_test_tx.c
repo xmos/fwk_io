@@ -32,7 +32,7 @@ DEFINE_INTERRUPT_PERMITTED(UART_TX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     // printf("UART setting: %d %d %d %d\n", TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);
 
 #if TEST_BUFFER
-    uint8_t buffer[64] = {0};
+    uint8_t buffer[64 + 1] = {0};
     uart_tx_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr, buffer, sizeof(buffer), tx_callback, &uart);
 #else
     uart_tx_blocking_init(&uart, p_uart_tx, TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS, tmr);

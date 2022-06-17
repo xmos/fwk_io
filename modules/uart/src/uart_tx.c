@@ -31,7 +31,7 @@ void uart_tx_init(
 
         hwtimer_t tmr,
         uint8_t *buffer,
-        size_t buffer_size,
+        size_t buffer_size_plus_one,
         void(*uart_tx_empty_callback_fptr)(void* app_data),
         void *app_data
         ){
@@ -50,7 +50,7 @@ void uart_tx_init(
     uart_cfg->uart_data = 0;
     uart_cfg->state = UART_IDLE;
 
-    init_buffer(&uart_cfg->buffer, buffer, buffer_size);
+    init_buffer(&uart_cfg->buffer, buffer, buffer_size_plus_one);
 
     //HW timer will be replaced by poll if set to zero
     uart_cfg->tmr = tmr;

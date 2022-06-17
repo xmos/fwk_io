@@ -69,7 +69,7 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
     uart_rx_t uart;
     hwtimer_t tmr = hwtimer_alloc();
 
-    char buffer[64];
+    char buffer[64 + 1];
     char test_rx[NUM_RX_WORDS];
 
     // printf("UART setting: %d %d %d %d\n", TEST_BAUD, TEST_DATA_BITS, TEST_PARITY, TEST_STOP_BITS);

@@ -41,7 +41,7 @@ void uart_rx_init(
 
         hwtimer_t tmr,
         uint8_t *buffer,
-        size_t buffer_size,
+        size_t buffer_size_plus_one,
         void(*uart_rx_complete_callback_fptr)(void *app_data),
         void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
         void *app_data
@@ -62,7 +62,7 @@ void uart_rx_init(
     //HW timer will be replaced by poll if set to zero
     uart_cfg->tmr = tmr;
 
-    init_buffer(&uart_cfg->buffer, buffer, buffer_size);
+    init_buffer(&uart_cfg->buffer, buffer, buffer_size_plus_one);
 
     uart_cfg->cb_code = UART_RX_COMPLETE;
     uart_cfg->uart_rx_complete_callback_arg = uart_rx_complete_callback_fptr;
@@ -78,7 +78,7 @@ void uart_rx_init(
 
     //TODO work out if buffer can be used without HW timer
     if(buffer_used(&uart_cfg->buffer)){
-        init_buffer(&uart_cfg->buffer, buffer, buffer_size);
+        init_buffer(&uart_cfg->buffer, buffer, buffer_size_plus_one);
 
         //Setup interrupts
         interrupt_mask_all();

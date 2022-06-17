@@ -133,7 +133,10 @@ typedef struct {
  * \param tx_buff       Pointer to a buffer. Optional. If set to zero the 
  *                      UART will run in blocking mode. If initialised to a
  *                      valid buffer, the UART will be interrupt driven.
- * \param buffer_size   Size of the buffer if enabled in tx_buff.
+ * \param buffer_size_plus_one   Size of the buffer if enabled in tx_buff. 
+ *                      Note that the buffer allocation and size argument
+ *                      must be one greater than needed. Eg. buff[65] for a
+ *                      64 byte buffer.
  * \param uart_tx_empty_callback_fptr Callback function pointer for UART buffer 
  *                      empty in buffered mode.
  * \param app_data      A pointer to application specific data provided
@@ -150,7 +153,7 @@ void uart_tx_init(
 
         hwtimer_t tmr,
         uint8_t *tx_buff,
-        size_t buffer_size,
+        size_t buffer_size_plus_one,
         void(*uart_tx_empty_callback_fptr)(void* app_data),
         void *app_data
         );
@@ -216,7 +219,10 @@ void uart_tx_deinit(
  * \param rx_buff       Pointer to a buffer. Optional. If set to zero the 
  *                      UART will run in blocking mode. If initialised to a
  *                      valid buffer, the UART will be interrupt driven.
- * \param buffer_size   Size of the buffer if enabled in tx_buff.
+ * \param buffer_size_plus_one   Size of the buffer if enabled in rx_buff. 
+ *                      Note that the buffer allocation and size argument
+ *                      must be one greater than needed. Eg. buff[65] for a
+ *                      64 byte buffer. 
  * \param uart_rx_complete_callback_fptr Callback function pointer for UART rx
  *                      complete (one word) in buffered mode only. Optionally NULL.
  * \param uart_rx_error_callback_fptr Callback function pointer for UART rx errors 

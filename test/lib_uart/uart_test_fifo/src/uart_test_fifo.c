@@ -10,15 +10,15 @@
 
 // #define BUFFER_SIZE 1234
 #define BUFFER_SIZE 77 //SOmething not a power of 2 and bigger than typical size (16)
+#define BUFFER_ALLOC (BUFFER_SIZE + 1)
 
 //Just for debugs
 void dump_fifo(uart_buffer_t *buff){
-    printf("size: %d\n", buff->size);
+    printf("size_plus_one: %d\n", buff->size_plus_one);
     printf("fill: %d\n", get_buffer_fill_level(buff));
-    printf("next_write_idx: %d\n", buff->next_write_idx);
-    printf("next_read_idx: %d\n", buff->next_read_idx);
-    printf("size_overlow_flag: %d\n", buff->size_overlow_flag);
-    printf("contents: "); for(int i=0; i<buff->size;i++) printf("%d, ",buff->buffer[i]);
+    printf("write_idx: %d\n", buff->write_idx);
+    printf("read_idx: %d\n", buff->read_idx);
+    printf("contents: "); for(int i=0; i<buff->size_plus_one;i++) printf("%d, ",buff->buffer[i]);
     printf("\n\n");
 }
 
@@ -38,6 +38,7 @@ void test_fill_level(uart_buffer_t *buff){
         unsigned fill_level = get_buffer_fill_level(buff);
         push_byte_into_buffer(buff, data);
         unsigned expected = i > BUFFER_SIZE ? BUFFER_SIZE : i;
+        // dump_fifo(buff);
 
         if(fill_level != expected){
             printf("ERROR: wrong fill level on up, expected: %d got: %d\n", expected, fill_level);
@@ -55,31 +56,38 @@ void test_fill_level(uart_buffer_t *buff){
         }
     }
     
-
     printf("test_fill_level: PASS\n");
 }
 
 void test_full(uart_buffer_t *buff){
+    // dump_fifo(buff);
+
     //fully drain
-    for(int i = 0; i < BUFFER_SIZE; i++){
+    uart_buffer_error_t err = UART_BUFFER_OK;
+    for(int i = 0; i < BUFFER_SIZE+3; i++){
         uint8_t data = 0;
-        pop_byte_from_buffer(buff, &data);
-        // dump_fifo(buffs);
+        err = pop_byte_from_buffer(buff, &data);
+    }
+    if(err != UART_BUFFER_EMPTY){
+        printf("ERROR: FIFO not empty when expected\n");
+        xassert(0);
     }
 
+    // dump_fifo(buff);
 
-    uart_buffer_error_t err = UART_BUFFER_OK;
     for(int i = 0; i < BUFFER_SIZE; i++){
         uint8_t data = (i + 1) % (UCHAR_MAX + 1);
         err = push_byte_into_buffer(buff, data);
-        // dump_fifo(buff);
 
         if(err != UART_BUFFER_OK){
             printf("ERROR: FIFO size too small %d (%d)\n", i + 1, BUFFER_SIZE);
             xassert(0);
         }
     }
+    // dump_fifo(buff);
+
     err = push_byte_into_buffer(buff, 22);
+
     // dump_fifo(buff);
 
     if(err != UART_BUFFER_FULL){
@@ -87,8 +95,8 @@ void test_full(uart_buffer_t *buff){
         xassert(0);
     }
 
-    if(get_buffer_fill_level(buff) != buff->size){
-        printf("ERROR: FIFO fill level wrong, expected: %d got: %d\n", buff->size, get_buffer_fill_level(buff));
+    if(get_buffer_fill_level(buff) != BUFFER_SIZE){
+        printf("ERROR: FIFO fill level wrong, expected: %d got: %d\n", BUFFER_SIZE, get_buffer_fill_level(buff));
         xassert(0);
     }
 
@@ -108,35 +116,30 @@ void test_full(uart_buffer_t *buff){
         xassert(0);
     }
 
-    if(get_buffer_fill_level(buff) != buff->size - 1){
-        printf("ERROR: FIFO fill level wrong, expected: %d got: %d\n", buff->size - 1, get_buffer_fill_level(buff));
+    if(get_buffer_fill_level(buff) != BUFFER_SIZE - 1){
+        printf("ERROR: FIFO fill level wrong, expected: %d got: %d\n", buff->size_plus_one - 1, get_buffer_fill_level(buff));
         xassert(0);
     }
-
 
     printf("test_full: PASS\n");
 }
 
 void test_empty(uart_buffer_t *buff){
 
-    //fully drain
-    for(int i = 0; i < BUFFER_SIZE; i++){
-        uint8_t data = 0;
-        pop_byte_from_buffer(buff, &data);
-        // dump_fifo(buffs);
-    }
-
     int test_fill_sizes[] = {BUFFER_SIZE/3 , BUFFER_SIZE/2, BUFFER_SIZE}; //Test for wrapping too by part filling fifo
     char *test_string[]= {"third", "half", "all"};
     for(int test_fill_size_idx = 0; test_fill_size_idx < sizeof(test_fill_sizes) / sizeof(int); test_fill_size_idx++){
-        //drain
         int test_fill_size = test_fill_sizes[test_fill_size_idx];
 
+
+        //drain
         uint8_t data = 0;
-        for(int i = 0; i < test_fill_size; i++){
+        for(int i = 0; i < BUFFER_SIZE; i++){
             pop_byte_from_buffer(buff, &data);
-            // dump_fifo(buffs);
+            // dump_fifo(buff);
         }
+
+        // dump_fifo(buff);
 
         uart_buffer_error_t err = pop_byte_from_buffer(buff, &data);
         if(err != UART_BUFFER_EMPTY){
@@ -149,8 +152,10 @@ void test_empty(uart_buffer_t *buff){
         for(int i = 0; i < test_fill_size; i++){
             push_byte_into_buffer(buff, expect);
             // dump_fifo(buff);
-
         }
+
+        // dump_fifo(buff);
+
         for(int i = 0; i < test_fill_size; i++){
             data = 0;
             uart_buffer_error_t err =  pop_byte_from_buffer(buff, &data);
@@ -167,19 +172,20 @@ void test_empty(uart_buffer_t *buff){
         err =  pop_byte_from_buffer(buff, &data);
         if(err != UART_BUFFER_EMPTY){
             printf("ERROR: FIFO unexpectedly not empty\n");
+            dump_fifo(buff);
             xassert(0);
         }
-    printf("test_empty %s: PASS\n", test_string[test_fill_size_idx], test_fill_size);
+        printf("test_empty %d %s: PASS\n",test_fill_size, test_string[test_fill_size_idx]);
     }
 }
 
 void test() {
     uart_buffer_t buff;
-    uint8_t storage[BUFFER_SIZE];
+    uint8_t storage[BUFFER_ALLOC];
 
-    init_buffer(&buff, storage, sizeof(storage));
-    test_fill_level(&buff);
+    init_buffer(&buff, storage, BUFFER_ALLOC);
     test_empty_after_init(&buff);
+    test_fill_level(&buff);
     test_full(&buff);
     test_empty(&buff);
     

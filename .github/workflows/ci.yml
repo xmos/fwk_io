@@ -12,10 +12,14 @@
 name: CI
 
 on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
   pull_request:
     branches:
-      - develop
-      - main
+      - 'main'
+      - 'develop'
 
   # Allow manually triggering of the workflow.
   workflow_dispatch: {}
@@ -35,22 +39,27 @@ jobs:
       spi: ${{ steps.filter.outputs.spi }}
       uart: ${{ steps.filter.outputs.uart }}
     steps:
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          i2c:
-            - 'modules/i2c/**'
-            - 'test/lib_i2c/**'
-          i2s:
-            - 'modules/i2s/**'
-            - 'test/lib_i2s/**'
-          spi:
-            - 'modules/spi/**'
-            - 'test/lib_spi/**'
-          uart:
-            - 'modules/uart/**'
-            - 'test/lib_uart/**'
+      - name: Checkout SDK
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Paths filter
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            i2c:
+              - 'modules/i2c/**'
+              - 'test/lib_i2c/**'
+            i2s:
+              - 'modules/i2s/**'
+              - 'test/lib_i2s/**'
+            spi:
+              - 'modules/spi/**'
+              - 'test/lib_spi/**'
+            uart:
+              - 'modules/uart/**'
+              - 'test/lib_uart/**'
             
   i2ctests:
     needs: changes
@@ -82,7 +91,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Pull SDK builder image
+      - name: Pull SDK builder
         run: |
           docker pull ${SDK_BUILDER_IMAGE}
 
@@ -121,7 +130,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Pull SDK builder image
+      - name: Pull SDK builder
         run: |
           docker pull ${SDK_BUILDER_IMAGE}
 

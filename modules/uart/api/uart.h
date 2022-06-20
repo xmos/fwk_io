@@ -18,7 +18,7 @@
 /**
  * \addtogroup hil_uart hil_uart
  *
- * The public API for using the HIL UART.
+ * The public API for using the HIL UART Tx Module.
  * @{
  */
 
@@ -103,31 +103,6 @@ typedef struct {
     uart_buffer_t buffer;
 } uart_tx_t;
 
-/**
- * Struct to hold a UART Rx context.
- *
- * The members in this struct should not be accessed directly. Use the
- * API provided instead.
- */
-typedef struct {
-    uart_state_t state;
-    port_t rx_port;
-    uint32_t bit_time_ticks;
-    uint32_t next_event_time_ticks;
-    uart_parity_t parity;
-    uint8_t num_data_bits;
-    uint8_t current_data_bit;
-    uint8_t uart_data;
-    uint8_t stop_bits;
-    uint8_t current_stop_bit;
-
-    uart_callback_code_t cb_code;
-    HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_complete_callback_arg)(void* app_data);
-    HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_error_callback_arg)(uart_callback_code_t callback_code, void* app_data);
-    void *app_data;
-    hwtimer_t tmr;
-    uart_buffer_t buffer;
-} uart_rx_t;
 
 /**
  * Initializes a UART Tx I/O interface. Passing a valid buffer will enable
@@ -188,7 +163,7 @@ void uart_tx_blocking_init(
         uart_tx_t *uart,
         port_t tx_port,
         uint32_t baud_rate,
-        uint8_t num_data_bits,
+        uint8_t data_bits,
         uart_parity_t parity,
         uint8_t stop_bits,
         hwtimer_t tmr);
@@ -213,6 +188,42 @@ void uart_tx(
 void uart_tx_deinit(
         uart_tx_t *uart);
 
+
+
+/**@}*/ // END: addtogroup hil_uart_tx
+
+/**
+ * \addtogroup hil_uart hil_uart_rx
+ *
+ * The public API for using the HIL UART Rx module.
+ * @{
+ */
+
+/**
+ * Struct to hold a UART Rx context.
+ *
+ * The members in this struct should not be accessed directly. Use the
+ * API provided instead.
+ */
+typedef struct {
+    uart_state_t state;
+    port_t rx_port;
+    uint32_t bit_time_ticks;
+    uint32_t next_event_time_ticks;
+    uart_parity_t parity;
+    uint8_t num_data_bits;
+    uint8_t current_data_bit;
+    uint8_t uart_data;
+    uint8_t stop_bits;
+    uint8_t current_stop_bit;
+
+    uart_callback_code_t cb_code;
+    HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_complete_callback_arg)(void* app_data);
+    HIL_UART_RX_CALLBACK_ATTR void(*uart_rx_error_callback_arg)(uart_callback_code_t callback_code, void* app_data);
+    void *app_data;
+    hwtimer_t tmr;
+    uart_buffer_t buffer;
+} uart_rx_t;
 
 
 /**
@@ -309,4 +320,4 @@ void uart_rx_deinit(uart_rx_t *uart);
 
 
 
-/**@}*/ // END: addtogroup hil_uart
+/**@}*/ // END: addtogroup hil_uart_rx

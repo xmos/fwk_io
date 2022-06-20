@@ -62,7 +62,7 @@ The following code snippet demonstrates the basic usage of an UART Rx device whe
 UART Rx Usage ISR/Buffered
 ==========================
 
-The following code snippet demonstrates the basic usage of an UART Rx device used in ISR/Buffered mode:
+The following code snippet demonstrates the usage of an UART Rx device used in ISR/Buffered mode:
 
 .. code-block:: c
 
@@ -114,8 +114,8 @@ The following code snippet demonstrates the basic usage of an UART Rx device use
       uart_rx_init(&uart, p_uart_rx, 115200, 8, UART_PARITY_NONE, 1, tmr, 
                    buffer, sizeof(buffer), rx_callback, &bytes_received);
 
-      // Wait for the data
-      while(bytes_received < 16);
+      // Wait for 16b of data
+      while(bytes_received < 15);
 
       // Get the data
       uint8_t test_rx[NUM_RX_WORDS];

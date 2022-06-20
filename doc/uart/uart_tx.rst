@@ -7,7 +7,7 @@ UART Tx
 UART Tx Usage
 =============
 
-The following code snippet demonstrates the basic usage of an UART Tx device.
+The following code snippet demonstrates the basic blocking usage of an UART Tx device.
 
 .. code-block:: c
 
@@ -29,10 +29,11 @@ The following code snippet demonstrates the basic usage of an UART Tx device.
       uart_tx(&uart, tx_data[i]);
    }
 
+
 UART Tx Usage ISR/Buffered
 ==========================
 
-The following code snippet demonstrates the basic usage of an UART Tx device used in ISR/Buffered mode:
+The following code snippet demonstrates the usage of an UART Tx device used in ISR/Buffered mode:
 
 .. code-block:: c
 
@@ -40,7 +41,7 @@ The following code snippet demonstrates the basic usage of an UART Tx device use
   #include "uart.h"
 
 
-  HIL_UART_TX_CALLBACK_ATTR void tx_callback(void *app_data){
+  HIL_UART_TX_CALLBACK_ATTR void tx_empty_callback(void *app_data){
         int *tx_empty = (int *)app_data;
         *tx_empty = 1;
   }
@@ -53,10 +54,10 @@ The following code snippet demonstrates the basic usage of an UART Tx device use
       uint8_t buffer[64 + 1] = {0}; // Note buffer size plus one
 
       uint8_t tx_data[4] = {0x01, 0x02, 0x04, 0x08};
-      int tx_empty = 0;
+      volatile int tx_empty = 0;
 
       // Initialize the UART Tx
-      uart_tx_init(&uart, p_uart_tx, 115200, 8, UART_PARITY_NONE, 1, tmr, buffer, sizeof(buffer), tx_callback, &tx_empty);
+      uart_tx_init(&uart, p_uart_tx, 115200, 8, UART_PARITY_NONE, 1, tmr, buffer, sizeof(buffer), tx_empty_callback, &tx_empty);
 
       // Transfer some data
       for(int i = 0; i < sizeof(tx_data); i++){

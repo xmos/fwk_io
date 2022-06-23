@@ -221,11 +221,11 @@ elif [ "$1" == "smoke" ]
 then
     applications=(
         #Pick the fastest options to test (good for runtime too). One vanilla 8b N 1 and one funky one
-        "test_hil_uart_rx_test_BUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
-        "test_hil_uart_rx_test_UNBUFFERED_921600_5_EVEN_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        # "test_hil_uart_rx_test_BUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        # "test_hil_uart_rx_test_UNBUFFERED_921600_5_EVEN_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 
-        "test_hil_uart_tx_test_BUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
-        "test_hil_uart_tx_test_UNBUFFERED_921600_5_EVEN_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        # "test_hil_uart_tx_test_BUFFERED_576000_8_NONE_1 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
+        # "test_hil_uart_tx_test_UNBUFFERED_921600_5_EVEN_2 XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
 
         "test_hil_uart_fifo_test XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"
         "test_hil_uart_fifo_thread_safe_test XCORE-AI-EXPLORER xmos_cmake_toolchain/xs3a.cmake"

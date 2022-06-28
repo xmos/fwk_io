@@ -1,7 +1,7 @@
 # This file provides overrides to the Doxyfile configuration
 
-PROJECT_NAME = XCore IO Framework
-PROJECT_BRIEF = "XCore IO Framework"
+PROJECT_NAME = XCORE IO Framework
+PROJECT_BRIEF = "XCORE IO Framework"
 
 PREDEFINED = __DOXYGEN__=1 
 PREDEFINED += DWORD_ALIGNED=

@@ -13,7 +13,7 @@ The HIL module tests are designed to regression test behavior for the following 
 Hardware Setup
 **************
 
-No hardware is needed for these tests as they all run using the ``xsim`` XCore simulator that is installed with the XTC Tools.
+No hardware is needed for these tests as they all run using the ``xsim`` xcore simulator that is installed with the XTC Tools.
 
 *************
 Running Tests

@@ -1,6 +1,6 @@
 # IO Framework Repository
 
-This repository is a collection of C/C++ peripheral IO libraries used to develop for XCore:
+This repository is a collection of C/C++ peripheral IO libraries used to develop for xcore:
 
 Supported peripherals include:
 
@@ -12,7 +12,7 @@ Supported peripherals include:
 - PDM microphones
 - USB
 
-This repository can be used standalone.  However, it is meant to be used as part of the [XCore SDK](https://github.com/xmos/xcore_sdk).
+This repository can be used standalone.  However, it is meant to be used as part of the [XCORE SDK](https://github.com/xmos/xcore_sdk).
 
 ## Build Status
 

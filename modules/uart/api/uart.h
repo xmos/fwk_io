@@ -16,7 +16,7 @@
 #include "uart_util.h"
 
 /**
- * \addtogroup hil_uart hil_uart
+ * \addtogroup hil_uart_tx hil_uart_tx
  *
  * The public API for using the HIL UART Tx Module.
  * @{
@@ -193,7 +193,7 @@ void uart_tx_deinit(
 /**@}*/ // END: addtogroup hil_uart_tx
 
 /**
- * \addtogroup hil_uart hil_uart_rx
+ * \addtogroup hil_uart_rx hil_uart_rx
  *
  * The public API for using the HIL UART Rx module.
  * @{

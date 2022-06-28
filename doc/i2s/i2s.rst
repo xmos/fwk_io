@@ -4,7 +4,7 @@
 |I2S| Library
 #############
 
-A software defined library that allows you to control an |I2S| (Inter-IC Sound) bus via XCore ports. |I2S| is a digital data streaming interfaces particularly appropriate for transmission of audio data. The components in the library are controlled via C and can either act as |I2S| master or |I2S| slave.
+A software defined library that allows you to control an |I2S| (Inter-IC Sound) bus via xcore ports. |I2S| is a digital data streaming interfaces particularly appropriate for transmission of audio data. The components in the library are controlled via C and can either act as |I2S| master or |I2S| slave.
 
 And archived version of the original |I2S| specification can be found here:
 

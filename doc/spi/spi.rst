@@ -4,9 +4,9 @@
 SPI Library
 ###########
 
-A software defined SPI (serial peripheral interface) library that allows you to control a SPI bus via the XCore GPIO hardware-response ports. SPI is a four-wire hardware bi-directional serial interface. The components in the library are controlled via C and can either act as SPI master or slave.
+A software defined SPI (serial peripheral interface) library that allows you to control a SPI bus via the xcore GPIO hardware-response ports. SPI is a four-wire hardware bi-directional serial interface. The components in the library are controlled via C and can either act as SPI master or slave.
 
-The SPI bus can be used by multiple tasks within the XCore device and (each addressing the same or different slaves) and is compatible with other slave devices on the same bus.
+The SPI bus can be used by multiple tasks within the xcore device and (each addressing the same or different slaves) and is compatible with other slave devices on the same bus.
 
 The SPI protocol requires a clock, one or more slave selects and either one or two data wires.
 

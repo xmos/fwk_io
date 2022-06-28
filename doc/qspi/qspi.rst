@@ -4,7 +4,7 @@
 QSPI Library
 ############
 
-A software defined QSPI (quad serial peripheral interface) library that allows you to read and write to a QSPI peripheral via the XCore ports.
+A software defined QSPI (quad serial peripheral interface) library that allows you to read and write to a QSPI peripheral via the xcore ports.
 
 All QSPI functions can be accessed via the ``qspi_flash.h`` or ``qspi_io.h`` header:
 

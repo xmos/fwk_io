@@ -115,7 +115,6 @@ static inline void sleep_until_start_transition(uart_rx_t *uart){
         //Poll the port
         while(port_in(uart->rx_port) & 0x1);
     }
-    uart->next_event_time_ticks = get_current_time(uart);
 }
 
 __attribute__((always_inline))
@@ -140,10 +139,8 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
     uart_rx_t *uart = (uart_rx_t*) callback_info;
     switch(uart->state){
         case UART_IDLE: {
-            if(buffer_used(&uart->buffer)){
-                uart->next_event_time_ticks = get_current_time(uart);
-            }
-
+            uart->next_event_time_ticks = get_current_time(uart);
+            
             uart->next_event_time_ticks += uart->bit_time_ticks >> 1; //Halfway through start bit
             uart->state = UART_START;
             if(buffer_used(&uart->buffer)){

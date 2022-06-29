@@ -76,7 +76,6 @@ void uart_rx_init(
 
     port_enable(rx_port);
 
-    //TODO work out if buffer can be used without HW timer
     if(buffer_used(&uart->buffer)){
         init_buffer(&uart->buffer, buffer, buffer_size_plus_one);
 

@@ -9,12 +9,6 @@
 
 DECLARE_INTERRUPT_CALLBACK(uart_rx_handle_event, callback_info);
 
-static inline uint32_t get_current_time(uart_rx_t *uart){
-    if(uart->tmr){
-        return hwtimer_get_time(uart->tmr);
-    }
-    return get_reference_time();
-}
 
 void uart_rx_blocking_init(
         uart_rx_t *uart,
@@ -63,6 +57,10 @@ void uart_rx_init(
     uart->tmr = tmr;
 
     init_buffer(&uart->buffer, buffer, buffer_size_plus_one);
+    if(buffer_used(&uart->buffer)){
+        xassert(buffer_size_plus_one > (1 + 1)); // Buffer must be at least one deep to be valid
+        //From now on we just check to see if buffer is NULL or not for speed
+    }
 
     uart->cb_code = UART_RX_COMPLETE;
     uart->uart_rx_complete_callback_arg = uart_rx_complete_callback_fptr;
@@ -98,6 +96,17 @@ void uart_rx_init(
     }
 }
 
+__attribute__((always_inline))
+static inline uint32_t get_current_time(uart_rx_t *uart){
+    // if(uart->tmr){
+    //     return hwtimer_get_time(uart->tmr);
+    // }
+    //Note this has now been optimised since all timers share the same physical timer counter
+    return get_reference_time();
+}
+
+
+__attribute__((always_inline))
 static inline void sleep_until_start_transition(uart_rx_t *uart){
     if(uart->tmr){
         //Wait on a port transition to low
@@ -109,6 +118,7 @@ static inline void sleep_until_start_transition(uart_rx_t *uart){
     uart->next_event_time_ticks = get_current_time(uart);
 }
 
+__attribute__((always_inline))
 static inline void sleep_until_next_sample(uart_rx_t *uart){
     if(uart->tmr){
         //Wait on a the timer

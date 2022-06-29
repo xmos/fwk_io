@@ -45,5 +45,5 @@ uart_buffer_error_t pop_byte_from_buffer(uart_buffer_t *buff_cfg, uint8_t *data)
 
 __attribute__((always_inline))
 inline int buffer_used(uart_buffer_t *buff_cfg){
-    return(buff_cfg->buffer);
+    return(buff_cfg->buffer != NULL);
 }

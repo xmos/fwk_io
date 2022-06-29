@@ -210,9 +210,6 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
             } else {
                 uart->cb_code = UART_RX_COMPLETE;
             }
-            if(buffer_used(&uart->buffer) && uart->uart_rx_complete_callback_arg != NULL){
-                (*uart->uart_rx_complete_callback_arg)(uart->app_data);
-            }
             uart->state = UART_IDLE;
 
             //Go back to waiting for next start bit transition
@@ -228,6 +225,9 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
                 port_set_trigger_in_equal(uart->rx_port, 0); //Trigger on low (start of start bit)
                 triggerable_set_trigger_enabled(uart->rx_port, 1);
 
+                if(uart->uart_rx_complete_callback_arg != NULL){
+                    (*uart->uart_rx_complete_callback_arg)(uart->app_data);
+                }
             }
             break;
         }

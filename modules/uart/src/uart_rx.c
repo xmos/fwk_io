@@ -133,12 +133,7 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
             if(buffer_used(&uart->buffer)){
                 uart->next_event_time_ticks = get_current_time(uart);
             }
-            //Double check line still low
-            uint32_t pin = port_in(uart->rx_port) & 0x1;
-            if(pin != 0){
-                uart->cb_code = UART_START_BIT_ERROR;
-                (*uart->uart_rx_error_callback_arg)(uart->cb_code, uart->app_data);
-            }
+
             uart->next_event_time_ticks += uart->bit_time_ticks >> 1; //Halfway through start bit
             uart->state = UART_START;
             if(buffer_used(&uart->buffer)){

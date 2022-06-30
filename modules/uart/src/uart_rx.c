@@ -6,9 +6,12 @@
 
 #include "uart.h"
 
+#define UART_RX_DEBUG 0 //Drives debug port for checking state timing in simulator
+#if UART_RX_DEBUG
+port_t p_dbg = XS1_PORT_32A;
+#endif
 
-DECLARE_INTERRUPT_CALLBACK(uart_rx_handle_event, callback_info);
-
+DECLARE_INTERRUPT_CALLBACK(uart_rx_handle_isr, callback_info);
 
 void uart_rx_blocking_init(
         uart_rx_t *uart,
@@ -40,6 +43,10 @@ void uart_rx_init(
         void(*uart_rx_error_callback_fptr)(uart_callback_code_t callback_code, void *app_data),
         void *app_data
         ){
+
+    #if UART_RX_DEBUG
+    port_enable(p_dbg);
+    #endif
 
     uart->rx_port = rx_port;
     uart->bit_time_ticks = XS1_TIMER_HZ / baud_rate;
@@ -139,8 +146,11 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
     uart_rx_t *uart = (uart_rx_t*) callback_info;
     switch(uart->state){
         case UART_IDLE: {
+            #if UART_RX_DEBUG
+            port_out(p_dbg, uart->state);
+            #endif
+
             uart->next_event_time_ticks = get_current_time(uart);
-            
             uart->next_event_time_ticks += uart->bit_time_ticks >> 1; //Halfway through start bit
             uart->state = UART_START;
             if(buffer_used(&uart->buffer)){
@@ -156,6 +166,10 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         }
 
         case UART_START: {
+            #if UART_RX_DEBUG
+            port_out(p_dbg, uart->state);
+            #endif
+
             uint32_t pin = port_in(uart->rx_port) & 0x1;
             if(pin != 0){
                 uart->cb_code = UART_START_BIT_ERROR;
@@ -172,6 +186,10 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         }
 
         case UART_DATA: { 
+            #if UART_RX_DEBUG
+            port_out(p_dbg, uart->state);
+            #endif
+
             uint32_t pin = port_in(uart->rx_port) & 0x1;
             uart->uart_data |= pin << uart->current_data_bit;
             uart->current_data_bit += 1;
@@ -191,6 +209,10 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
         }
 
         case UART_PARITY: {
+            #if UART_RX_DEBUG
+            port_out(p_dbg, uart->state);
+            #endif
+
             uint32_t pin = port_in(uart->rx_port) & 0x1;
             uint32_t parity_setting = (uart->parity == UART_PARITY_EVEN) ? 0 : 1;
             uint32_t parity = (unsigned)uart->uart_data;
@@ -209,7 +231,11 @@ DEFINE_INTERRUPT_CALLBACK(UART_RX_INTERRUPTABLE_FUNCTIONS, uart_rx_handle_event,
             break;
         }
      
-        case UART_STOP: {   
+        case UART_STOP: {
+            #if UART_RX_DEBUG
+            port_out(p_dbg, uart->state);
+            #endif
+
             uint32_t pin = port_in(uart->rx_port) & 0x1;
             if(pin != 1){
                 uart->cb_code = UART_FRAMING_ERROR;

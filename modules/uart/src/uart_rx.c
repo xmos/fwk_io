@@ -135,11 +135,11 @@ static inline void sleep_until_next_sample(uart_rx_t *uart){
     }
 }
 
-// Interrupt latency and calling overhead has been measured at 510ns @ 75Mhz thread speed 
-// Latency for polling mode is between 320ns and 190 so use 200ns
+// Interrupt latency and calling overhead has been measured at 510ns @ 75-120MHz thread speed 
+// Latency for polling/timer wait mode is around 320ns @ 75-120MHz thread speed   
 // These values have been experimentally derived using xsim (See enabling of debug in test_rx_uart.py)
 // and then inspecting the VCD waveform to see where the start bit samples in relation 
-// to the falling edge of the start bit
+// to the falling edge of the start bit. Turn on debug mode and observe p_dbg
 
 #define INTERRUPT_LATENCY_COMPENSATION_TICKS (XS1_TIMER_MHZ * 510 / 1000)
 #define BLOCKING_LATENCY_COMPENSATION_TICKS  (XS1_TIMER_MHZ * 320 / 1000)

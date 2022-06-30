@@ -135,12 +135,14 @@ static inline void sleep_until_next_sample(uart_rx_t *uart){
     }
 }
 
-// Interrupt latency overhead has been measured at 360ns @ 75Mhz thread speed 
-// and 320ns at 120Mhz thread speed. Hence use mid point of 340ns
-// Latency for polling mode is between 210ns and 190 so use 200ns
-#define INTERRUPT_LATENCY_COMPENSATION_TICKS (XS1_TIMER_MHZ * 340 / 1000)
-#define BLOCKING_LATENCY_COMPENSATION_TICKS  (XS1_TIMER_MHZ * 200 / 1000)
+// Interrupt latency and calling overhead has been measured at 510ns @ 75Mhz thread speed 
+// Latency for polling mode is between 320ns and 190 so use 200ns
+// These values have been experimentally derived using xsim (See enabling of debug in test_rx_uart.py)
+// and then inspecting the VCD waveform to see where the start bit samples in relation 
+// to the falling edge of the start bit
 
+#define INTERRUPT_LATENCY_COMPENSATION_TICKS (XS1_TIMER_MHZ * 510 / 1000)
+#define BLOCKING_LATENCY_COMPENSATION_TICKS  (XS1_TIMER_MHZ * 320 / 1000)
 
 
 __attribute__((always_inline))

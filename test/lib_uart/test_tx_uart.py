@@ -11,7 +11,7 @@ buffered_args = {   "UNBUFFERED" : 0,
                     "BUFFERED": 1}
 
 speed_args = {
-              "921600 baud": 921600,
+              "1152000 baud": 1152000,
               "576000 baud": 576000,
               "115200 baud": 115200,
               "9600 baud": 9600

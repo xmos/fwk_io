@@ -105,7 +105,6 @@ DEFINE_INTERRUPT_PERMITTED(UART_RX_INTERRUPTABLE_FUNCTIONS, void, test, void){
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     for(;;);
 }
 

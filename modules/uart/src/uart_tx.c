@@ -51,6 +51,10 @@ void uart_tx_init(
     uart_cfg->state = UART_IDLE;
 
     init_buffer(&uart_cfg->buffer, buffer, buffer_size_plus_one);
+    if(buffer_used(&uart_cfg->buffer)){
+        xassert(buffer_size_plus_one > (1 + 1)); // Buffer must be at least one deep to be valid
+        //From now on we just check to see if buffer is NULL or not for speed
+    }
 
     //HW timer will be replaced by poll if set to zero
     uart_cfg->tmr = tmr;

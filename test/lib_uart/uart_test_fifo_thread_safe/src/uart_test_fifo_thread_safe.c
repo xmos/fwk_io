@@ -12,7 +12,7 @@
 #define SETSR(c) asm volatile("setsr %0" : : "n"(c));
 
 
-const unsigned num_test_bytes = 2000; //How many bytes to push/pop
+const unsigned num_test_bytes = 4000; //How many bytes to push/pop
 const size_t buff_size = 17; //Something odd and small enough to trigger lots of over/undeflows
 volatile int test_running = 1;
 
@@ -175,7 +175,6 @@ void consumer(uart_buffer_t *fifo, chanend_t sync){
 
 DECLARE_JOB(burn, (void));
 void burn(void) {
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     while(test_running);
 }
 

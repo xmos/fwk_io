@@ -195,7 +195,6 @@ void test() {
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     for(;;);
 }
 

@@ -11,7 +11,7 @@ buffered_args = {   "UNBUFFERED" : 0,
                     "BUFFERED": 1}
 
 speed_args = {
-              "921600 baud": 921600,
+              "1152000 baud": 1152000,
               "576000 baud": 576000,
               "115200 baud": 115200,
               "9600 baud": 9600
@@ -52,7 +52,7 @@ def test_uart_tx(request, capfd, buffered, baud, bpb, parity, stop):
     parity_key = [key for key, value in parity_args.items() if value == parity][0] #reverse lookup because we use the parity key name in the binary
     buffer_key = [key for key, value in buffered_args.items() if value == buffered][0] #reverse lookup because we use the parity key name in the binary
 
-    if buffered and baud >= 921600:
+    if buffered and baud >= 576000:
         pytest.skip(f"Skipping {buffer_key} at {baud} baud")
 
     binary = f'{cwd}/uart_test_tx/bin/test_hil_uart_tx_test_{buffer_key}_{baud}_{bpb}_{parity_key}_{stop}.xe'

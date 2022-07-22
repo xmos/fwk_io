@@ -62,7 +62,7 @@ void i2s_slave(
 
     if (io_port_size == 4)
     {
-        _i2s_slave_4b(i2s_cbg,
+        i2s_slave_4b(i2s_cbg,
                         p_dout,
                         num_out_ports,
                         num_out,
@@ -76,7 +76,7 @@ void i2s_slave(
     }
     else if (io_port_size == 1)
     {
-        _i2s_slave_1b(i2s_cbg,
+        i2s_slave_1b(i2s_cbg,
                         p_dout,
                         num_out_ports,
                         num_out,
@@ -90,7 +90,7 @@ void i2s_slave(
     }
 }
 
-static void _i2s_slave_1b(
+static void i2s_slave_1b(
         const i2s_callback_group_t *const i2s_cbg,
         /*out buffered*/port_t /*:32*/p_dout[],
         const size_t num_out,
@@ -231,7 +231,7 @@ static void _i2s_slave_1b(
     }
 }
 
-static void _i2s_slave_4b(
+static void i2s_slave_4b(
         const i2s_callback_group_t *const i2s_cbg,
         /*out buffered*/port_t /*:32*/p_dout[],
         const size_t num_out,

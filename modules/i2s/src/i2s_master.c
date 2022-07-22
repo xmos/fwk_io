@@ -73,7 +73,7 @@ static void i2s_deinit_ports(
     }
 }
 
-static i2s_restart_t i2s_ratio_n(
+static i2s_restart_t i2s_ratio_n_1b(
         const i2s_callback_group_t *const i2s_cbg,
         const port_t p_dout[],
         const size_t num_out,
@@ -203,12 +203,30 @@ static i2s_restart_t i2s_ratio_n(
     return I2S_RESTART;
 }
 
-void i2s_master(
+
+static i2s_restart_t i2s_ratio_n_4b(
         const i2s_callback_group_t *const i2s_cbg,
         const port_t p_dout[],
         const size_t num_out,
         const port_t p_din[],
         const size_t num_in,
+        const port_t p_bclk,
+        const xclock_t bclk,
+        const port_t p_lrclk,
+        const i2s_mode_t mode)
+{
+    // do 4b content
+}
+
+static void i2s_master_1b(
+        const i2s_callback_group_t *const i2s_cbg,
+        const port_t p_dout[],
+        const size_t num_out_ports,
+        const size_t num_out,
+        const port_t p_din[],
+        const size_t num_in_ports,
+        const size_t num_in,
+        const size_t num_data_bits,
         const port_t p_bclk,
         const port_t p_lrclk,
         const port_t p_mclk,
@@ -218,16 +236,12 @@ void i2s_master(
         i2s_config_t config;
         i2s_cbg->init(i2s_cbg->app_data, &config);
 
-        if (!p_dout && !p_din) {
-            xassert(0); /* Must provide non-null p_dout or p_din */
-        }
-
         i2s_setup_bclk(bclk, p_mclk, config.mclk_bclk_ratio);
 
         //This ensures that the port time on all the ports is at 0
         i2s_init_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk, bclk);
 
-        i2s_restart_t restart = i2s_ratio_n(i2s_cbg, p_dout, num_out, p_din,
+        i2s_restart_t restart = i2s_ratio_n_1b(i2s_cbg, p_dout, num_out, p_din,
                                              num_in,
                                              p_bclk, bclk, p_lrclk,
                                              config.mode);
@@ -240,12 +254,51 @@ void i2s_master(
     }
 }
 
-void i2s_master_external_clock(
+static void i2s_master_4b(
         const i2s_callback_group_t *const i2s_cbg,
         const port_t p_dout[],
+        const size_t num_out_ports,
         const size_t num_out,
         const port_t p_din[],
+        const size_t num_in_ports,
         const size_t num_in,
+        const size_t num_data_bits,
+        const port_t p_bclk,
+        const port_t p_lrclk,
+        const port_t p_mclk,
+        const xclock_t bclk)
+{
+    for (;;) {
+        i2s_config_t config;
+        i2s_cbg->init(i2s_cbg->app_data, &config);
+
+        i2s_setup_bclk(bclk, p_mclk, config.mclk_bclk_ratio);
+
+        //This ensures that the port time on all the ports is at 0
+        i2s_init_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk, bclk);
+
+        i2s_restart_t restart = i2s_ratio_n_4b(i2s_cbg, p_dout, num_out, p_din,
+                                             num_in,
+                                             p_bclk, bclk, p_lrclk,
+                                             config.mode);
+
+        if (restart == I2S_SHUTDOWN) {
+            i2s_deinit_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk);
+            clock_disable(bclk);
+            return;
+        }
+    }
+}
+
+static void i2s_master_external_clock_1b(
+        const i2s_callback_group_t *const i2s_cbg,
+        const port_t p_dout[],
+        const size_t num_out_ports,
+        const size_t num_out,
+        const port_t p_din[],
+        const size_t num_in_ports,
+        const size_t num_in,
+        const size_t num_data_bits,
         const port_t p_bclk,
         const port_t p_lrclk,
         const xclock_t bclk)
@@ -253,10 +306,6 @@ void i2s_master_external_clock(
     while (1) {
         i2s_config_t config;
         i2s_cbg->init(i2s_cbg->app_data, &config);
-
-        if (!p_dout && !p_din) {
-            xassert(0); /* Must provide non-null p_dout or p_din */
-        }
 
         //This ensures that the port time on all the ports is at 0
         i2s_init_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk, bclk);
@@ -270,5 +319,142 @@ void i2s_master_external_clock(
             i2s_deinit_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk);
             return;
         }
+    }
+}
+
+static void i2s_master_external_clock_4b(
+        const i2s_callback_group_t *const i2s_cbg,
+        const port_t p_dout[],
+        const size_t num_out_ports,
+        const size_t num_out,
+        const port_t p_din[],
+        const size_t num_in_ports,
+        const size_t num_in,
+        const size_t num_data_bits,
+        const port_t p_bclk,
+        const port_t p_lrclk,
+        const xclock_t bclk)
+{
+    while (1) {
+        i2s_config_t config;
+        i2s_cbg->init(i2s_cbg->app_data, &config);
+
+        //This ensures that the port time on all the ports is at 0
+        i2s_init_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk, bclk);
+
+        i2s_restart_t restart = i2s_ratio_n(i2s_cbg, p_dout, num_out, p_din,
+                                            num_in,
+                                            p_bclk, bclk, p_lrclk,
+                                            config.mode);
+
+        if (restart == I2S_SHUTDOWN) {
+            i2s_deinit_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk);
+            return;
+        }
+    }
+}
+
+void i2s_master(
+        const i2s_callback_group_t *const i2s_cbg,
+        const size_t io_port_size,
+        const size_t num_data_bits,
+        const port_t p_dout[],
+        const size_t num_out_ports,
+        const size_t num_out,
+        const port_t p_din[],
+        const size_t num_in_ports,
+        const size_t num_in,
+        const port_t p_bclk,
+        const port_t p_lrclk,
+        const port_t p_mclk,
+        const xclock_t bclk)
+{
+    xassert(num_data_bits == 32);
+    xassert(io_port_size == 4 || io_port_size == 1);
+    xassert(num_out || num_in);
+    xassert(p_dout || p_din);
+    xassert((io_port_size * num_out_ports) >= num_out);
+    xassert((io_port_size * num_in_ports) >= num_in);
+
+    if (io_port_size == 4)
+    {
+        i2s_master_4b(i2s_cbg,
+                        p_dout,
+                        num_out_ports,
+                        num_out,
+                        p_din,
+                        num_in_ports,
+                        num_in,
+                        num_data_bits,
+                        p_bclk,
+                        p_lrclk,
+                        p_mclk,
+                        bclk);
+    }
+    else if (io_port_size == 1)
+    {
+        i2s_master_1b(i2s_cbg,
+                        p_dout,
+                        num_out_ports,
+                        num_out,
+                        p_din,
+                        num_in_ports,
+                        num_in,
+                        num_data_bits,
+                        p_bclk,
+                        p_lrclk,
+                        p_mclk,
+                        bclk);
+    }
+}
+
+void i2s_master_external_clock(
+        const i2s_callback_group_t *const i2s_cbg,
+        const size_t io_port_size,
+        const size_t num_data_bits,
+        const port_t p_dout[],
+        const size_t num_out_ports,
+        const size_t num_out,
+        const port_t p_din[],
+        const size_t num_in_ports,
+        const size_t num_in,
+        const port_t p_bclk,
+        const port_t p_lrclk,
+        const xclock_t bclk)
+{
+    xassert(num_data_bits == 32);
+    xassert(io_port_size == 4 || io_port_size == 1);
+    xassert(num_out || num_in);
+    xassert(p_dout || p_din);
+    xassert((io_port_size * num_out_ports) >= num_out);
+    xassert((io_port_size * num_in_ports) >= num_in);
+
+    if (io_port_size == 4)
+    {
+        i2s_master_external_clock_4b(i2s_cbg,
+                                        p_dout,
+                                        num_out_ports,
+                                        num_out,
+                                        p_din,
+                                        num_in_ports,
+                                        num_in,
+                                        num_data_bits,
+                                        p_bclk,
+                                        p_lrclk,
+                                        bclk);
+    }
+    else if (io_port_size == 1)
+    {
+        i2s_master_external_clock_1b(i2s_cbg,
+                                        p_dout,
+                                        num_out_ports,
+                                        num_out,
+                                        p_din,
+                                        num_in_ports,
+                                        num_in,
+                                        num_data_bits,
+                                        p_bclk,
+                                        p_lrclk,
+                                        bclk);
     }
 }

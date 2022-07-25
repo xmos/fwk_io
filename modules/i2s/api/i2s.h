@@ -163,9 +163,46 @@ typedef struct {
 
 /**@}*/ // END: addtogroup hil_i2s_core
 
-DECLARE_JOB(i2s_master, (const i2s_callback_group_t *, const port_t *, const size_t, const port_t *, const size_t, const port_t, const port_t, const port_t, const xclock_t));
-DECLARE_JOB(i2s_master_external_clock, (const i2s_callback_group_t *, const port_t *, const size_t, const port_t *, const size_t, const port_t, const port_t, const xclock_t));
-DECLARE_JOB(i2s_slave, (const i2s_callback_group_t *, port_t *, const size_t, port_t *, const size_t, port_t, port_t, xclock_t));
+DECLARE_JOB(i2s_master, (
+        const i2s_callback_group_t *,
+        const size_t ,
+        const size_t ,
+        const port_t * ,
+        const size_t ,
+        const size_t ,
+        const port_t * ,
+        const size_t ,
+        const size_t ,
+        const port_t ,
+        const port_t ,
+        const port_t ,
+        const xclock_t));
+DECLARE_JOB(i2s_master_external_clock, (
+        const i2s_callback_group_t *,
+        const size_t ,
+        const size_t ,
+        const port_t * ,
+        const size_t ,
+        const size_t ,
+        const port_t * ,
+        const size_t ,
+        const size_t ,
+        const port_t ,
+        const port_t ,
+        const xclock_t));
+DECLARE_JOB(i2s_slave, (
+        const i2s_callback_group_t *,
+        const size_t,
+        const size_t,
+        port_t *,
+        const size_t,
+        const size_t,
+        port_t *,
+        const size_t,
+        const size_t,
+        port_t,
+        port_t,
+        xclock_t));
 
 /**
  * \addtogroup hil_i2s_master hil_i2s_master
@@ -200,9 +237,13 @@ DECLARE_JOB(i2s_slave, (const i2s_callback_group_t *, port_t *, const size_t, po
  */
 void i2s_master(
         const i2s_callback_group_t *const i2s_cbg,
+        const size_t io_port_size,
+        const size_t num_data_bits,
         const port_t p_dout[],
+        const size_t num_out_ports,
         const size_t num_out,
         const port_t p_din[],
+        const size_t num_in_ports,
         const size_t num_in,
         const port_t p_bclk,
         const port_t p_lrclk,
@@ -236,9 +277,13 @@ void i2s_master(
  */
 void i2s_master_external_clock(
         const i2s_callback_group_t *const i2s_cbg,
+        const size_t io_port_size,
+        const size_t num_data_bits,
         const port_t p_dout[],
+        const size_t num_out_ports,
         const size_t num_out,
         const port_t p_din[],
+        const size_t num_in_ports,
         const size_t num_in,
         const port_t p_bclk,
         const port_t p_lrclk,
@@ -278,9 +323,13 @@ void i2s_master_external_clock(
  */
 void i2s_slave(
         const i2s_callback_group_t *const i2s_cbg,
+        const size_t io_port_size,
+        const size_t num_data_bits,
         port_t p_dout[],
+        const size_t num_out_ports,
         const size_t num_out,
         port_t p_din[],
+        const size_t num_in_ports,
         const size_t num_in,
         port_t p_bclk,
         port_t p_lrclk,

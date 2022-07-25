@@ -7,6 +7,10 @@
 
 #include "i2s.h"
 
+extern void i2s_master_4b_setup(int32_t out_samps[], int32_t in_samps[], port_t p_dout, port_t p_din, xclock_t bclk, port_t p_lrclk);
+extern void i2s_master_4b_loop_part_1(int32_t out_samps[], int32_t in_samps[], port_t p_dout, port_t p_din, port_t p_lrclk);
+extern void i2s_master_4b_loop_part_2(int32_t out_samps[], int32_t in_samps[], port_t p_dout, port_t p_din, port_t p_lrclk);
+
 static void i2s_setup_bclk(
         xclock_t bclk,
         /*in*/port_t p_mclk,
@@ -274,7 +278,7 @@ static i2s_restart_t i2s_ratio_n_4b(
 
         if (num_in)
         {
-            i2s_i.receive(num_in << 1, in_samps);
+            i2s_cbg->receive(i2s_cbg->app_data, num_in << 1, in_samps);
         }
 
         if (restart == I2S_NO_RESTART)
@@ -390,7 +394,7 @@ static void i2s_master_external_clock_1b(
         //This ensures that the port time on all the ports is at 0
         i2s_init_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk, bclk);
 
-        i2s_restart_t restart = i2s_ratio_n(i2s_cbg, p_dout, num_out, p_din,
+        i2s_restart_t restart = i2s_ratio_n_1b(i2s_cbg, p_dout, num_out, p_din,
                                             num_in,
                                             p_bclk, bclk, p_lrclk,
                                             config.mode);
@@ -422,7 +426,7 @@ static void i2s_master_external_clock_4b(
         //This ensures that the port time on all the ports is at 0
         i2s_init_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk, bclk);
 
-        i2s_restart_t restart = i2s_ratio_n(i2s_cbg, p_dout, num_out, p_din,
+        i2s_restart_t restart = i2s_ratio_n_4b(i2s_cbg, p_dout, num_out, p_din,
                                             num_in,
                                             p_bclk, bclk, p_lrclk,
                                             config.mode);

@@ -7,13 +7,17 @@
 
 #include "i2s.h"
 
+extern void i2s_slave_4b_setup(int32_t out_samps[], int32_t in_samps[], port_t p_dout, port_t p_din, port_t p_lrclk);
+extern void i2s_slave_4b_loop_part_1(int32_t out_samps[], int32_t in_samps[], port_t p_dout, port_t p_din, port_t p_lrclk);
+extern void i2s_slave_4b_loop_part_2(int32_t out_samps[], int32_t in_samps[], port_t p_dout, port_t p_din, port_t p_lrclk);
+
 static void i2s_slave_init_ports(
-        /*out buffered*/port_t /*:32*/p_dout[],
+        port_t p_dout[],
         size_t num_out,
-        /*in buffered*/port_t /*:32*/p_din[],
+        port_t p_din[],
         size_t num_in,
-        /*in*/port_t p_bclk,
-        /*in buffered*/port_t /*:32*/p_lrclk,
+        port_t p_bclk,
+        port_t p_lrclk,
         xclock_t bclk)
 {
     size_t i;
@@ -41,12 +45,15 @@ static void i2s_slave_init_ports(
 
 static void i2s_slave_1b(
         const i2s_callback_group_t *const i2s_cbg,
-        /*out buffered*/port_t /*:32*/p_dout[],
+        port_t p_dout[],
+        const size_t num_out_ports,
         const size_t num_out,
-        /*in buffered*/port_t /*:32*/p_din[],
+        port_t p_din[],
+        const size_t num_in_ports,
         const size_t num_in,
-        /*in*/port_t p_bclk,
-        /*in buffered*/port_t /*:32*/p_lrclk,
+        const size_t num_data_bits,
+        port_t p_bclk,
+        port_t p_lrclk,
         xclock_t bclk)
 {
 
@@ -54,7 +61,6 @@ static void i2s_slave_1b(
     size_t i;
     size_t idx;
 
-    /* two samples per data line, left and right */
     int32_t in_samps[I2S_CHANS_PER_FRAME * I2S_MAX_DATALINES];
     int32_t out_samps[I2S_CHANS_PER_FRAME * I2S_MAX_DATALINES];
 
@@ -134,7 +140,7 @@ static void i2s_slave_1b(
                 i2s_cbg->send(i2s_cbg->app_data, num_out << 1, out_samps);
 
                 //Output i2s evens (0,2,4..)
-//#pragma unroll(I2S_MAX_DATALINES)
+
                 for (size_t i = 0, idx = 0; i < num_out; i++, idx += I2S_CHANS_PER_FRAME) {
                     port_out(p_dout[i], bitrev(out_samps[idx]));
                 }
@@ -144,7 +150,7 @@ static void i2s_slave_1b(
             lrval = port_in(p_lrclk);
 
             //Input i2s evens (0,2,4..)
-//#pragma unroll(I2S_MAX_DATALINES)
+
             for (size_t i = 0, idx = 0; i < num_in; i++, idx += I2S_CHANS_PER_FRAME) {
                 int32_t data;
                 data = port_in(p_din[i]);
@@ -157,7 +163,7 @@ static void i2s_slave_1b(
             lrval = port_in(p_lrclk);
 
             //Output i2s odds (1,3,5..)
-//#pragma unroll(I2S_MAX_DATALINES)
+
             if (num_out && (restart == I2S_NO_RESTART)) {
                 for (size_t i = 0, idx = 1; i < num_out; i++, idx += I2S_CHANS_PER_FRAME) {
                     port_out(p_dout[i], bitrev(out_samps[idx]));
@@ -165,7 +171,7 @@ static void i2s_slave_1b(
             }
 
             //Input i2s odds (1,3,5..)
-//#pragma unroll(I2S_MAX_DATALINES)
+
             for (size_t i = 0, idx = 1; i < num_in; i++, idx += I2S_CHANS_PER_FRAME) {
                 int32_t data;
                 data = port_in(p_din[i]);
@@ -182,12 +188,15 @@ static void i2s_slave_1b(
 
 static void i2s_slave_4b(
         const i2s_callback_group_t *const i2s_cbg,
-        /*out buffered*/port_t /*:32*/p_dout[],
+        port_t p_dout[],
+        const size_t num_out_ports,
         const size_t num_out,
-        /*in buffered*/port_t /*:32*/p_din[],
+        port_t p_din[],
+        const size_t num_in_ports,
         const size_t num_in,
-        /*in*/port_t p_bclk,
-        /*in buffered*/port_t /*:32*/p_lrclk,
+        const size_t num_data_bits,
+        port_t p_bclk,
+        port_t p_lrclk,
         xclock_t bclk)
 {
   // do 4b stuff
@@ -197,14 +206,14 @@ void i2s_slave(
         const i2s_callback_group_t *const i2s_cbg,
         const size_t io_port_size,
         const size_t num_data_bits,
-        /*out buffered*/port_t /*:32*/p_dout[],
+        port_t p_dout[],
         const size_t num_out_ports,
         const size_t num_out,
-        /*in buffered*/port_t /*:32*/p_din[],
+        port_t p_din[],
         const size_t num_in_ports,
         const size_t num_in,
-        /*in*/port_t p_bclk,
-        /*in buffered*/port_t /*:32*/p_lrclk,
+        port_t p_bclk,
+        port_t p_lrclk,
         xclock_t bclk)
 {
     xassert(num_data_bits == 32);

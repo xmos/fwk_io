@@ -32,6 +32,7 @@ port_t p_lrclk = XS1_PORT_1C;
     port_t p_dout[1] = {0};
     #define NUM_OUT_PORTS 0
 #endif
+#define NUM_DATA_BITS 32
 
 xclock_t bclk = XS1_CLKBLK_2;
 
@@ -41,7 +42,6 @@ port_t  setup_resp_port = XS1_PORT_1M;
 
 #define MAX_RATIO 4
 #define MAX_CHANNELS 8
-#define NUM_DATA_BITS 32
 
 #if defined(SMOKE)
 #if NUM_OUT > 1 || NUM_IN > 1

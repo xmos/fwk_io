@@ -10,8 +10,29 @@ port_t p_mclk  = XS1_PORT_1A;
 port_t p_bclk = XS1_PORT_1B;
 port_t p_lrclk = XS1_PORT_1C;
 
-port_t p_din [4] = {XS1_PORT_1D, XS1_PORT_1E, XS1_PORT_1F, XS1_PORT_1G};
-port_t p_dout[4] = {XS1_PORT_1H, XS1_PORT_1I, XS1_PORT_1J, XS1_PORT_1K};
+/* 
+ * This segment is the only difference between
+ * the 4b test and the 1b test.
+ * TODO: do some parameterisation in the tests to
+ * remove the need for two separate test files
+ */
+#define PORT_SIZE 1
+#if NUM_IN
+    port_t p_din [4] = {XS1_PORT_1D, XS1_PORT_1E, XS1_PORT_1F, XS1_PORT_1G};
+    #define NUM_IN_PORTS 4
+#else
+    port_t p_din[1] = {0};
+    #define NUM_IN_PORTS 0
+#endif
+
+#if NUM_OUT
+    port_t p_dout[4] = {XS1_PORT_1H, XS1_PORT_1I, XS1_PORT_1J, XS1_PORT_1K};
+    #define NUM_OUT_PORTS 4
+#else
+    port_t p_dout[1] = {0};
+    #define NUM_OUT_PORTS 0
+#endif
+#define NUM_DATA_BITS 32
 
 xclock_t bclk = XS1_CLKBLK_2;
 
@@ -20,7 +41,6 @@ port_t setup_data_port = XS1_PORT_16A;
 port_t  setup_resp_port = XS1_PORT_1M;
 
 #define MAX_RATIO 4
-
 #define MAX_CHANNELS 8
 
 #define MAX_NUM_RESTARTS (4)
@@ -250,9 +270,13 @@ int main(){
     PAR_JOBS (
         PJOB(i2s_master_external_clock, (
             &i_i2s,
+            PORT_SIZE,
+            NUM_DATA_BITS,
             p_dout,
+            NUM_OUT_PORTS,
             NUM_OUT,
             p_din,
+            NUM_IN_PORTS,
             NUM_IN,
             p_bclk,
             p_lrclk,

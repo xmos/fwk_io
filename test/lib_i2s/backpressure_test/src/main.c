@@ -42,8 +42,24 @@
 port_t p_lrclk = XS1_PORT_1G;
 port_t p_bclk = XS1_PORT_1H;
 port_t p_mclk = XS1_PORT_1F;
-port_t p_dout[4] = {XS1_PORT_1M, XS1_PORT_1N, XS1_PORT_1O, XS1_PORT_1P};
-port_t p_din [4] = {XS1_PORT_1I, XS1_PORT_1J, XS1_PORT_1K, XS1_PORT_1L};
+
+#define PORT_SIZE 1
+#define NUM_DATA_BITS 32
+#if NUM_IN
+    port_t p_din [4] = {XS1_PORT_1I, XS1_PORT_1J, XS1_PORT_1K, XS1_PORT_1L};
+    #define NUM_IN_PORTS 4
+#else
+    port_t p_din[1] = {0};
+    #define NUM_IN_PORTS 0
+#endif
+
+#if NUM_OUT
+    port_t p_dout[4] = {XS1_PORT_1M, XS1_PORT_1N, XS1_PORT_1O, XS1_PORT_1P};
+    #define NUM_OUT_PORTS 4
+#else
+    port_t p_dout[1] = {0};
+    #define NUM_OUT_PORTS 0
+#endif
 
 xclock_t mclk = XS1_CLKBLK_1;
 xclock_t bclk = XS1_CLKBLK_2;
@@ -174,9 +190,13 @@ int main() {
   PAR_JOBS (
       PJOB(i2s_master, (
           &i_i2s,
+          PORT_SIZE,
+          NUM_DATA_BITS,
           p_dout,
+          NUM_OUT_PORTS,
           NUM_I2S_LINES,
           p_din,
+          NUM_IN_PORTS,
           NUM_I2S_LINES,
           p_bclk,
           p_lrclk,

@@ -1,4 +1,4 @@
-// Copyright 2021 XMOS LIMITED.
+// Copyright 2021-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #pragma once
 
@@ -18,6 +18,7 @@
 #include <xcore/assert.h>
 #include <xcore/port.h>
 #include <xcore/clock.h>
+#include <xcore/thread.h>
 
 /* The SETC constant for pad delay is missing from xs2a_user.h */
 #define SPI_IO_SETC_PAD_DELAY(n) (0x7007 | ((n) << 3))
@@ -123,6 +124,7 @@ typedef struct {
     uint32_t cs_to_clk_delay_ticks;
     uint32_t clk_to_cs_delay_ticks;
     uint32_t cs_to_cs_delay_ticks;
+    thread_mode_t thread_mode;
 } spi_master_device_t;
 
 /**
@@ -334,7 +336,7 @@ typedef struct {
  * Initializes a SPI slave.
  *
  * \note Verified at 25000 kbps, with a 2000ns CS assertion to first clock
- * in all modes.  The CS to first clock minimum delay will vary based on the 
+ * in all modes.  The CS to first clock minimum delay will vary based on the
  * duration of the slave_transaction_started callback.
  *
  * \param spi_cbg     The spi_slave_callback_group_t context to use.

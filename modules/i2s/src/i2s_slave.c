@@ -1,4 +1,4 @@
-// Copyright 2021 XMOS LIMITED.
+// Copyright 2021-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <xclib.h>
 #include <xcore/port.h>
@@ -65,6 +65,8 @@ void i2s_slave(
         i2s_slave_init_ports(p_dout, num_out, p_din, num_in, p_bclk, p_lrclk, bclk);
 
         i2s_config_t config;
+        memset(&config, 0, sizeof(i2s_config_t));
+
         i2s_restart_t restart = I2S_NO_RESTART;
         i2s_cbg->init(i2s_cbg->app_data, &config);
 

@@ -216,6 +216,8 @@ void i2s_master(
 {
     for (;;) {
         i2s_config_t config;
+        memset(&config, 0, sizeof(i2s_config_t));
+
         i2s_cbg->init(i2s_cbg->app_data, &config);
 
         if (!p_dout && !p_din) {
@@ -252,6 +254,8 @@ void i2s_master_external_clock(
 {
     while (1) {
         i2s_config_t config;
+        memset(&config, 0, sizeof(i2s_config_t));
+
         i2s_cbg->init(i2s_cbg->app_data, &config);
 
         if (!p_dout && !p_din) {

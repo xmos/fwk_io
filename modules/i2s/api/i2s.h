@@ -1,4 +1,4 @@
-// Copyright 2021 XMOS LIMITED.
+// Copyright 2021-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #ifndef _i2s_h_
 #define _i2s_h_
@@ -25,7 +25,7 @@
  * This type is used to describe the I2S mode.
  */
 typedef enum i2s_mode {
-    I2S_MODE_I2S,            /**< The LR clock transitions ahead of the data by one bit clock. */
+    I2S_MODE_I2S = 0,            /**< The LR clock transitions ahead of the data by one bit clock. */
     I2S_MODE_LEFT_JUSTIFIED, /**< The LR clock and data are phase aligned. */
 } i2s_mode_t;
 
@@ -37,7 +37,7 @@ typedef enum i2s_mode {
  * masters have it the other way around.
  */
 typedef enum i2s_slave_bclk_polarity {
-    I2S_SLAVE_SAMPLE_ON_BCLK_RISING,   /**< Toggle falling, sample rising (default if not set) */
+    I2S_SLAVE_SAMPLE_ON_BCLK_RISING = 0,   /**< Toggle falling, sample rising (default if not set) */
     I2S_SLAVE_SAMPLE_ON_BCLK_FALLING,  /**< Toggle rising, sample falling */
 } i2s_slave_bclk_polarity_t;
 

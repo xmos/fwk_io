@@ -31,7 +31,6 @@ void test() {
             p_sda, 0, 0,
             400); /* kbps */
 
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     i2c_master_write(i2c_ctx_ptr, 0x33, data, 1, NULL, 0);
     hwtimer_delay(delay_timer, 1000);
     i2c_master_write(i2c_ctx_ptr, 0x33, data, 1, NULL, 1);
@@ -44,7 +43,6 @@ void test() {
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     for(;;);
 }
 

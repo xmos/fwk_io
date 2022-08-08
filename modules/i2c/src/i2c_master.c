@@ -1,4 +1,4 @@
-// Copyright 2021 XMOS LIMITED.
+// Copyright 2021-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <stdlib.h>
 #include <stdint.h>
@@ -26,7 +26,7 @@ extern i2c_regop_res_t write_reg16(i2c_master_t *ctx, uint8_t device_addr, uint1
 #define BIT_TIME(KBITS_PER_SEC) ((XS1_TIMER_MHZ * 1000) / KBITS_PER_SEC)
 #define BIT_MASK(BIT_POS) (1 << BIT_POS)
 
-#define JITTER_TICKS    3
+#define JITTER_TICKS    0
 #define WAKEUP_TICKS    20
 
 static uint32_t interrupt_state_get(void)

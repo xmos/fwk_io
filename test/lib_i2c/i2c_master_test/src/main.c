@@ -102,8 +102,6 @@ void test() {
             p_sda, p_sda_bit_pos, 0,
             SPEED); /* kbps */
 
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
-
     // Setup all data to be written
     data_write_1[0] = 0x90; data_write_1[1] = 0xfe;
     data_write_2[0] = 0xff; data_write_2[1] = 0x00; data_write_2[2] = 0xaa;
@@ -142,7 +140,6 @@ void test() {
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     for(;;);
 }
 

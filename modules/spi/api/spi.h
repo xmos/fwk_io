@@ -128,6 +128,11 @@ typedef struct {
 /**
  * Initializes a SPI master I/O interface.
  *
+ * Note: To guarantee timing in all situations, the SPI I/O interface
+ * implicitly sets the fast mode and high priority status register bits
+ * for the duration of SPI operations.  This may reduce the MIPS of other
+ * threads based on overall system setup.
+ *
  * \param spi         The spi_master_t context to initialize.
  * \param clock_block The clock block to use for the SPI master interface.
  * \param cs_port     The SPI interface's chip select port. This may be a multi-bit port.

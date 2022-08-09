@@ -888,6 +888,11 @@ inline void qspi_io_end_transaction(const qspi_io_ctx_t *ctx)
  * This disables and frees the clock block and all the ports associated with
  * the QSPI I/O interface.
  *
+ * Note: To guarantee timing in all situations, the QSPI I/O interface
+ * implicitly sets the fast mode and high priority status register bits
+ * for the duration of flash operations.  This may reduce the MIPS of other
+ * threads based on overall system setup.
+ *
  * \param ctx Pointer to the QSPI I/O context. This should have been
  *            previously initialized with qspi_io_init().
  */

@@ -1,4 +1,4 @@
-// Copyright 2014-2021 XMOS LIMITED.
+// Copyright 2014-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <xs1.h>
 #include <string.h>
@@ -75,7 +75,6 @@ int i2c_shutdown(void *app_data) {
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     for(;;);
 }
 

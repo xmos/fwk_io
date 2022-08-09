@@ -1,4 +1,4 @@
-// Copyright 2015-2021 XMOS LIMITED.
+// Copyright 2015-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #ifndef COMMON_H_
 #define COMMON_H_
@@ -6,12 +6,9 @@
 #include "xcore/port.h"
 #include "xcore/parallel.h"
 
-#define SET_FAST_MODE() asm volatile("setsr %0" : : "n"(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK))
-
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
-    SET_FAST_MODE();
     for(;;);
 }
 

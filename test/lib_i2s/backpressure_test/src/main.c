@@ -1,4 +1,4 @@
-// Copyright 2016-2021 XMOS LIMITED.
+// Copyright 2016-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <platform.h>
 #include <xs1.h>
@@ -89,9 +89,6 @@ void test_lr_period() {
     const int ref_tick_per_sample = XS1_TIMER_HZ/SAMPLE_FREQUENCY;
     const int period = ref_tick_per_sample;
 
-    //set_core_fast_mode_on();
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
-
     port_enable(p_lr_test);
     int time;
 
@@ -142,8 +139,6 @@ void test_lr_period() {
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
-    //set_core_fast_mode_on();
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     for(;;);
 }
 

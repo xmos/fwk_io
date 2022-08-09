@@ -1,4 +1,4 @@
-// Copyright 2014-2021 XMOS LIMITED.
+// Copyright 2014-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <xs1.h>
 #include <stdio.h>
@@ -48,8 +48,6 @@ void test() {
             p_sda, 0, 0,
             400); /* kbps */
 
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
-
     // Test register writing
     write_results[TEST_WRITE_1] = write_reg(i2c_ctx_ptr, 0x44, 0x07, 0x12);
     write_results[TEST_WRITE_2] = write_reg8_addr16(i2c_ctx_ptr, 0x22, 0xfe99, 0x12);
@@ -79,7 +77,6 @@ void test() {
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
-    SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
     for(;;);
 }
 

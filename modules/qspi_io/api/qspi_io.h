@@ -356,8 +356,8 @@ inline void qspi_io_start_transaction(qspi_io_ctx_t *ctx,
     /* Save thread bits on entry */
     ctx->thread_mode = local_thread_mode_get_bits();
 
-	/* enable fast mode */
-    local_thread_mode_set_bits(thread_mode_fast);
+    /* enable fast mode and high priority */
+    local_thread_mode_set_bits(thread_mode_fast | thread_mode_high_priority);
 
 	ctx->transaction_length = len;
 
@@ -877,8 +877,8 @@ inline void qspi_io_end_transaction(const qspi_io_ctx_t *ctx)
 	 */
 	QSPI_IO_RESOURCE_SETCI(ctx->sio_port, XS1_SETC_DRIVE_PULL_UP);
 
-	/* disable fast mode */
-    local_thread_mode_clear_bits(thread_mode_fast);
+    /* disable fast mode and high priority */
+    local_thread_mode_clear_bits(thread_mode_fast | thread_mode_high_priority);
 
     /* Restore original thread bits on exit */
     local_thread_mode_set_bits(ctx->thread_mode);

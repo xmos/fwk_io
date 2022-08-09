@@ -13,7 +13,7 @@ void spi_master_start_transaction(
     dev->thread_mode = local_thread_mode_get_bits();
 
     /* enable fast mode and high priority */
-    local_thread_mode_set_bits(thread_mode_fast);
+    local_thread_mode_set_bits(thread_mode_fast | thread_mode_high_priority);
 
     if (dev->cs_assert_val != spi->current_device) {
         spi->current_device = dev->cs_assert_val;
@@ -206,7 +206,7 @@ void spi_master_end_transaction(
     spi_master_t *spi = dev->spi_master_ctx;
 
     /* disable fast mode and high priority */
-    local_thread_mode_clear_bits(thread_mode_fast);
+    local_thread_mode_clear_bits(thread_mode_fast | thread_mode_high_priority);
 
     /* Restore original thread bits on exit */
     local_thread_mode_set_bits(dev->thread_mode);

@@ -1,4 +1,4 @@
-// Copyright 2021 XMOS LIMITED.
+// Copyright 2021-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <stdint.h>
 
@@ -9,8 +9,11 @@ void spi_master_start_transaction(
 {
     spi_master_t *spi = dev->spi_master_ctx;
 
+    /* Save thread bits on entry */
+    dev->thread_mode = local_thread_mode_get_bits();
+
     /* enable fast mode and high priority */
-    SPI_IO_SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
+    local_thread_mode_set_bits(thread_mode_fast | thread_mode_high_priority);
 
     if (dev->cs_assert_val != spi->current_device) {
         spi->current_device = dev->cs_assert_val;
@@ -202,8 +205,11 @@ void spi_master_end_transaction(
     const uint32_t cs_deassert_val = 0xFFFFFFFF;
     spi_master_t *spi = dev->spi_master_ctx;
 
-    /* enable fast mode and high priority */
-    SPI_IO_CLRSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
+    /* disable fast mode and high priority */
+    local_thread_mode_clear_bits(thread_mode_fast | thread_mode_high_priority);
+
+    /* Restore original thread bits on exit */
+    local_thread_mode_set_bits(dev->thread_mode);
 
     port_sync(spi->cs_port);
 

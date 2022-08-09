@@ -1,4 +1,4 @@
-// Copyright 2020-2021 XMOS LIMITED.
+// Copyright 2020-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #pragma once
 
@@ -11,6 +11,7 @@
 #include <xclib.h> /* for byterev() */
 #include <xcore/port.h>
 #include <xcore/clock.h>
+#include <xcore/thread.h>
 
 /**
  * \addtogroup hil_qspi_io hil_qspi_io
@@ -98,7 +99,7 @@ typedef struct {
 	 * and must not change.
 	 */
 	xclock_t clock_block;
-	
+
 	/**
 	 * The chip select port. MUST be a 1-bit port.
 	 *
@@ -106,7 +107,7 @@ typedef struct {
 	 * and must not change.
 	 */
 	port_t cs_port;
-	
+
 	/**
 	 * The SCLK port. MUST be a 1-bit port.
 	 *
@@ -114,7 +115,7 @@ typedef struct {
 	 * and must not change.
 	 */
 	port_t sclk_port;
-	
+
 	/**
 	 * The SIO port. MUST be a 4-bit port.
 	 *
@@ -157,7 +158,7 @@ typedef struct {
 
 	/**
 	 * Number of SCLK cycles to delay the sampling of SIO on input
-	 * during a full speed transaction. 
+	 * during a full speed transaction.
 	 *
 	 * Usually either 0 or 1 depending on the SCLK frequency.
 	 *
@@ -168,7 +169,7 @@ typedef struct {
 
 	/**
 	 * Number of SCLK cycles to delay the sampling of SIO on input
-	 * during a SPI read transaction. 
+	 * during a SPI read transaction.
 	 *
 	 * Usually either 0 or 1 depending on the SCLK frequency.
 	 *
@@ -224,6 +225,7 @@ typedef struct {
 	uint32_t sample_edge;
 	uint32_t sio_pad_delay;
 	uint32_t sio_drive;
+    thread_mode_t thread_mode;
 } qspi_io_ctx_t;
 
 /**
@@ -312,8 +314,6 @@ inline uint32_t qspi_io_nibble_swap(uint32_t word)
 /* These appear to be missing from the public API of lib_xcore */
 #define QSPI_IO_RESOURCE_SETCI(res, c) asm volatile( "setc res[%0], %1" :: "r" (res), "n" (c))
 #define QSPI_IO_RESOURCE_SETC(res, r) asm volatile( "setc res[%0], %1" :: "r" (res), "r" (r))
-#define QSPI_IO_SETSR(c) asm volatile("setsr %0" : : "n"(c));
-#define QSPI_IO_CLRSR(c) asm volatile("clrsr %0" : : "n"(c));
 
 /**
  * Begins a new QSPI I/O transaction by starting the clock,
@@ -353,8 +353,11 @@ inline void qspi_io_start_transaction(qspi_io_ctx_t *ctx,
                                       size_t len,
                                       qspi_io_transaction_type_t transaction_type)
 {
-	/* enable fast mode and high priority */
-	QSPI_IO_SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
+    /* Save thread bits on entry */
+    ctx->thread_mode = local_thread_mode_get_bits();
+
+    /* enable fast mode and high priority */
+    local_thread_mode_set_bits(thread_mode_fast | thread_mode_high_priority);
 
 	ctx->transaction_length = len;
 
@@ -424,9 +427,9 @@ inline void qspi_io_bytes_out(const qspi_io_ctx_t *ctx,
 		}
 		port_out(ctx->sio_port, word);
 	}
-	
+
 	len &= sizeof(uint32_t) - 1; /* get the byte remainder */
-	
+
 	if (len) {
 		word = data_words[i];
 		len *= 8;
@@ -628,7 +631,7 @@ inline void qspi_io_sio_direction_input(qspi_io_ctx_t *ctx)
  *                      actually removes a nibble swap operation.
  * \param data          Pointer to the byte array to save the received data to.
  *                      This MUST begin on a 4-byte boundary.
- * \param start_time    The port time, relative to the beginning of the transfer, 
+ * \param start_time    The port time, relative to the beginning of the transfer,
  *                      at which to input the first group of four bytes. This must
  *                      line up with the last nibble of the fourth byte. If \p len
  *                      is less than four, then it must line up with the last nibble
@@ -638,7 +641,7 @@ inline void qspi_io_sio_direction_input(qspi_io_ctx_t *ctx)
 __attribute__((always_inline))
 inline void qspi_io_bytes_in(const qspi_io_ctx_t *ctx,
                              const qspi_io_transfer_mode_t transfer_mode,
-                             uint8_t *data, 
+                             uint8_t *data,
                              uint32_t start_time,
                              size_t len)
 {
@@ -661,7 +664,7 @@ inline void qspi_io_bytes_in(const qspi_io_ctx_t *ctx,
 		data_words[i] = word;
 	}
 
-	/* 
+	/*
 	 * Note: Some of the following code, including the final IN
 	 * instruction, may execute well after the data has already
 	 * shifted in. This is ok provided this is the end of the
@@ -677,7 +680,7 @@ inline void qspi_io_bytes_in(const qspi_io_ctx_t *ctx,
 	 */
 
 	len &= sizeof(uint32_t) - 1; /* get the byte remainder */
-	
+
 	if (len) {
 		if (word_len > 0) {
 			/*
@@ -695,12 +698,12 @@ inline void qspi_io_bytes_in(const qspi_io_ctx_t *ctx,
 
 		word = port_in(ctx->sio_port);
 		word >>= 8 * (4 - len);
-		
+
 		data = (uint8_t *) &data_words[i];
 		if (transfer_mode == qspi_io_transfer_normal) {
 			word = qspi_io_nibble_swap(word);
 		}
-		
+
 		for (i = 0; i < len; i++) {
 			*data++ = word & 0xFF;
 			word >>= 8;
@@ -812,7 +815,7 @@ inline void qspi_io_miso_poll(const qspi_io_ctx_t *ctx,
                               uint32_t start_time)
 {
 	uint32_t word;
-	
+
 	port_set_trigger_time(ctx->sio_port, ctx->transaction_start + start_time);
 
 	/*
@@ -866,7 +869,7 @@ inline void qspi_io_end_transaction(const qspi_io_ctx_t *ctx)
 	QSPI_IO_RESOURCE_SETCI(ctx->sio_port, QSPI_IO_SETC_PAD_DELAY(0));
 	QSPI_IO_RESOURCE_SETCI(ctx->cs_port, QSPI_IO_SETC_PAD_DELAY(0));
 	port_set_sample_falling_edge(ctx->sio_port);
-	
+
 	/*
 	 * Also enable pull-ups on the SIO lines between transactions. If the
 	 * transaction ended with an input, then SIO is still in input mode so
@@ -874,13 +877,21 @@ inline void qspi_io_end_transaction(const qspi_io_ctx_t *ctx)
 	 */
 	QSPI_IO_RESOURCE_SETCI(ctx->sio_port, XS1_SETC_DRIVE_PULL_UP);
 
-	/* disable fast mode and high priority */
-	QSPI_IO_CLRSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
+    /* disable fast mode and high priority */
+    local_thread_mode_clear_bits(thread_mode_fast | thread_mode_high_priority);
+
+    /* Restore original thread bits on exit */
+    local_thread_mode_set_bits(ctx->thread_mode);
 }
 
 /**
  * This disables and frees the clock block and all the ports associated with
  * the QSPI I/O interface.
+ *
+ * Note: To guarantee timing in all situations, the QSPI I/O interface
+ * implicitly sets the fast mode and high priority status register bits
+ * for the duration of flash operations.  This may reduce the MIPS of other
+ * threads based on overall system setup.
  *
  * \param ctx Pointer to the QSPI I/O context. This should have been
  *            previously initialized with qspi_io_init().
@@ -894,7 +905,7 @@ void qspi_io_deinit(const qspi_io_ctx_t *ctx);
  *
  * \param ctx          Pointer to the QSPI I/O context. This must be initialized
  *                     with the clock block and ports to use.
- * \param source_clock Set to qspi_io_source_clock_ref to use the 100 MHz reference 
+ * \param source_clock Set to qspi_io_source_clock_ref to use the 100 MHz reference
  *                     clock as the source for SCLK. Set to qspi_io_source_clock_xcore
  *                     to use the xcore clock.
  */

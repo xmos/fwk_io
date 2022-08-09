@@ -1,4 +1,4 @@
-// Copyright 2021 XMOS LIMITED.
+// Copyright 2021-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #pragma once
 
@@ -18,6 +18,7 @@
 #include <xcore/assert.h>
 #include <xcore/port.h>
 #include <xcore/clock.h>
+#include <xcore/thread.h>
 
 /* The SETC constant for pad delay is missing from xs2a_user.h */
 #define SPI_IO_SETC_PAD_DELAY(n) (0x7007 | ((n) << 3))
@@ -25,8 +26,6 @@
 /* These appear to be missing from the public API of lib_xcore */
 #define SPI_IO_RESOURCE_SETCI(res, c) asm volatile( "setc res[%0], %1" :: "r" (res), "n" (c))
 #define SPI_IO_RESOURCE_SETC(res, r) asm volatile( "setc res[%0], %1" :: "r" (res), "r" (r))
-#define SPI_IO_SETSR(c) asm volatile("setsr %0" : : "n"(c));
-#define SPI_IO_CLRSR(c) asm volatile("clrsr %0" : : "n"(c));
 
 /* is setpsc available in lib_xcore or anywhere else..??? */
 __attribute__((always_inline))
@@ -123,10 +122,16 @@ typedef struct {
     uint32_t cs_to_clk_delay_ticks;
     uint32_t clk_to_cs_delay_ticks;
     uint32_t cs_to_cs_delay_ticks;
+    thread_mode_t thread_mode;
 } spi_master_device_t;
 
 /**
  * Initializes a SPI master I/O interface.
+ *
+ * Note: To guarantee timing in all situations, the SPI I/O interface
+ * implicitly sets the fast mode and high priority status register bits
+ * for the duration of SPI operations.  This may reduce the MIPS of other
+ * threads based on overall system setup.
  *
  * \param spi         The spi_master_t context to initialize.
  * \param clock_block The clock block to use for the SPI master interface.
@@ -334,7 +339,7 @@ typedef struct {
  * Initializes a SPI slave.
  *
  * \note Verified at 25000 kbps, with a 2000ns CS assertion to first clock
- * in all modes.  The CS to first clock minimum delay will vary based on the 
+ * in all modes.  The CS to first clock minimum delay will vary based on the
  * duration of the slave_transaction_started callback.
  *
  * \param spi_cbg     The spi_slave_callback_group_t context to use.

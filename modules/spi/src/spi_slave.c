@@ -1,4 +1,4 @@
-// Copyright 2021 XMOS LIMITED.
+// Copyright 2021-2022 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <xs1.h>
 #include <xclib.h>
@@ -278,8 +278,8 @@ void spi_slave(
     uint32_t in_word;
     uint32_t out_word;
 
-	/* Enable fast mode and high priority */
-	SPI_IO_SETSR(XS1_SR_QUEUE_MASK | XS1_SR_FAST_MASK);
+	/* Enable fast mode */
+    local_thread_mode_set_bits(thread_mode_fast);
 
     /* Setup the chip select port */
     port_enable(p_cs);

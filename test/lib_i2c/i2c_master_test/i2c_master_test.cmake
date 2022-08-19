@@ -10,6 +10,7 @@ set(APP_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/src)
 set(APP_COMPILER_FLAGS
     -Os
     -target=XCORE-AI-EXPLORER
+    -report
 )
 set(APP_LINK_OPTIONS
     -report

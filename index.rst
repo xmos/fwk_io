@@ -4,6 +4,8 @@ IO Framework
 
 Framework of peripheral IO libraries for XCORE.AI.
 
+.. _fwk_io-peripherals:
+
 ***********
 Peripherals
 ***********

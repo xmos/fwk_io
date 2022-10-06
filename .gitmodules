@@ -9,4 +9,4 @@
 	url = git@github.com:xmos/xmos_cmake_toolchain.git
 [submodule "test/modules/test_support"]
 	path = test/modules/test_support
-	url = https://github.com/ACascarino/test_support.git
+	url = https://github.com/xmos/test_support/test_support.git

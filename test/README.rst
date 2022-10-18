@@ -16,6 +16,18 @@ Hardware Setup
 No hardware is needed for these tests as they all run using the ``xsim`` xcore simulator that is installed with the XTC Tools.
 
 *************
+Host Setup
+*************
+
+Install the Python dependencies into your virtual environment of choice, or host, by running:
+
+.. code-block:: console
+
+    $ python -m pip install -r requirements.txt
+
+in the fwk_io/test directory.
+
+*************
 Running Tests
 *************
 

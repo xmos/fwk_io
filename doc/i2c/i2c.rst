@@ -10,9 +10,9 @@ The library is compatible with multiple slave devices existing on the same bus. 
 
 The library can also be used to implement multiple |I2C| physical interfaces on a single xcore device simultaneously.
 
-All signals are designed to comply with the timings in the |I2C| specification found here:
+All signals are designed to comply with the timings in the |I2C| specification. Information on obtaining the |I2C| specification can be found here:
 
-https://www.nxp.com/docs/en/user-guide/UM10204.pdf
+https://www.i2c-bus.org/specification/
 
 Note that the following optional parts of the |I2C| specification are not supported:
 

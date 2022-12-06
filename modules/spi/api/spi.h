@@ -339,7 +339,9 @@ typedef struct {
  * Initializes a SPI slave.
  *
  * \note Verified at 25000 kbps, with a 2000ns CS assertion to first clock
- * in all modes.  The CS to first clock minimum delay, sometimes referred to
+ * in all modes.
+ * 
+ * The CS to first clock minimum delay, sometimes referred to
  * as setup time, will vary based on the duration of the
  * slave_transaction_started callback.  This parameter will be application
  * specific.  To determine the typical value, time the duration of the
@@ -347,7 +349,20 @@ typedef struct {
  * If slave_transaction_started has a non-deterministic runtime, perhaps
  * due to waiting on an XCORE resource, then the application developer must
  * decide an appropriate CS to first SCLK specification.
- *
+ * 
+ * The minimum delay between consecutive transactions varies based
+ * on SPI mode, and if MISO is used.
+ * MISO     | CPOL | CPHA | Min Delay (ns)
+ * ---------------------------------------
+ * enabled  | 0    | 0    | 2270
+ * enabled  | 0    | 1    | 2240
+ * enabled  | 1    | 0    | 2240
+ * enabled  | 1    | 1    | 2270
+ * disabled | 0    | 0    |  440
+ * disabled | 0    | 1    |  420
+ * disabled | 1    | 0    |  430
+ * disabled | 1    | 1    |  430
+ * 
  * \param spi_cbg     The spi_slave_callback_group_t context to use.
  * \param p_sclk      The SPI slave's SCLK port. Must be a 1-bit port.
  * \param p_mosi      The SPI slave's MOSI port. Must be a 1-bit port.

@@ -25,7 +25,7 @@ if(PROJECT_IS_TOP_LEVEL)
     FetchContent_Declare(
       core
       GIT_REPOSITORY https://github.com/xmos/fwk_core.git
-      GIT_TAG        8743436a14f3abdebc7294220d61e1fbf807adc5
+      GIT_TAG        61ef20e2b5b79898a9d1d095cc9f77b2906c9a06
       GIT_SUBMODULES "."
       GIT_SUBMODULES_RECURSE true
     )

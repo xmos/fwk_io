@@ -414,6 +414,14 @@ then
         "test_hil_spi_slave_rx_tx_0_1_1_2_1                 XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
         "test_hil_spi_slave_rx_tx_0_1_1_3_0                 XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
         "test_hil_spi_slave_rx_tx_0_1_1_3_1                 XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_spi_slave_intertransaction_1_0_1_0_1      XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_spi_slave_intertransaction_1_0_1_1_1      XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_spi_slave_intertransaction_1_0_1_2_1      XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_spi_slave_intertransaction_1_0_1_3_1      XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_spi_slave_intertransaction_1_1_1_0_1      XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_spi_slave_intertransaction_1_1_1_1_1      XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_spi_slave_intertransaction_1_1_1_2_1      XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+        "test_hil_spi_slave_intertransaction_1_1_1_3_1      XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
     )
 else
     echo "Argument $1 not a supported configuration!"

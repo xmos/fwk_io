@@ -1,0 +1,5 @@
+SPI Slave checker started
+Send initial settings
+Got Settings:cpol [0-1]{1} cpha [0-1]{1} miso [0-1]{1} num_bits 128 kbps \d+ init delay \d+
+Delay is \d+.\d+ ns
+(Request exit on success|Request exit on error){1}

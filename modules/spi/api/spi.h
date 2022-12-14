@@ -92,7 +92,7 @@ typedef enum {
  * Set SPI Slave thread to high priority
  */
 #ifndef HIL_IO_SPI_SLAVE_HIGH_PRIO
-    #define HIL_IO_SPI_SLAVE_HIGH_PRIO 1
+    #define HIL_IO_SPI_SLAVE_HIGH_PRIO 0
 #endif
 
 /**

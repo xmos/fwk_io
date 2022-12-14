@@ -89,6 +89,20 @@ typedef enum {
 #define SPI_MODE_3 1,1
 
 /**
+ * Set SPI Slave thread to high priority
+ */
+#ifndef HIL_IO_SPI_SLAVE_HIGH_PRIO
+    #define HIL_IO_SPI_SLAVE_HIGH_PRIO 1
+#endif
+
+/**
+ * Set SPI Slave thread to run in fast mode
+ */
+#ifndef HIL_IO_SPI_SLAVE_FAST_MODE
+    #define HIL_IO_SPI_SLAVE_FAST_MODE 1
+#endif
+
+/**
  * Struct to hold a SPI master context.
  *
  * The members in this struct should not be accessed directly.

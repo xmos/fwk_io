@@ -279,7 +279,7 @@ void spi_slave(
     uint32_t out_word;
 
 	/* Enable fast mode and high priority */
-    local_thread_mode_set_bits(thread_mode_fast);
+    local_thread_mode_set_bits(thread_mode_high_priority);
 
     /* Setup the chip select port */
     port_enable(p_cs);

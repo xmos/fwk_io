@@ -257,7 +257,8 @@ void spi_slave(
         port_t p_cs,
         xclock_t cb_clk,
         int cpol,
-        int cpha) {
+        int cpha,
+        uint32_t thread_mode) {
     internal_ctx_t int_ctx = {
         .p_miso = p_miso,
         .p_mosi = p_mosi,
@@ -278,8 +279,8 @@ void spi_slave(
     uint32_t in_word;
     uint32_t out_word;
 
-	/* Enable fast mode and high priority */
-    local_thread_mode_set_bits(thread_mode_fast | thread_mode_high_priority);
+    /* Set thread mode */
+    local_thread_mode_set_bits(thread_mode);
 
     /* Setup the chip select port */
     port_enable(p_cs);

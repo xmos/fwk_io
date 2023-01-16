@@ -380,6 +380,7 @@ void spi_slave(
         port_t p_cs,
         xclock_t clk,
         int cpol,
-        int cpha);
+        int cpha,
+        uint32_t thread_mode);
 
 /**@}*/ // END: addtogroup hil_spi_slave

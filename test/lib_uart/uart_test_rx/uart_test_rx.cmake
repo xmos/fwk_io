@@ -70,7 +70,7 @@ foreach(buffer ${TEST_USE_BUFFERED})
                             TEST_STOP_BITS=${stop}
                     )
                     target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS})
-                    target_link_libraries(${TARGET_NAME} PUBLIC io::uart core::utils)
+                    target_link_libraries(${TARGET_NAME} PUBLIC lib_uart framework_core_utils)
                     target_link_options(${TARGET_NAME} PRIVATE ${APP_LINK_OPTIONS})
                     set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
                     unset(TARGET_NAME)

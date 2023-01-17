@@ -27,28 +27,25 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     list(APPEND LIB_PRIVATE_SOURCES ${${CMAKE_SYSTEM_NAME}_SOURCES})
 
     ## Create library target
-    add_library(framework_io_qspi_io STATIC)
-    target_sources(framework_io_qspi_io
+    add_library(lib_qspi_io STATIC)
+    target_sources(lib_qspi_io
         PUBLIC
             ${LIB_PUBLIC_SOURCES}
         PRIVATE
             ${LIB_PRIVATE_SOURCES}
     )
-    target_include_directories(framework_io_qspi_io
+    target_include_directories(lib_qspi_io
         PUBLIC
             ${LIB_PUBLIC_INCLUDES}
         PRIVATE
             ${LIB_PRIVATE_INCLUDES}
     )
-    target_compile_options(framework_io_qspi_io
+    target_compile_options(lib_qspi_io
         PRIVATE
             ${LIB_COMPILE_FLAGS}
     )
-    target_link_libraries(framework_io_qspi_io
+    target_link_libraries(lib_qspi_io
         PUBLIC
-            core::utils
+            framework_core_utils
     )
-
-    ## Create an alias
-    add_library(io::qspi_io ALIAS framework_io_qspi_io)
 endif()

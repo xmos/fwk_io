@@ -18,7 +18,6 @@ option(FWK_IO_TESTS     "Enable framework_io tests"  OFF)
 ## Setup a framework root path
 set(FRAMEWORK_IO_ROOT_PATH ${PROJECT_SOURCE_DIR} CACHE STRING "Root folder of framework_io in this cmake project tree")
 
-
 ## Add top level project targets
 if(PROJECT_IS_TOP_LEVEL)
     include(FetchContent)

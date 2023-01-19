@@ -12,8 +12,6 @@ Supported peripherals include:
 - PDM microphones
 - USB
 
-This repository can be used standalone.  However, it is intended to be used as part of a greater project, such as the [XCORE-VOICE Solution](https://github.com/xmos/sln_voice).
-
 ## Build Status
 
 Build Type       |    Status     |

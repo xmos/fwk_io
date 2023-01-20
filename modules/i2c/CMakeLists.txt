@@ -27,24 +27,21 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     list(APPEND LIB_PRIVATE_SOURCES ${${CMAKE_SYSTEM_NAME}_SOURCES})
 
     ## Create library target
-    add_library(framework_io_i2c STATIC)
-    target_sources(framework_io_i2c
+    add_library(lib_i2c STATIC)
+    target_sources(lib_i2c
         PUBLIC
             ${LIB_PUBLIC_SOURCES}
         PRIVATE
             ${LIB_PRIVATE_SOURCES}
     )
-    target_include_directories(framework_io_i2c
+    target_include_directories(lib_i2c
         PUBLIC
             ${LIB_PUBLIC_INCLUDES}
         PRIVATE
             ${LIB_PRIVATE_INCLUDES}
     )
-    target_compile_options(framework_io_i2c
+    target_compile_options(lib_i2c
         PRIVATE
             ${LIB_COMPILE_FLAGS}
     )
-
-    ## Create an alias
-    add_library(io::i2c ALIAS framework_io_i2c)
 endif()

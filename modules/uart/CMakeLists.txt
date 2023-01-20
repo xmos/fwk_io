@@ -27,24 +27,21 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     list(APPEND LIB_PRIVATE_SOURCES ${${CMAKE_SYSTEM_NAME}_SOURCES})
 
     ## Create library target
-    add_library(framework_io_uart STATIC)
-    target_sources(framework_io_uart
+    add_library(lib_uart STATIC)
+    target_sources(lib_uart
         PUBLIC
             ${LIB_PUBLIC_SOURCES}
         PRIVATE
             ${LIB_PRIVATE_SOURCES}
     )
-    target_include_directories(framework_io_uart
+    target_include_directories(lib_uart
         PUBLIC
             ${LIB_PUBLIC_INCLUDES}
         PRIVATE
             ${LIB_PRIVATE_INCLUDES}
     )
-    target_compile_options(framework_io_uart
+    target_compile_options(lib_uart
         PRIVATE
             ${LIB_COMPILE_FLAGS}
     )
-
-    ## Create an alias
-    add_library(io::uart ALIAS framework_io_uart)
 endif()

@@ -18,18 +18,10 @@ option(FWK_IO_TESTS     "Enable framework_io tests"  OFF)
 ## Setup a framework root path
 set(FRAMEWORK_IO_ROOT_PATH ${PROJECT_SOURCE_DIR} CACHE STRING "Root folder of framework_io in this cmake project tree")
 
-
 ## Add top level project targets
 if(PROJECT_IS_TOP_LEVEL)
-    include(FetchContent)
-    FetchContent_Declare(
-      core
-      GIT_REPOSITORY https://github.com/xmos/fwk_core.git
-      GIT_TAG        61ef20e2b5b79898a9d1d095cc9f77b2906c9a06
-      GIT_SUBMODULES "."
-      GIT_SUBMODULES_RECURSE true
-    )
-    FetchContent_MakeAvailable(core)
+    ## Fetch dependencies if top level
+    include(tools/ci/fetch_ci_deps.cmake)
 endif()
 
 add_subdirectory(modules)

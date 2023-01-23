@@ -1,4 +1,4 @@
-// Copyright 2015-2022 XMOS LIMITED.
+// Copyright 2015-2023 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <platform.h>
 #include <string.h>
@@ -234,7 +234,7 @@ DEFINE_INTERRUPT_PERMITTED(spi_isr_grp, void, app, void)
     broadcast_settings(setup_strobe_port, setup_data_port,
             CPOL, CPHA, MOSI_ENABLED, MISO_ENABLED, app_data.num_bits, KBPS, INITIAL_CLOCK_DELAY);
 
-    spi_slave(&spi_cbg, p_sclk, MOSI, MISO, p_cs, cb, CPOL, CPHA);
+    spi_slave(&spi_cbg, p_sclk, MOSI, MISO, p_cs, cb, CPOL, CPHA, thread_mode_fast | thread_mode_high_priority);
 }
 
 int main(void) {

@@ -2,7 +2,7 @@
 add_subdirectory(i2c)
 add_subdirectory(i2s)
 if(${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A)
-    add_subdirectory(mic_array)
+    add_subdirectory(mic_array/lib_mic_array)
 endif()
 add_subdirectory(qspi_io)
 add_subdirectory(spi)

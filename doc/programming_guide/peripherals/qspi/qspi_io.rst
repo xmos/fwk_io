@@ -1,4 +1,4 @@
-.. include:: ../substitutions.rst
+.. include:: ../../../substitutions.rst
 
 ********
 QSPI I/O

@@ -1,14 +1,10 @@
-.. include:: ../substitutions.rst
+.. include:: ../../../substitutions.rst
 
 #############
 |I2S| Library
 #############
 
 A software defined library that allows you to control an |I2S| (Inter-IC Sound) bus via xcore ports. |I2S| is a digital data streaming interfaces particularly appropriate for transmission of audio data. The components in the library are controlled via C and can either act as |I2S| master or |I2S| slave.
-
-And archived version of the original |I2S| specification can be found here:
-
-https://web.archive.org/web/20070102004400/http://www.nxp.com/acrobat_download/various/I2SBUS.pdf
 
 .. note::
 

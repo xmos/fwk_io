@@ -1,11 +1,11 @@
-#########################################
-Peripheral IO Framework Programming Guide
-#########################################
+###############################
+Peripheral IO Programming Guide
+###############################
 
 .. toctree::
    :maxdepth: 1
    :includehidden:
 
    ../shared/introduction
-   peripherals/peripherals
+   reference/api
    ../shared/legal

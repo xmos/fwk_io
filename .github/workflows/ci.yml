@@ -29,7 +29,7 @@ on:
         default: 'no'
 
 env:
-  SDK_BUILDER_IMAGE: 'ghcr.io/xmos/sdk_app_builder:develop'
+  XCORE_BUILDER_IMAGE: 'ghcr.io/xmos/xcore_builder:latest'
 
 jobs:
   # JOB to run change detection
@@ -43,7 +43,7 @@ jobs:
       spi: ${{ github.event.inputs.run_driver_tests == 'yes' || steps.filter.outputs.spi }}
       uart: ${{ github.event.inputs.run_driver_tests == 'yes' || steps.filter.outputs.uart }}
     steps:
-      - name: Checkout SDK
+      - name: Checkout
         if: ${{ github.event.inputs.run_driver_tests != 'yes' }}
         uses: actions/checkout@v2
         with:
@@ -77,13 +77,13 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Pull SDK builder image
+      - name: Pull Docker builder image
         run: |
-          docker pull ${SDK_BUILDER_IMAGE}
+          docker pull ${XCORE_BUILDER_IMAGE}
 
       - name: Run tests
         run: |
-          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2c
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_i2c
 
   i2stests:
     name: I2S tests
@@ -96,13 +96,13 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Pull SDK builder
+      - name: Pull Docker builder
         run: |
-          docker pull ${SDK_BUILDER_IMAGE}
+          docker pull ${XCORE_BUILDER_IMAGE}
 
       - name: Run tests
         run: |
-          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_i2s
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_i2s
 
   spitests:
     name: SPI tests
@@ -115,13 +115,13 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Pull SDK builder image
+      - name: Pull Docker builder image
         run: |
-          docker pull ${SDK_BUILDER_IMAGE}
+          docker pull ${XCORE_BUILDER_IMAGE}
 
       - name: Run tests
         run: |
-          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_spi
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_spi
 
 
   uarttests:
@@ -135,10 +135,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Pull SDK builder
+      - name: Pull Docker builder
         run: |
-          docker pull ${SDK_BUILDER_IMAGE}
+          docker pull ${XCORE_BUILDER_IMAGE}
 
       - name: Run tests
         run: |
-          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${SDK_BUILDER_IMAGE} bash -l run_tests.sh lib_uart
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_uart

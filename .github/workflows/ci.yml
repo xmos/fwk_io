@@ -1,0 +1,144 @@
+# YAML schema for GitHub Actions:
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions
+#
+# Helpful YAML parser to clarify YAML syntax:
+# https://yaml-online-parser.appspot.com/
+#
+# This workflow uses actions that are not certified by GitHub. They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support documentation.
+#
+# This file contains the workflows that are run prior to merging a pull request.
+
+name: CI
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'develop'
+  pull_request:
+    branches:
+      - 'main'
+      - 'develop'
+
+  # Allow manually triggering of the workflow.
+  workflow_dispatch:
+    inputs:
+      run_driver_tests:
+        description: 'Force Driver Testing? (yes/no)'
+        default: 'no'
+
+env:
+  XCORE_BUILDER_IMAGE: 'ghcr.io/xmos/xcore_builder:latest'
+
+jobs:
+  # JOB to run change detection
+  changes:
+    runs-on: ubuntu-latest
+    name: Change detection
+    # Set job outputs to values from filter step
+    outputs:
+      i2c: ${{ github.event.inputs.run_driver_tests == 'yes' || steps.filter.outputs.i2c }}
+      i2s: ${{ github.event.inputs.run_driver_tests == 'yes' || steps.filter.outputs.i2s }}
+      spi: ${{ github.event.inputs.run_driver_tests == 'yes' || steps.filter.outputs.spi }}
+      uart: ${{ github.event.inputs.run_driver_tests == 'yes' || steps.filter.outputs.uart }}
+    steps:
+      - name: Checkout
+        if: ${{ github.event.inputs.run_driver_tests != 'yes' }}
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Paths filter
+        if: ${{ github.event.inputs.run_driver_tests != 'yes' }}
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            i2c:
+              - 'modules/i2c/**'
+              - 'test/lib_i2c/**'
+            i2s:
+              - 'modules/i2s/**'
+              - 'test/lib_i2s/**'
+            spi:
+              - 'modules/spi/**'
+              - 'test/lib_spi/**'
+            uart:
+              - 'modules/uart/**'
+              - 'test/lib_uart/**'
+  i2ctests:
+    needs: changes
+    name: I2C tests
+    if: ${{ needs.changes.outputs.i2c == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull Docker builder image
+        run: |
+          docker pull ${XCORE_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_i2c
+
+  i2stests:
+    name: I2S tests
+    needs: changes
+    if: ${{ needs.changes.outputs.i2s == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull Docker builder
+        run: |
+          docker pull ${XCORE_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_i2s
+
+  spitests:
+    name: SPI tests
+    needs: changes
+    if: ${{ needs.changes.outputs.spi == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull Docker builder image
+        run: |
+          docker pull ${XCORE_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_spi
+
+
+  uarttests:
+    name: UART tests
+    needs: changes
+    if: ${{ needs.changes.outputs.uart == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Pull Docker builder
+        run: |
+          docker pull ${XCORE_BUILDER_IMAGE}
+
+      - name: Run tests
+        run: |
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_uart

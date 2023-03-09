@@ -1,0 +1,12 @@
+[submodule "mic_array"]
+	path = modules/mic_array
+	url = git@github.com:xmos/lib_mic_array.git
+[submodule "xud"]
+	path = modules/xud/lib_xud
+	url = git@github.com:xmos/lib_xud.git
+[submodule "xmos_cmake_toolchain"]
+	path = xmos_cmake_toolchain
+	url = git@github.com:xmos/xmos_cmake_toolchain.git
+[submodule "test/modules/test_support"]
+	path = test/modules/test_support
+	url = git@github.com:xmos/test_support.git

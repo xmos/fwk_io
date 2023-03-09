@@ -1,0 +1,16 @@
+producer start, 4000 pushes into FIFO of size: 17
+consumer start, 4000 pops from FIFO of size: 17
+producer finished secanrio: 0 Balanced rate
+consumer finished secanrio: 0 Balanced rate
+
+producer start, 4000 pushes into FIFO of size: 17
+consumer start, 4000 pops from FIFO of size: 17
+producer finished secanrio: 1 Over producing
+consumer finished secanrio: 1 Over producing
+
+producer start, 4000 pushes into FIFO of size: 17
+consumer start, 4000 pops from FIFO of size: 17
+producer finished secanrio: 2 Over consuming
+consumer finished secanrio: 2 Over consuming
+
+PASS

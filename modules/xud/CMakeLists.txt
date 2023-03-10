@@ -7,6 +7,7 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     file(GLOB_RECURSE LIB_ASM_SOURCES lib_xud/lib_xud/src/*.S )
 
     list(REMOVE_ITEM LIB_ASM_SOURCES ${CMAKE_CURRENT_LIST_DIR}/lib_xud/lib_xud/src/core/included/XUD_PidJumpTable.S)
+    list(REMOVE_ITEM LIB_ASM_SOURCES ${CMAKE_CURRENT_LIST_DIR}/lib_xud/lib_xud/src/core/included/XUD_PidJumpTable_RxData.S)
     list(REMOVE_ITEM LIB_ASM_SOURCES ${CMAKE_CURRENT_LIST_DIR}/lib_xud/lib_xud/src/core/included/XUD_RxData.S)
     list(REMOVE_ITEM LIB_ASM_SOURCES ${CMAKE_CURRENT_LIST_DIR}/lib_xud/lib_xud/src/core/included/XUD_Token_In.S)
     list(REMOVE_ITEM LIB_ASM_SOURCES ${CMAKE_CURRENT_LIST_DIR}/lib_xud/lib_xud/src/core/included/XUD_Token_In_DI.S)
@@ -27,7 +28,7 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     set(XCORE_XS3A_SOURCES ${LIB_ASM_SOURCES})
 
     ## Includes files
-    set(LIB_PUBLIC_INCLUDES  lib_xud/lib_xud/api lib_xud/lib_xud/src/user)
+    set(LIB_PUBLIC_INCLUDES  lib_xud/lib_xud/api lib_xud/lib_xud/src/user lib_xud/lib_xud/src/user/class)
     set(LIB_PRIVATE_INCLUDES lib_xud/lib_xud/src lib_xud/lib_xud/src/core)
 
     ## Gather library sources

@@ -1,0 +1,16 @@
+FROM ghcr.io/xmos/xcore_builder:latest
+
+# This Dockerfile is for use by the XMOS fwk_io CI system
+# It provides a minimal environment needed to build applications and run tests
+
+# install dependencies
+# RUN apt-get update && apt-get install -y \
+#     && apt-get clean autoclean
+
+WORKDIR /test
+ADD test/requirements.txt /test
+ADD test/modules/test_support /test/modules/test_support
+RUN pip3 install -r requirements.txt
+
+# set login shell
+SHELL ["/bin/bash", "-l", "-c"]

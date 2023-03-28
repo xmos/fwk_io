@@ -1,5 +1,6 @@
 // Copyright 2021 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
+#include <string.h>
 #include <xclib.h>
 #include <xcore/port.h>
 #include <xcore/clock.h>

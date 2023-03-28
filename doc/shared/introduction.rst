@@ -10,4 +10,3 @@ The peripheral IO framework is a collection of IO libraries written in C for XCO
 - |I2C| - master and slave
 - |I2S| - master and slave 
 - SPI - master and slave
-- QSPI - IO and flash with Serial Flash Discoverable Parameter (SFDP) support

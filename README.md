@@ -8,7 +8,6 @@ Supported peripherals include:
 - I2C
 - I2S
 - SPI
-- QSPI flash
 - PDM microphones
 - USB
 

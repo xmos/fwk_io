@@ -12,7 +12,6 @@ PREDEFINED += C_API= MA_C_API= C_API_START= C_API_END= EXTERN_C=
 INPUT += ../modules/uart/api
 INPUT += ../modules/i2c/api
 INPUT += ../modules/i2s/api
-INPUT += ../modules/qspi_io/api
 INPUT += ../modules/spi/api
 #INPUT += ../modules/mic_array/lib_mic_array/api ../modules/mic_array/lib_mic_array/etc/vanilla
 

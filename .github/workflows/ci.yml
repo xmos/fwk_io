@@ -29,7 +29,7 @@ on:
         default: 'no'
 
 env:
-  XCORE_BUILDER_IMAGE: 'ghcr.io/xmos/xcore_builder:latest'
+  FWK_IO_TESTER_IMAGE: 'ghcr.io/xmos/fwk_io_tester:develop'
 
 jobs:
   # JOB to run change detection
@@ -79,11 +79,11 @@ jobs:
 
       - name: Pull Docker builder image
         run: |
-          docker pull ${XCORE_BUILDER_IMAGE}
+          docker pull ${FWK_IO_TESTER_IMAGE}
 
       - name: Run tests
         run: |
-          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_i2c
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${FWK_IO_TESTER_IMAGE} bash -l run_tests.sh lib_i2c
 
   i2stests:
     name: I2S tests
@@ -98,11 +98,11 @@ jobs:
 
       - name: Pull Docker builder
         run: |
-          docker pull ${XCORE_BUILDER_IMAGE}
+          docker pull ${FWK_IO_TESTER_IMAGE}
 
       - name: Run tests
         run: |
-          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_i2s
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${FWK_IO_TESTER_IMAGE} bash -l run_tests.sh lib_i2s
 
   spitests:
     name: SPI tests
@@ -117,11 +117,11 @@ jobs:
 
       - name: Pull Docker builder image
         run: |
-          docker pull ${XCORE_BUILDER_IMAGE}
+          docker pull ${FWK_IO_TESTER_IMAGE}
 
       - name: Run tests
         run: |
-          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_spi
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${FWK_IO_TESTER_IMAGE} bash -l run_tests.sh lib_spi
 
 
   uarttests:
@@ -137,8 +137,8 @@ jobs:
 
       - name: Pull Docker builder
         run: |
-          docker pull ${XCORE_BUILDER_IMAGE}
+          docker pull ${FWK_IO_TESTER_IMAGE}
 
       - name: Run tests
         run: |
-          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${XCORE_BUILDER_IMAGE} bash -l run_tests.sh lib_uart
+          docker run --rm -w /fwk_io/test -v ${{github.workspace}}:/fwk_io ${FWK_IO_TESTER_IMAGE} bash -l run_tests.sh lib_uart

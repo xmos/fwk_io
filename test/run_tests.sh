@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+if [ -f /.dockerenv ]; then
+    # Docker workaround for: "fatal: detected dubious ownership in repository"
+    git config --global --add safe.directory /fwk_io
+fi
+
 if [ -z "$1" ] || [ "$1" == "all" ]
 then
     declare -a hil_test_libs=(

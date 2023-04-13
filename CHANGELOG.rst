@@ -1,6 +1,11 @@
 IO Framework change log
 =======================
 
+TBD
+-----
+
+  * Remove QSPI_IO
+
 2.0.0
 -----
 

@@ -4,7 +4,6 @@ add_subdirectory(i2s)
 if(${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A)
     add_subdirectory(mic_array)
 endif()
-add_subdirectory(qspi_io)
 add_subdirectory(spi)
 add_subdirectory(xud)
 add_subdirectory(uart)
@@ -15,7 +14,6 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     target_link_libraries(framework_io_general
         INTERFACE
             lib_i2c
-            lib_qspi_io
             lib_spi
             lib_uart
             lib_xud

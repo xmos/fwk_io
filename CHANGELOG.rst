@@ -1,6 +1,11 @@
 IO Framework change log
 =======================
 
+3.0.0
+-----
+
+  * CHANGE: Removed QSPI IO library
+
 2.0.0
 -----
 

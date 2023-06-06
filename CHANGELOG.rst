@@ -5,6 +5,7 @@ IO Framework change log
 -----
 
   * CHANGE: Updated lib_mic_array to v5.0.3
+  * CHANGE: Updated lib_xud to v2.2.3
 
 3.0.0
 -----

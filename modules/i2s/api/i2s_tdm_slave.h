@@ -37,7 +37,7 @@
  * The members in this struct should not be accessed directly.
  */
 typedef struct {
-    i2s_callback_group_t *const i2s_cbg;
+    i2s_callback_group_t *i2s_cbg;
     port_t p_dout[I2S_TDM_MAX_POUT_CNT];
     size_t num_out;
     port_t p_din[I2S_TDM_MAX_PIN_CNT];
@@ -56,8 +56,8 @@ typedef struct {
 
 /**@}*/ // END: addtogroup hil_i2s_tdm_core
 
-DECLARE_JOB(i2s_tdm_slave_tx_16, (const i2s_tdm_ctx_t *));
-DECLARE_JOB(i2s_slave_tdm, (const i2s_tdm_ctx_t *));
+DECLARE_JOB(i2s_tdm_slave_tx_16_thread, (i2s_tdm_ctx_t *));
+DECLARE_JOB(i2s_slave_tdm_thread, (i2s_tdm_ctx_t *));
 
 /**
  * \addtogroup hil_i2s_tdm_slave_tx16 hil_i2s_tdm_slave_tx16
@@ -87,25 +87,27 @@ DECLARE_JOB(i2s_slave_tdm, (const i2s_tdm_ctx_t *));
  *                       the bit clock
  * \param tx_offset      The number of bclks from FSYNC transition to the MSB
  *                       of Slot 0
+ * \param slave_bclk_pol The polarity of bclk
  * \param app_data       A pointer to application specific data supplied
  *                       by the application. May be used for context
  *                       data specific to each I2S task instance.
  */
-void tdm_slave_tx_16_init(
-        const i2s_tdm_ctx_t *ctx,
-        const i2s_callback_group_t *const i2s_cbg,
-        const port_t p_dout,
-        const port_t p_fsync,
-        const port_t p_bclk,
-        const xclock_t bclk,
-        const uint32_t tx_offset,
+void i2s_tdm_slave_tx_16_init(
+        i2s_tdm_ctx_t *ctx,
+        i2s_callback_group_t *i2s_cbg,
+        port_t p_dout,
+        port_t p_fsync,
+        port_t p_bclk,
+        xclock_t bclk,
+        uint32_t tx_offset,
+        i2s_slave_bclk_polarity_t slave_bclk_polarity,
         void *app_data);
 
 /**
  * I2S TDM TX 16 ch slave task
  *
  * This task performs I2S TDM slave on the provided context which was
- * initialized with tdm_slave_tx_16_init(). It will perform
+ * initialized with i2s_tdm_slave_tx_16_init(). It will perform
  * callbacks over the i2s_callback_group_t callback group to get
  * data from the application using this component.
  * 
@@ -118,7 +120,7 @@ void tdm_slave_tx_16_init(
  * \param ctx             A pointer to the I2S TDM context to use.
  */
 void i2s_tdm_slave_tx_16_thread(
-        const i2s_tdm_ctx_t *ctx);
+        i2s_tdm_ctx_t *ctx);
 
 /**@}*/ // END: addtogroup hil_i2s_tdm_slave_tx16
 
@@ -163,20 +165,20 @@ void i2s_tdm_slave_tx_16_thread(
  *                       data specific to each I2S task instance.
  */
 void i2s_tdm_slave_init(
-        const i2s_tdm_ctx_t *ctx,
-        const i2s_callback_group_t *const i2s_cbg,
-        const port_t p_dout[],
-        const size_t num_out,
-        const port_t p_din[],
-        const size_t num_in,
-        const port_t p_fsync,
-        const port_t p_bclk,
-        const xclock_t bclk,
-        const uint32_t tx_offset,
-        const uint32_t fsync_len,
-        const uint32_t word_len,
-        const uint32_t ch_len,
-        const uint32_t ch_per_frame,
+        i2s_tdm_ctx_t *ctx,
+        i2s_callback_group_t *i2s_cbg,
+        port_t p_dout[],
+        size_t num_out,
+        port_t p_din[],
+        size_t num_in,
+        port_t p_fsync,
+        port_t p_bclk,
+        xclock_t bclk,
+        uint32_t tx_offset,
+        uint32_t fsync_len,
+        uint32_t word_len,
+        uint32_t ch_len,
+        uint32_t ch_per_frame,
         i2s_slave_bclk_polarity_t slave_bclk_pol,
         void *app_data);
 
@@ -193,6 +195,6 @@ void i2s_tdm_slave_init(
  * \param ctx             A pointer to the I2S TDM context to use.
  */
 void i2s_slave_tdm_thread(
-        const i2s_tdm_ctx_t *ctx);
+        i2s_tdm_ctx_t *ctx);
 
 /**@}*/ // END: addtogroup hil_i2s_tdm_slave

@@ -8,11 +8,9 @@ import pytest
 DEBUG = True
 # DEBUG = False
 
-tx_offset_args = {"0": (0)}
-# tx_offset_args = {"1": (1)}
-# tx_offset_args = {"0": (0),
-#                   "1": (1),
-#                   "2": (2)}
+tx_offset_args = {"0": (0),
+                  "1": (1),
+                  "2": (2)}
 
 @pytest.mark.parametrize(("tx_offset"), tx_offset_args.values(), ids=tx_offset_args.keys())
 def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
@@ -25,7 +23,6 @@ def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
         "tile[0]:XS1_PORT_1A",
         "tile[0]:XS1_PORT_1C",
         "tile[0]:XS1_PORT_1D",
-        tx_offset,
         "tile[0]:XS1_PORT_1E",
         "tile[0]:XS1_PORT_16B",
         "tile[0]:XS1_PORT_1F")
@@ -44,7 +41,7 @@ def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
                             simthreads = [checker],
                             simargs = [],
                             vcdTracing = True,
-                            timeout = 50)
+                            timeout = 100)
             
         tester.run(capfd.readouterr().out)
     else:

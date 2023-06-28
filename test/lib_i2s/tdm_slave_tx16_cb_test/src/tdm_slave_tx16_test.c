@@ -140,6 +140,7 @@ int main(void)
         PJOB(burn, ()),
         PJOB(burn, ()),
         PJOB(burn, ()),
+        PJOB(burn, ()),
         PJOB(burn, ())
     );
 

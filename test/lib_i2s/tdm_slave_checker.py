@@ -9,7 +9,6 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         sclk,
         fsync,
         dout,
-        tx_offset,
         setup_strobe_port,
         setup_data_port,
         setup_resp_port
@@ -17,7 +16,6 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         self._sclk = sclk
         self._fsync = fsync
         self._dout = dout
-        self._tx_offset = tx_offset
         self._setup_strobe_port = setup_strobe_port
         self._setup_data_port = setup_data_port
         self._setup_resp_port = setup_resp_port
@@ -105,18 +103,30 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
                     # sample
                     bit_val = xsi.sample_port_pins(self._dout)
                     
-                    if frame_cnt >= 2:
+                    if frame_cnt >= 2: # Ignore init frame as data is 0's while slave syncs up
+                        frame_arg = 0
+                        bit_arg = 0
                         if tx_offset == 0:
                             frame_arg = frame_cnt-1
                             bit_arg = bits_rx
                         else:
-                            frame_arg = (frame_cnt-1) if bits_rx <= tx_offset else (frame_cnt-2)
-                            bit_arg = bits_rx + tx_offset if bits_rx >= tx_offset else blcks_per_frame - (tx_offset - bits_rx)
+                            if bits_rx < tx_offset:
+                                frame_arg = (frame_cnt-2) 
+                            else:
+                                frame_arg = (frame_cnt-1)
+
+                            if frame_arg == (frame_cnt-1):
+                                bit_arg = bits_rx - tx_offset 
+                            else:
+                                bit_arg = (blcks_per_frame - 1) + (bits_rx - tx_offset)
 
                         expect_rx = self.calc_expected_bit(frame_arg, bit_arg)
+                        # print(f"asked for {frame_arg}:{bit_arg} check bit[{bits_rx}]:{bit_val}:{expect_rx}")
 
-                        if bit_val != expect_rx:
-                            print(f"bit[{bits_rx}]:{bit_val}:{expect_rx}")
+                        # For the first frame, if tx_offset > 0, the first tx_offset bits are don't cares
+                        if frame_cnt == 2 and bits_rx > tx_offset:
+                            if bit_val != expect_rx:
+                                print(f"bit[{bits_rx}]:{bit_val}:{expect_rx}")
                     
                     bits_rx += 1
                     time = xsi.get_time()

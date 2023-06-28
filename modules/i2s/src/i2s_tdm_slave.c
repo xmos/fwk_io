@@ -152,44 +152,37 @@ void i2s_tdm_slave_tx_16_thread(
         port_set_trigger_in_equal(ctx->p_fsync, 1);
         (void) port_in(ctx->p_fsync);
         port_timestamp_t fsync_edge_time = port_get_trigger_time(ctx->p_fsync);
-        port_start_buffered(ctx->p_fsync, 32);
-
+        
         /* Setup trigger times */
-        uint32_t fsync_trig_time = port_frame_time + fsync_edge_time - ctx->word_len - 2;
-        port_set_trigger_time(ctx->p_fsync, fsync_trig_time);
+        port_set_trigger_time(ctx->p_fsync, port_frame_time + fsync_edge_time);
         port_set_trigger_time(ctx->p_dout[0], port_frame_time + fsync_edge_time + ctx->tx_offset);
 
-        // (void) port_in(ctx->p_fsync);
-        for (int i=0; i<ctx->ch_per_frame; i++) {
+        port_out(ctx->p_dout[0], bitrev(out_samps[0]));
+        fsync_val = port_in(ctx->p_fsync);
+        fsync_edge_time = port_get_trigger_time(ctx->p_fsync);
+        port_set_trigger_time(ctx->p_fsync, port_frame_time + fsync_edge_time);
+        
+        for (int i=1; i<ctx->ch_per_frame; i++) {
             port_out(ctx->p_dout[0], bitrev(out_samps[i]));
-            // (void) port_in(ctx->p_fsync);
         }
 
         while(1) {
-            /* We only care about seeing the rising edge */
-            // fsync_val &= 0x8000000;
-            // if (fsync_val != 0x8000000) {
-            //     printf("fsync error, expected 0x%x, was 0x%x\n", 0x00000001, (unsigned int)fsync_val);
-            //     break;
-            // }
-
             /* Get frame data and tx */
             ctx->i2s_cbg->send((void*)ctx, ctx->ch_per_frame, (int32_t*)out_samps);
 
-            for (int i=0; i<ctx->ch_per_frame; i++) {
+            port_out(ctx->p_dout[0], bitrev(out_samps[0]));
+            fsync_val = port_in(ctx->p_fsync);
+            fsync_edge_time = port_get_trigger_time(ctx->p_fsync);
+            port_set_trigger_time(ctx->p_fsync, port_frame_time + fsync_edge_time);
+
+            /* Note: Still possible for us to alias, but this will catch nonperiod drifting */
+            if (fsync_val != 1) {
+                // printf("fsync_error\n");
+                break;
+            }
+
+            for (int i=1; i<ctx->ch_per_frame; i++) {
                 port_out(ctx->p_dout[0], bitrev(out_samps[i]));
-                // fsync_val = port_in(ctx->p_fsync);
-
-                // if (i == 1) {
-                //     fsync_val &= 0x00000003;
-                //     if (fsync_val != 0x00000002) {
-                //         printf("fsync error, expected 0x%x, was 0x%x\n", 0x00000001, (unsigned int)fsync_val);
-                //         break;
-                //     }
-                // }
-
-
-                // printf("fsync_val[%d] 0x%x\n", i, fsync_val);
             }
 
             /* Check for exit condition */
@@ -211,7 +204,6 @@ void i2s_tdm_slave_tx_16_thread(
 void i2s_slave_tdm_thread(
         i2s_tdm_ctx_t *ctx)
 {
-    printf("Not implemented\n");
     xassert(0); /* Not yet implemented */
     while(1) {
         ;

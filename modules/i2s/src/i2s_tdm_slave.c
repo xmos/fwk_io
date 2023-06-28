@@ -90,6 +90,7 @@ static void i2s_tdm_slave_init_resources(
     port_enable(ctx->p_bclk);
     clock_enable(ctx->bclk);
     clock_set_source_port(ctx->bclk, ctx->p_bclk);
+    clock_set_divide(ctx->bclk, 0);
 
     for(int i=0; i<ctx->num_out; i++) {
         port_start_buffered(ctx->p_dout[i], 32);
@@ -101,7 +102,7 @@ static void i2s_tdm_slave_init_resources(
         port_set_clock(ctx->p_din[i], ctx->bclk);
         port_clear_buffer(ctx->p_din[i]);
     }
-    port_start_buffered(ctx->p_fsync, 32);
+    port_enable(ctx->p_fsync);
     port_set_clock(ctx->p_fsync, ctx->bclk);
     port_clear_buffer(ctx->p_fsync);
     
@@ -110,6 +111,7 @@ static void i2s_tdm_slave_init_resources(
     } else {
         port_set_no_invert(ctx->p_bclk);
     }
+    clock_start(ctx->bclk);
 }
 
 static void i2s_tdm_slave_deinit_resources(
@@ -132,20 +134,16 @@ void i2s_tdm_slave_tx_16_thread(
     uint32_t out_samps[I2S_TDM_MAX_CH_PER_FRAME];
     uint32_t fsync_val = 0;
 
-printf("%d\n",__LINE__);
     while(1) {
         if (ctx->i2s_cbg->init != NULL) {
-printf("%d\n",__LINE__);
             ctx->i2s_cbg->init((void*)ctx, NULL);
         }
         xassert(ctx->num_out == 1);
-printf("%d\n",__LINE__);
         i2s_tdm_slave_init_resources(ctx);
 
         /* Get first frame data */
         ctx->i2s_cbg->send((void*)ctx, ctx->ch_per_frame, (int32_t*)out_samps);
 
-printf("%d\n",__LINE__);
         uint32_t port_frame_time = (ctx->ch_per_frame * ctx->word_len);
 
         /* Wait for first fsync rising edge to occur */
@@ -154,31 +152,44 @@ printf("%d\n",__LINE__);
         port_set_trigger_in_equal(ctx->p_fsync, 1);
         (void) port_in(ctx->p_fsync);
         port_timestamp_t fsync_edge_time = port_get_trigger_time(ctx->p_fsync);
+        port_start_buffered(ctx->p_fsync, 32);
 
-printf("%d\n",__LINE__);
         /* Setup trigger times */
-        uint32_t fsync_trig_time = port_frame_time + ctx->word_len + fsync_edge_time - 1;
+        uint32_t fsync_trig_time = port_frame_time + fsync_edge_time - ctx->word_len - 2;
         port_set_trigger_time(ctx->p_fsync, fsync_trig_time);
         port_set_trigger_time(ctx->p_dout[0], port_frame_time + fsync_edge_time + ctx->tx_offset);
+
+        // (void) port_in(ctx->p_fsync);
         for (int i=0; i<ctx->ch_per_frame; i++) {
             port_out(ctx->p_dout[0], bitrev(out_samps[i]));
+            // (void) port_in(ctx->p_fsync);
         }
 
-printf("%d\n",__LINE__);
         while(1) {
-            fsync_val = port_in(ctx->p_fsync);
             /* We only care about seeing the rising edge */
-            fsync_val &= 0xc0000000;
-            if (fsync_val != 0x80000000) {
-                printf("fsync error, expected 0x%x, was 0x%x\n", 0x80000000, (unsigned int)fsync_val);
-                break;
-            }
+            // fsync_val &= 0x8000000;
+            // if (fsync_val != 0x8000000) {
+            //     printf("fsync error, expected 0x%x, was 0x%x\n", 0x00000001, (unsigned int)fsync_val);
+            //     break;
+            // }
 
             /* Get frame data and tx */
             ctx->i2s_cbg->send((void*)ctx, ctx->ch_per_frame, (int32_t*)out_samps);
-            
+
             for (int i=0; i<ctx->ch_per_frame; i++) {
                 port_out(ctx->p_dout[0], bitrev(out_samps[i]));
+                // fsync_val = port_in(ctx->p_fsync);
+
+                // if (i == 1) {
+                //     fsync_val &= 0x00000003;
+                //     if (fsync_val != 0x00000002) {
+                //         printf("fsync error, expected 0x%x, was 0x%x\n", 0x00000001, (unsigned int)fsync_val);
+                //         break;
+                //     }
+                // }
+
+
+                // printf("fsync_val[%d] 0x%x\n", i, fsync_val);
             }
 
             /* Check for exit condition */

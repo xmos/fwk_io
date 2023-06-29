@@ -5,8 +5,8 @@ from pathlib import Path
 import Pyxsim
 import pytest
 
-DEBUG = True
-# DEBUG = False
+# DEBUG = True
+DEBUG = False
 
 tx_offset_args = {"0": (0),
                   "1": (1),
@@ -30,7 +30,7 @@ def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
     ## Temporarily building externally, see hil/build_lib_i2s_tests.sh
 
     if DEBUG:
-        tester = Pyxsim.testers.AssertiveComparisonTester(
+        tester = Pyxsim.testers.PytestComparisonTester(
             f'{cwd}/expected/tdm_slave_tx16_cb_test.expect',
             regexp = True,
             ordered = True
@@ -45,12 +45,10 @@ def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
             
         tester.run(capfd.readouterr().out)
     else:
-        tester = Pyxsim.testers.AssertiveComparisonTester(
+        tester = Pyxsim.testers.PytestComparisonTester(
             f'{cwd}/expected/tdm_slave_tx16_cb_test.expect',
             regexp = True,
             ordered = True,
-            suppress_multidrive_messages=True,
-            ignore=["CONFIG:.*"]
         )
 
         Pyxsim.run_with_pyxsim(binary,

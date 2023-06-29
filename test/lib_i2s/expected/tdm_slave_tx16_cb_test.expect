@@ -1,2 +1,3 @@
 TDM Slave TX 16 Checker Started
+CONFIG: bclk:\d+
 Got Settings:tx_offset \d+

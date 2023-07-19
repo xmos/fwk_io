@@ -88,9 +88,6 @@ DECLARE_JOB(i2s_slave_tdm_thread, (i2s_tdm_ctx_t *));
  * \param tx_offset      The number of bclks from FSYNC transition to the MSB
  *                       of Slot 0
  * \param slave_bclk_pol The polarity of bclk
- * \param app_data       A pointer to application specific data supplied
- *                       by the application. May be used for context
- *                       data specific to each I2S task instance.
  */
 void i2s_tdm_slave_tx_16_init(
         i2s_tdm_ctx_t *ctx,
@@ -100,8 +97,7 @@ void i2s_tdm_slave_tx_16_init(
         port_t p_bclk,
         xclock_t bclk,
         uint32_t tx_offset,
-        i2s_slave_bclk_polarity_t slave_bclk_polarity,
-        void *app_data);
+        i2s_slave_bclk_polarity_t slave_bclk_polarity);
 
 /**
  * I2S TDM TX 16 ch slave task
@@ -160,9 +156,6 @@ void i2s_tdm_slave_tx_16_thread(
  *                       word_len
  * \param ch_per_frame   The number of channels per frame
  * \param slave_bclk_pol The polarity of bclk
- * \param app_data       A pointer to application specific data supplied
- *                       by the application. May be used for context
- *                       data specific to each I2S task instance.
  */
 void i2s_tdm_slave_init(
         i2s_tdm_ctx_t *ctx,
@@ -179,8 +172,7 @@ void i2s_tdm_slave_init(
         uint32_t word_len,
         uint32_t ch_len,
         uint32_t ch_per_frame,
-        i2s_slave_bclk_polarity_t slave_bclk_pol,
-        void *app_data);
+        i2s_slave_bclk_polarity_t slave_bclk_pol);
 
 /**
  * I2S generic TDM slave task

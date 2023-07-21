@@ -26,7 +26,8 @@ void i2s_tdm_slave_init(
         uint32_t word_len,
         uint32_t ch_len,
         uint32_t ch_per_frame,
-        i2s_slave_bclk_polarity_t slave_bclk_pol)
+        i2s_slave_bclk_polarity_t slave_bclk_pol,
+        tdm_post_port_init_t tdm_post_port_init)
 {
     memset(ctx, 0, sizeof(i2s_tdm_ctx_t));
     ctx->i2s_cbg = i2s_cbg;
@@ -47,6 +48,7 @@ void i2s_tdm_slave_init(
     ctx->ch_len = ch_len;
     ctx->ch_per_frame = ch_per_frame;
     ctx->slave_bclk_polarity = I2S_SLAVE_SAMPLE_ON_BCLK_RISING;
+    ctx->tdm_post_port_init = tdm_post_port_init;
 }
 
 void i2s_tdm_slave_tx_16_init(
@@ -57,7 +59,8 @@ void i2s_tdm_slave_tx_16_init(
         port_t p_bclk,
         xclock_t bclk,
         uint32_t tx_offset,
-        i2s_slave_bclk_polarity_t slave_bclk_polarity)
+        i2s_slave_bclk_polarity_t slave_bclk_polarity,
+        tdm_post_port_init_t tdm_post_port_init)
 {
     port_t pdout[I2S_TDM_MAX_POUT_CNT]; 
     pdout[0] = p_dout;
@@ -77,7 +80,8 @@ void i2s_tdm_slave_tx_16_init(
         32, /* word len */
         32, /* ch len */
         16,  /* ch per frame */
-        slave_bclk_polarity);
+        slave_bclk_polarity,
+        tdm_post_port_init);
 }
 
 static void i2s_tdm_slave_init_resources(
@@ -131,11 +135,19 @@ void i2s_tdm_slave_tx_16_thread(
     uint32_t fsync_val = 0;
 
     while(1) {
+        xassert(ctx->num_out == 1);
+
         if (ctx->i2s_cbg->init != NULL) {
             ctx->i2s_cbg->init(ctx->i2s_cbg->app_data, NULL);
         }
-        xassert(ctx->num_out == 1);
+
         i2s_tdm_slave_init_resources(ctx);
+
+        /* Note we init the resources first to allow port delays etc. to be modified
+           after ports and clocks have been initialised */
+        if (ctx->tdm_post_port_init != NULL) {
+            ctx->tdm_post_port_init(ctx);
+        }
 
         /* Get first frame data */
         ctx->i2s_cbg->send(ctx->i2s_cbg->app_data, ctx->ch_per_frame, (int32_t*)out_samps);
@@ -183,7 +195,7 @@ void i2s_tdm_slave_tx_16_thread(
 
             /* Check for exit condition */
             if (ctx->i2s_cbg->restart_check != NULL) {
-                i2s_restart_t restart = ctx->i2s_cbg->restart_check(ctx->app_data);
+                i2s_restart_t restart = ctx->i2s_cbg->restart_check(ctx->i2s_cbg->app_data);
 
                 if (restart == I2S_RESTART) {
                     break;

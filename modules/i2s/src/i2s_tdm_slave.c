@@ -160,7 +160,8 @@ void i2s_tdm_slave_tx_16_thread(
         port_set_trigger_in_equal(ctx->p_fsync, 1);
         (void) port_in(ctx->p_fsync);
         port_timestamp_t fsync_edge_time = port_get_trigger_time(ctx->p_fsync);
-        
+        port_clear_trigger_in(ctx->p_fsync);
+
         /* Setup trigger times */
         port_set_trigger_time(ctx->p_fsync, port_frame_time + fsync_edge_time);
         port_set_trigger_time(ctx->p_dout[0], port_frame_time + fsync_edge_time + ctx->tx_offset);
@@ -181,7 +182,7 @@ void i2s_tdm_slave_tx_16_thread(
             port_out(ctx->p_dout[0], bitrev(out_samps[0]));
             fsync_val = port_in(ctx->p_fsync);
             fsync_edge_time = port_get_trigger_time(ctx->p_fsync);
-            port_set_trigger_time(ctx->p_fsync, port_frame_time + fsync_edge_time);
+            port_set_trigger_time(ctx->p_fsync, fsync_edge_time + port_frame_time);
 
             /* Note: Still possible for us to alias, but this will catch nonperiod drifting */
             if (fsync_val != 1) {

@@ -5,6 +5,7 @@
 #include <xs1.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #include <xcore/port.h>
 #include <xcore/clock.h>
@@ -72,6 +73,7 @@ typedef struct {
     uint32_t ch_len;
     uint32_t ch_per_frame;
     i2s_slave_bclk_polarity_t slave_bclk_polarity;
+    bool fysnch_error;
     void *app_data;
 } i2s_tdm_ctx_t;
 

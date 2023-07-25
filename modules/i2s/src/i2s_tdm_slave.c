@@ -49,6 +49,7 @@ void i2s_tdm_slave_init(
     ctx->ch_per_frame = ch_per_frame;
     ctx->slave_bclk_polarity = I2S_SLAVE_SAMPLE_ON_BCLK_RISING;
     ctx->tdm_post_port_init = tdm_post_port_init;
+    ctx->fysnch_error = false;
 }
 
 void i2s_tdm_slave_tx_16_init(
@@ -155,6 +156,7 @@ void i2s_tdm_slave_tx_16_thread(
         uint32_t port_frame_time = (ctx->ch_per_frame * ctx->word_len);
 
         /* Wait for first fsync rising edge to occur */
+        ctx->fysnch_error = false;
         port_set_trigger_in_equal(ctx->p_fsync, 0);
         (void) port_in(ctx->p_fsync);
         port_set_trigger_in_equal(ctx->p_fsync, 1);
@@ -186,7 +188,7 @@ void i2s_tdm_slave_tx_16_thread(
 
             /* Note: Still possible for us to alias, but this will catch nonperiod drifting */
             if (fsync_val != 1) {
-                // printf("fsync_error\n");
+                ctx->fysnch_error = true;
                 break;
             }
 

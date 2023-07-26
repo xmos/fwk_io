@@ -48,10 +48,9 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
             sclk_frequency = 49152000
             blcks_per_frame = bits_per_word * ch_count
 
-            print(f"CONFIG: bclk:{sclk_frequency}")
-            clock_half_period = float(1000000000000) / float(2 * (sclk_frequency/1000)) ## Want freq in khz
             edge_str = "FALLING" if self._sample_edge==self.sample_on_falling else "RISING"
             print(f"CONFIG: bclk:{sclk_frequency} sample_edge: {edge_str} fsynch_len: {fsync_len}")
+            clock_half_period = float(1000000000) / float(2 * (sclk_frequency/1000)) ## Want freq in khz
             clock_quarter_period = clock_half_period / 2
 
             #first do the setup rx

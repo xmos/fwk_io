@@ -24,6 +24,8 @@ fi
 # Run tests and copy results
 #****************************
 tests_start=`date +%s`
+tools_ver=`xcc --version`
+echo "Using tools_ver ${tools_ver}"
 
 for lib in ${hil_test_libs[@]}; do
     pushd .

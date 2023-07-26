@@ -4,6 +4,7 @@
 #include <xclib.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "xcore/port.h"
 #include "xcore/clock.h"
@@ -29,7 +30,7 @@ port_t setup_resp_port = XS1_PORT_1F;
 #define TEST_NUM_CH 16
 #endif
 
-int32_t test_data[TEST_FRAME_COUNT][TEST_NUM_CH] = {0};
+int32_t test_data[TEST_FRAME_COUNT][TEST_NUM_CH] = {{0}};
 
 
 DECLARE_JOB(burn, (void));
@@ -73,6 +74,7 @@ static uint32_t request_response(
 I2S_CALLBACK_ATTR
 void i2s_init(void *app_data, i2s_config_t *i2s_config)
 {
+    printf("i2s_init\n");
     (void) app_data;
     (void) i2s_config;
 

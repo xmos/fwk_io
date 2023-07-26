@@ -24,13 +24,14 @@ port_t setup_data_port = XS1_PORT_16B;
 port_t setup_resp_port = XS1_PORT_1F;
 
 #ifndef TEST_FRAME_COUNT
-#define TEST_FRAME_COUNT 100
+#define TEST_FRAME_COUNT 20
 #endif
 #ifndef TEST_NUM_CH
 #define TEST_NUM_CH 16
 #endif
 
 int32_t test_data[TEST_FRAME_COUNT][TEST_NUM_CH] = {{0}};
+volatile int32_t cnt = 0;
 
 
 DECLARE_JOB(burn, (void));
@@ -78,6 +79,12 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
     (void) app_data;
     (void) i2s_config;
 
+    if (cnt > 0) {
+        printf("Restart likely due to fsynch error at frame count: %ld\n", cnt);
+        _Exit(1);
+    }
+
+
     /* Initialize test data */
     for (int i=1; i<=TEST_FRAME_COUNT; i++) {
         for (int j=0; j<TEST_NUM_CH; j++) {
@@ -92,20 +99,21 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
 I2S_CALLBACK_ATTR
 void i2s_send(void *app_data, size_t n, int32_t *send_data)
 {
-    static int32_t cnt = 0;
-
-    if (cnt == TEST_FRAME_COUNT) {
-        _Exit(1);
-    }
-
     memcpy(send_data, test_data[cnt], n * sizeof(int32_t));
-
-    cnt++;
 }
 
 I2S_CALLBACK_ATTR
 i2s_restart_t i2s_restart_check(void *app_data)
 {
+     cnt++;
+
+     if (cnt == TEST_FRAME_COUNT) {
+        port_sync(p_dout); // Wait for the port to empty so we get the whole frame before quitting
+        _Exit(1);
+
+     }
+
+
     return I2S_NO_RESTART;
 }
 

@@ -26,7 +26,8 @@ def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
         "tile[0]:XS1_PORT_1E",
         "tile[0]:XS1_PORT_16B",
         "tile[0]:XS1_PORT_1F",
-        sample_edge=TDMSlaveTX16Checker.sample_on_rising)
+        sample_edge=TDMSlaveTX16Checker.sample_on_rising,
+        sclk_frequency=33000000)
 
     ## Temporarily building externally, see hil/build_lib_i2s_tests.sh
 

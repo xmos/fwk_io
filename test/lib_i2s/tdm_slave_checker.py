@@ -15,7 +15,8 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         setup_strobe_port,
         setup_data_port,
         setup_resp_port,
-        sample_edge
+        sample_edge,
+        sclk_frequency
     ):
         self._sclk = sclk
         self._fsync = fsync
@@ -24,6 +25,7 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         self._setup_data_port = setup_data_port
         self._setup_resp_port = setup_resp_port
         self._sample_edge = sample_edge
+        self._sclk_frequency = sclk_frequency
 
     def get_setup_data(self, 
                        xsi: Pyxsim.pyxsim.Xsi, 
@@ -45,12 +47,11 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
             ch_count = 16
             fsync_len = 1
 
-            sclk_frequency = 49152000
             blcks_per_frame = bits_per_word * ch_count
 
             edge_str = "FALLING" if self._sample_edge==self.sample_on_falling else "RISING"
-            print(f"CONFIG: bclk:{sclk_frequency} sample_edge: {edge_str} fsynch_len: {fsync_len}")
-            clock_half_period = float(1000000000) / float(2 * (sclk_frequency/1000)) ## Want freq in khz
+            print(f"CONFIG: bclk:{self._sclk_frequency} sample_edge: {edge_str} fsynch_len: {fsync_len}")
+            clock_half_period = float(1000000000) / float(2 * (self._sclk_frequency/1000)) ## Want freq in Hz
             clock_quarter_period = clock_half_period / 2
 
             #first do the setup rx

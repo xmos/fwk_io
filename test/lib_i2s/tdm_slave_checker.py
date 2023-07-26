@@ -4,6 +4,9 @@ import Pyxsim
 
 class TDMSlaveTX16Checker(Pyxsim.SimThread):
 
+    sample_on_falling = 0
+    sample_on_rising = 1
+
     def __init__(
         self,
         sclk,
@@ -11,7 +14,8 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         dout,
         setup_strobe_port,
         setup_data_port,
-        setup_resp_port
+        setup_resp_port,
+        sample_edge
     ):
         self._sclk = sclk
         self._fsync = fsync
@@ -19,6 +23,7 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         self._setup_strobe_port = setup_strobe_port
         self._setup_data_port = setup_data_port
         self._setup_resp_port = setup_resp_port
+        self._sample_edge = sample_edge
 
     def get_setup_data(self, 
                        xsi: Pyxsim.pyxsim.Xsi, 
@@ -45,6 +50,8 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
 
             print(f"CONFIG: bclk:{sclk_frequency}")
             clock_half_period = float(1000000000000) / float(2 * (sclk_frequency/1000)) ## Want freq in khz
+            edge_str = "FALLING" if self._sample_edge==self.sample_on_falling else "RISING"
+            print(f"CONFIG: bclk:{sclk_frequency} sample_edge: {edge_str} fsynch_len: {fsync_len}")
             clock_quarter_period = clock_half_period / 2
 
             #first do the setup rx
@@ -59,9 +66,9 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
             print(f"Got Settings:tx_offset {tx_offset}")
 
             # drive initial values while slave starts up for the first time
-            xsi.drive_port_pins(self._sclk, 1)
+            xsi.drive_port_pins(self._sclk, 1 if self._sample_edge == self.sample_on_rising else 0)
             xsi.drive_port_pins(self._fsync, 0)
-            self.wait_until(xsi.get_time() + 10000000)
+            self.wait_until(xsi.get_time() + 1000000)
 
             frame_cnt = 0
             # Start test
@@ -69,11 +76,14 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
                 bits_rx = 0
                 bclk_val = 0
 
+
                 # print(f"frame:{frame_cnt}")
                 for i in range(0, blcks_per_frame):
+                    if i % bits_per_word == 0:
+                        word_rx = 0
 
                     # bclk
-                    xsi.drive_port_pins(self._sclk, 0)
+                    xsi.drive_port_pins(self._sclk, 0 if self._sample_edge == self.sample_on_rising else 1)
 
                     # fsync
                     if bits_rx % blcks_per_frame == 0:
@@ -87,7 +97,7 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
                     self.wait_until(time)
 
                     # bclk
-                    xsi.drive_port_pins(self._sclk, 1)
+                    xsi.drive_port_pins(self._sclk, 1 if self._sample_edge == self.sample_on_rising else 0)
 
                     # fsync (unchanged)
                     if bits_rx % blcks_per_frame == 0:
@@ -102,6 +112,7 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
 
                     # sample
                     bit_val = xsi.sample_port_pins(self._dout)
+                    word_rx |= bit_val << ((i - tx_offset) % bits_per_word)
                     
                     if frame_cnt >= 2: # Ignore init frame as data is 0's while slave syncs up
                         frame_arg = 0
@@ -126,21 +137,24 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
                         # For the first frame, if tx_offset > 0, the first tx_offset bits are don't cares
                         if frame_cnt == 2 and bits_rx > tx_offset:
                             if bit_val != expect_rx:
-                                print(f"bit[{bits_rx}]:{bit_val}:{expect_rx}")
+                                print(f"ERROR: bit[{bits_rx}]:{bit_val}:{expect_rx}")
                     
                     bits_rx += 1
                     time = xsi.get_time()
                     time = time + clock_quarter_period
                     self.wait_until(time)
 
+                    if i % bits_per_word == bits_per_word - 1:
+                        print(f"Received word: {frame_cnt} {i // bits_per_word} {hex(word_rx)}")
+
                 frame_cnt += 1
 
     def calc_expected_bit(self, frame, bit):
         # Each sample in the tdm_slave_tx16_test output is in the format
-        # bin AAAABBBB BBBBBBBB BBBBBBBB BBBBBBBB
+        # bin AAAAAAAA BBBBBBBB BBBBBBBB BBBBBBBB
         # Where:
-        #   AAAA is the channel id, [0,15]
-        #   BBBB BBBBBBBB BBBBBBBB BBBBBBBB is frame num starting at 1
+        #   AAAAAAAA is the channel id, [0,255]
+        #   BBBBBBBB BBBBBBBB BBBBBBBB is frame num starting at 1
         # Additionally, the output data is bitrev, so that it shows up
         # in a more easily recognizable format on the wire in vcd traces
         ret = 0

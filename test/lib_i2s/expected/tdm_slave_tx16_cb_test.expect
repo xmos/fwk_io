@@ -1,6 +1,6 @@
-i2s_init
 TDM Slave TX 16 Checker Started
 CONFIG: bclk:\d+ sample_edge: [A-Z]+ fsynch_len: \d+
+i2s_init
 Got Settings:tx_offset \d+
 Received word: 0 0 0x0
 Received word: 0 1 0x0

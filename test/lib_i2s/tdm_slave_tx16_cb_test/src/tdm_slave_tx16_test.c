@@ -82,7 +82,7 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
     for (int i=1; i<=TEST_FRAME_COUNT; i++) {
         for (int j=0; j<TEST_NUM_CH; j++) {
             /* bit rev and start with 1 to make it easier to see on the wire */
-            test_data[i-1][j] = bitrev((j << 28) | i);
+            test_data[i-1][j] = bitrev((j << 24) | i);
         }
     }
     

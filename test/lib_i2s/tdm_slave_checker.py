@@ -161,8 +161,8 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         ch = bit // 32
         ch_index = bit % 32
 
-        if ch_index >= 28:
-            ret = (ch >> (ch_index - 28)) & 0b1
+        if ch_index >= 24:
+            ret = (ch >> (ch_index - 24)) & 0b1
         else:
             ret = (frame >> ch_index) & 0b1
 

@@ -38,7 +38,7 @@ for lib in ${hil_test_libs[@]}; do
     echo "************************"
     #https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
     #Looks like runners are 2 cores (maybe 2 HT) so run 4 at a time for speedup
-    pytest -n 4 --junitxml="test_results.xml" ${lib}/test_*.py
+    pytest -n 4 --junitxml="test_results_${lib}.xml" ${lib}/test_*.py
     popd
 done
 
@@ -47,7 +47,7 @@ tests_end=`date +%s`
 #****************************
 # Check results
 #****************************
-pytest test_verify_results.py ${hil_test_libs[*]}
+pytest test_verify_results.py --lib_names '${hil_test_libs[*]'}
 
 #****************************
 # Display time results

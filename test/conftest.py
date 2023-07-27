@@ -25,6 +25,8 @@ def pytest_collection_modifyitems(config, items):
 
 def pytest_addoption(parser):
     parser.addoption("--nightly", action="store_true")
+    parser.addoption("--lib_names", action="store", default=[], help="Optional list of libs to verify the output from")
+
 
 @pytest.fixture
 def build():

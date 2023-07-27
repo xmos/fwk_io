@@ -36,7 +36,7 @@
  * TDM post resource initialization event callback.
  *
  * The TDM component will call this after it first initializes the ports. 
- * This gives the app write the chance to make adjustments to port timing which
+ * This gives the app the chance to make adjustments to port timing which
  * are often needed when clocking above 15MHz.
  *
  * \param i2s_tdm_ctx Points to i2s_tdm_ctx_t struct allowing the resources to be
@@ -73,7 +73,7 @@ typedef struct {
     uint32_t ch_len;
     uint32_t ch_per_frame;
     i2s_slave_bclk_polarity_t slave_bclk_polarity;
-    bool fysnch_error;
+    bool fysnch_error; /* This is set (and can be checked in tdm_post_port_init() if needed) */
     void *app_data;
 } i2s_tdm_ctx_t;
 
@@ -134,7 +134,7 @@ void i2s_tdm_slave_tx_16_init(
  * callbacks over the i2s_callback_group_t callback group to get
  * data from the application using this component.
  * 
- * This thread outputs assumes 1 output port, 32b word length,
+ * This thread assumes 1 data output port, 32b word length,
  * 32b channel length, and 16 channels per frame.
  *
  * The component performs I2S TDM slave so will expect the fsync and
@@ -174,7 +174,7 @@ void i2s_tdm_slave_tx_16_thread(
  * \param p_bclk                The bit clock input port. MUST be a 1b port
  * \param bclk                  A clock that will get configured for use with
  *                              the bit clock
- * \param tx_offset             The number of bclks from FSYNC transition to the MSB
+ * \param tx_offset             The number of BCLKS from FSYNC transition to the MSB
  *                              of Slot 0 
  * \param fsync_len             The length of the FSYNC in BCLKS
  * \param word_len              The number of bits in each sample frame slot.

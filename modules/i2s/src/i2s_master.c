@@ -31,6 +31,8 @@ static void i2s_init_ports(
 {
     size_t i;
 
+    clock_stop(bclk);
+
     port_reset(p_bclk);
     port_set_clock(p_bclk, bclk);
     port_set_out_clock(p_bclk);

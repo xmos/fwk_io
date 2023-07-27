@@ -1,33 +1,35 @@
 #!/usr/bin/env python
-# Copyright 2021 XMOS LIMITED.
+# Copyright 2021-2023 XMOS LIMITED.
 # This Software is subject to the terms of the XMOS Public Licence: Version 1.
 import sys
 import pytest
 import xml.etree.ElementTree as ET
 
-if len(sys.argv) == 2:
-    libs = ["lib_uart", "lib_i2c", "lib_i2s", "lib_spi"]
-else:
-    libs = sys.argv[2:]
 
-acceptable_outcomes = ("skipped",)
-result_fname = "test_results.xml"
+@pytest.fixture(scope="session")
+def lib_name(pytestconfig):
+    lib_name = pytestconfig.getoption("lib_name").split()
+    return lib_name
 
-test_libs = {lib: lib + "/" + result_fname for lib in libs}
-
-
-@pytest.mark.parametrize("fname", test_libs.values(), ids=test_libs.keys())
-def test_results(fname):
-    tree = ET.parse(fname)
+def test_results(lib_name):
+    lib = lib_name[0]
+    result_fname = f"test_results_{lib}.xml"
+    tree = ET.parse(result_fname)
     root = tree.getroot()
     tsuite = root.find("testsuite")
+
+    acceptable_outcomes = ("skipped",)
+    
 
     # There should at least be some tests in here. Assert that this is the case.
     assert len(tsuite) > 0
 
     for testcase in tsuite.iter("testcase"):
+
         # Test passed if there are no children
         if len(testcase) == 0:
+            if "name" in testcase.attrib:
+                print(testcase.attrib['name'], "passed")
             continue
         # Otherwise, test was either skipped, errored, or failed. The testcase
         # will have a child with a relevant tag - skipped, error, or failure.
@@ -37,3 +39,4 @@ def test_results(fname):
                 assert (
                     child.tag in acceptable_outcomes
                 ), f"A test reports as {child.tag}, which is not accepted."
+            print(testcase.attrib['name'], child.tag )

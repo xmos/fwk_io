@@ -1,6 +1,12 @@
 IO Framework change log
 =======================
 
+3.1.0
+-----
+
+  * ADDED: TDM16 Slave Tx library
+
+
 3.0.1
 -----
 

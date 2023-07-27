@@ -14,7 +14,7 @@ print = partial(print, flush=True)
 class Clock(px.SimThread):
 
     def __init__(self, port: str) -> None:
-        self._rate = 1000000000
+        self._rate = 100000000 # Just set to arbitrary 100MHz initially
         self._driving = True
         self._half_period = float(500000000000) / self._rate
         self._port = port

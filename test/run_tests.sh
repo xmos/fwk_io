@@ -24,6 +24,8 @@ fi
 # Run tests and copy results
 #****************************
 tests_start=`date +%s`
+tools_ver=`xcc --version`
+echo "Using tools_ver ${tools_ver}"
 
 for lib in ${hil_test_libs[@]}; do
     pushd .
@@ -36,7 +38,7 @@ for lib in ${hil_test_libs[@]}; do
     echo "************************"
     #https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
     #Looks like runners are 2 cores (maybe 2 HT) so run 4 at a time for speedup
-    cd ${lib} && pytest -n 4 --junitxml="test_results.xml"
+    pytest -n 4 --junitxml="test_results_${lib}.xml" ${lib}/test_*.py
     popd
 done
 
@@ -45,7 +47,9 @@ tests_end=`date +%s`
 #****************************
 # Check results
 #****************************
-pytest test_verify_results.py ${hil_test_libs[*]}
+for lib in ${hil_test_libs[@]}; do
+    pytest test_verify_results.py --lib_name ${lib}
+done
 
 #****************************
 # Display time results

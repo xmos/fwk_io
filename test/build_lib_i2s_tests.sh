@@ -79,6 +79,9 @@ applications=(
     "test_hil_i2s_slave_test_1_4_0_inv              XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
     "test_hil_i2s_slave_test_1_0_4_inv              XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
     "test_hil_i2s_slave_test_1_2_2_inv              XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+    "test_hil_i2s_tdm_tx16_slave_test_0               XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+    "test_hil_i2s_tdm_tx16_slave_test_1               XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
+    "test_hil_i2s_tdm_tx16_slave_test_2               XCORE-AI-EXPLORER  xmos_cmake_toolchain/xs3a.cmake"
 )
 
 # perform builds

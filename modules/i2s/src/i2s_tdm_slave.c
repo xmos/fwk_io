@@ -47,7 +47,7 @@ void i2s_tdm_slave_init(
     ctx->word_len = word_len;
     ctx->ch_len = ch_len;
     ctx->ch_per_frame = ch_per_frame;
-    ctx->slave_bclk_polarity = I2S_SLAVE_SAMPLE_ON_BCLK_RISING;
+    ctx->slave_bclk_polarity = slave_bclk_pol;
     ctx->tdm_post_port_init = tdm_post_port_init;
     ctx->fysnch_error = false;
 }

@@ -35,7 +35,7 @@ def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
         tester = Pyxsim.testers.PytestComparisonTester(
             f'{cwd}/expected/tdm_slave_tx16_cb_test.expect',
             regexp = True,
-            ordered = True
+            ordered = False # We are mixing sim and host prints so avoid race conditions
         )
 
         with capfd.disabled():
@@ -49,7 +49,7 @@ def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
         tester = Pyxsim.testers.PytestComparisonTester(
             f'{cwd}/expected/tdm_slave_tx16_cb_test.expect',
             regexp = True,
-            ordered = True,
+            ordered = False # We are mixing sim and host prints so avoid race conditions
         )
 
         Pyxsim.run_with_pyxsim(binary,

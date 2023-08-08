@@ -17,7 +17,7 @@ xclock_t bclk = XS1_CLKBLK_2;
 
 port_t setup_strobe_port = XS1_PORT_1L;
 port_t setup_data_port = XS1_PORT_16A;
-port_t  setup_resp_port = XS1_PORT_1M;
+port_t setup_resp_port = XS1_PORT_1M;
 
 #define MAX_RATIO 4
 

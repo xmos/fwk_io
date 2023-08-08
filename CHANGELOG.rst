@@ -5,7 +5,7 @@ IO Framework change log
 -----
 
   * ADDED: TDM16 Slave Tx library
-
+  * CHANGE: Updated lib_mic_array to v5.1.0
 
 3.0.1
 -----

@@ -1,4 +1,4 @@
-// Copyright 2021-2022 XMOS LIMITED.
+// Copyright 2021-2023 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #ifndef _i2s_h_
 #define _i2s_h_
@@ -47,9 +47,9 @@ typedef enum i2s_slave_bclk_polarity {
  * This structure describes the configuration of an I2S bus.
  */
 typedef struct i2s_config {
-  unsigned mclk_bclk_ratio;                       /**< The ratio between the master clock and bit clock signals. */
-  i2s_mode_t mode;                                /**< The mode of the LR clock. */
-  i2s_slave_bclk_polarity_t slave_bclk_polarity;  /**< Slave bit clock polarity. */
+    unsigned mclk_bclk_ratio;                       /**< The ratio between the master clock and bit clock signals. */
+    i2s_mode_t mode;                                /**< The mode of the LR clock. */
+    i2s_slave_bclk_polarity_t slave_bclk_polarity;  /**< Slave bit clock polarity. */
 } i2s_config_t;
 
 /**
@@ -58,9 +58,9 @@ typedef struct i2s_config {
  * Restart commands that can be signalled to the I2S or TDM component.
  */
 typedef enum i2s_restart {
-  I2S_NO_RESTART = 0,      /**< Do not restart. */
-  I2S_RESTART,             /**< Restart the bus (causes the I2S/TDM to stop and a new init callback to occur allowing reconfiguration of the BUS). */
-  I2S_SHUTDOWN             /**< Shutdown. This will cause the I2S/TDM component to exit. */
+    I2S_NO_RESTART = 0,      /**< Do not restart. */
+    I2S_RESTART,             /**< Restart the bus (causes the I2S/TDM to stop and a new init callback to occur allowing reconfiguration of the BUS). */
+    I2S_SHUTDOWN             /**< Shutdown. This will cause the I2S/TDM component to exit. */
 } i2s_restart_t;
 
 /**
@@ -73,10 +73,13 @@ typedef enum i2s_restart {
  *                    by the application. May be used for context
  *                    data specific to each I2S task instance.
  *
+ *                    This will contain the TDM context when in TDM mode.
+ *
  * \param i2s_config  This structure is provided if the connected
  *                    component drives an I2S bus. The members
  *                    of the structure should be set to the
- *                    required configuration.
+ *                    required configuration. This is ignored when
+ *                    used in TDM mode.
  */
 typedef void (*i2s_init_t)(void *app_data, i2s_config_t *i2s_config);
 
@@ -160,6 +163,7 @@ typedef struct {
     /** Pointer to application specific data which is passed to each callback. */
     void *app_data;
 } i2s_callback_group_t;
+
 
 /**@}*/ // END: addtogroup hil_i2s_core
 

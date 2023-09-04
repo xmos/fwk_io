@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblib_delta_sigma.a CMakeFiles/lib_delta_sigma.dir/src/delta_sigma3.c.o CMakeFiles/lib_delta_sigma.dir/src/upsample_x24_coef.c.o CMakeFiles/lib_delta_sigma.dir/src/upsample_x8_coef.c.o
+/usr/bin/ranlib liblib_delta_sigma.a

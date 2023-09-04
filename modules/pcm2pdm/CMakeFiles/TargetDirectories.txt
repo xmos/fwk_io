@@ -1,0 +1,3 @@
+/home/alexyiu/xmos/project/pdmout/sln_voice/modules/io/modules/pcm2pdm/CMakeFiles/lib_delta_sigma.dir
+/home/alexyiu/xmos/project/pdmout/sln_voice/modules/io/modules/pcm2pdm/CMakeFiles/edit_cache.dir
+/home/alexyiu/xmos/project/pdmout/sln_voice/modules/io/modules/pcm2pdm/CMakeFiles/rebuild_cache.dir

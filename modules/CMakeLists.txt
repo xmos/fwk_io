@@ -7,6 +7,7 @@ endif()
 add_subdirectory(spi)
 add_subdirectory(xud)
 add_subdirectory(uart)
+add_subdirectory(pcm2pdm)
 
 if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS2A))
     ## Create an aggregate of framework_io general libraries
@@ -26,6 +27,7 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
         INTERFACE
             lib_i2s
             lib_mic_array
+            lib_delta_sigma
     )
     add_library(io::audio ALIAS framework_io_audio)
 

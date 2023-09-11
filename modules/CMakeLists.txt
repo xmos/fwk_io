@@ -3,11 +3,12 @@ add_subdirectory(i2c)
 add_subdirectory(i2s)
 if(${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A)
     add_subdirectory(mic_array)
+    add_subdirectory(pcm2pdm)
 endif()
 add_subdirectory(spi)
 add_subdirectory(xud)
 add_subdirectory(uart)
-add_subdirectory(pcm2pdm)
+
 
 if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS2A))
     ## Create an aggregate of framework_io general libraries

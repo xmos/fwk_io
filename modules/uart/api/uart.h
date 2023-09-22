@@ -26,7 +26,7 @@
  * Enum type representing the different options
  * parity types.
  */
-typedef enum uart_parity_t {
+typedef enum {
   UART_PARITY_NONE = 0,
   UART_PARITY_EVEN,
   UART_PARITY_ODD

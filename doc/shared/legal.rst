@@ -1,8 +1,6 @@
 .. _sln_voice_copyright:
 
 
-.. include:: ../_templates/disclaimer.rst
-
 Licenses
 ========
 

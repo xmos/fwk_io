@@ -44,3 +44,19 @@ jobs:
       - name: Build documentation
         run: |
           docker run --rm -t -u "$(id -u):$(id -g)" -v ${{ github.workspace }}:/build ${DOC_BUILDER_IMAGE} -vv
+
+      - name: Save HTML documentation artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: fwk_io_docs_html
+          path: ./doc/_build/html
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
+          retention-days: 5
+
+      - name: Save PDF documentation artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: fwk_io_docs_pdf
+          path: ./doc/_build/latex
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
+          retention-days: 5

@@ -1,18 +1,18 @@
 .. include:: ../../../substitutions.rst
 
-***********
-|I2S| Slave
-***********
+*********
+TDM Slave
+*********
 
-|I2S| Slave Usage
-=================
+TDM Slave Usage
+===============
 
-The following code snippet demonstrates the basic usage of an |I2S| slave device.
+The following code snippet demonstrates the basic usage of a TDM slave device.
 
 .. code-block:: c
 
    #include <xs1.h>
-   #include "i2s.h"
+   #include "i2s_tdm_slave.h"
 
    // Setup ports and clocks
    port_t p_bclk  = XS1_PORT_1B;
@@ -21,8 +21,24 @@ The following code snippet demonstrates the basic usage of an |I2S| slave device
    port_t p_dout[4] = {XS1_PORT_1H, XS1_PORT_1I, XS1_PORT_1J, XS1_PORT_1K};
    xclock_t bclk = XS1_CLKBLK_1;
 
+   port_t p_bclk = TDM_SLAVEPORT_BCLK;
+   port_t p_fsync = TDM_SLAVEPORT_FSYNCH;
+   port_t p_dout = TDM_SLAVEPORT_OUT;
+
+   xclock_t bclk = TDM_SLAVEPORT_CLK_BLK;
+
    port_enable(p_bclk); 
    // NOTE:  p_lrclk does not need to be enabled by the caller
+   
+
+   i2s_tdm_ctx_t ctx;
+   i2s_callback_group_t i_i2s = {
+           .init = (i2s_init_t) i2s_init,
+           .restart_check = (i2s_restart_check_t) i2s_restart_check,
+           .receive = NULL,
+           .send = (i2s_send_t) i2s_send,
+           .app_data = (void*)read_buffer_ptr,
+   };
    
    // Setup callbacks
    //  NOTE: See API or SDK examples for more on using the callbacks

@@ -33,7 +33,7 @@ All |I2S| functions can be accessed via the ``i2s.h`` header:
 
 .. code-block:: c
    
-   #include <i2s.h>
+   #include "i2s.h"
 
 TDM is a protocol between two devices similar to |I2S| where one is the *master* and one is the *slave* which determines who drives the clock lines. The protocol is made up of four signals shown in :ref:`tdm_wire_table`.
 
@@ -53,13 +53,6 @@ TDM is a protocol between two devices similar to |I2S| where one is the *master*
        - Data line, driven by one of the slave or master depending on
          the data direction. There may be several data lines in
          differing directions.
-
-All |I2S| functions can be accessed via the ``i2s.h`` header:
-
-.. code-block:: c
-   
-   #include "i2s.h"
-
 
 Currently supported TDM functions can be accessed via the ``i2s_tdm_slave.h`` header:
 

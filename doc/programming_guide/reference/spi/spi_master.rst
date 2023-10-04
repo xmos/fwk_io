@@ -12,7 +12,7 @@ The following code snippet demonstrates the basic usage of an SPI master device.
 .. code-block:: c
 
    #include <xs1.h>
-   #include <spi.h>
+   #include "spi.h"
 
    spi_master_t spi_ctx;
    spi_master_device_t spi_dev;

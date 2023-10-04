@@ -4,14 +4,13 @@
 |I2S| Library
 #############
 
-A software defined library that allows you to control an |I2S| (Inter-IC Sound) bus via xcore ports. |I2S| is a digital data streaming interfaces particularly appropriate for transmission of audio data. TDM is a special case of |I2S| which supports transport of more than two audio channels and is partially included in the library. The components in the library are controlled via C and can either act as |I2S| master, |I2S| slave or TDM slave.
+A software defined library that allows you to control an |I2S| (Inter-IC Sound) bus via xcore ports. |I2S| is a digital data streaming interfaces particularly appropriate for transmission of audio data. TDM is a special case of |I2S| which supports transport of more than two audio channels and is partially included in the library at this time. The components in the library are controlled via C and can either act as |I2S| master, |I2S| slave or TDM slave.
 
 .. note::
 
     TDM is only currently supported as a TDM16 slave Tx component. Expansion of this library to support master or slave Rx is possible and can be done on request.
 
-|I2S| is a protocol between two devices where one is the *master* and one is the *slave* which determines which side drives the clock lines. The protocol is made up of four signals shown
-in :ref:`i2s_wire_table`.
+|I2S| is a protocol between two devices where one is the *master* and one is the *slave* which determines who drives the clock lines. The protocol is made up of four signals shown in :ref:`i2s_wire_table`.
 
 .. _i2s_wire_table:
 
@@ -36,8 +35,7 @@ All |I2S| functions can be accessed via the ``i2s.h`` header:
    
    #include <i2s.h>
 
-TDM is a protocol between two devices similar where one is the *master* and one is the *slave* which determines which side drives the clock lines. The protocol is made up of four signals shown
-in :ref:`tdm_wire_table`.
+TDM is a protocol between two devices similar to |I2S| where one is the *master* and one is the *slave* which determines who drives the clock lines. The protocol is made up of four signals shown in :ref:`tdm_wire_table`.
 
 .. _tdm_wire_table:
 
@@ -50,7 +48,7 @@ in :ref:`tdm_wire_table`.
        - Bit clock. This is a fixed divide of the *MCLK* and is driven
          by the master.
      * - *FSYCNH*
-       - Frame synchronisation. Toggles at the start of the TDM data frame. This is driven by the master.
+       - Frame synchronization. Toggles at the start of the TDM data frame. This is driven by the master.
      * - *DATA*
        - Data line, driven by one of the slave or master depending on
          the data direction. There may be several data lines in
@@ -76,4 +74,4 @@ Currently supported TDM functions can be accessed via the ``i2s_tdm_slave.h`` he
    i2s_common.rst
    i2s_master.rst
    i2s_slave.rst
-   tdm_slave.rst
+   i2s_tdm_slave.rst

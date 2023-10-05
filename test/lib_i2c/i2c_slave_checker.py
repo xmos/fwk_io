@@ -140,4 +140,3 @@ class I2CSlaveChecker(SimThread):
                     self.read(xsi, 0)
                 self.read(xsi, 1)
                 self.stop_bit(xsi)
-        print("FINISHED")

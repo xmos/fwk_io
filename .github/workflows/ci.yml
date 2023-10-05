@@ -26,7 +26,7 @@ on:
     inputs:
       run_driver_tests:
         description: 'Force Driver Testing? (yes/no)'
-        default: 'yes'
+        default: 'no'
 
 env:
   FWK_IO_TESTER_IMAGE: 'ghcr.io/xmos/fwk_io_tester:develop'
@@ -66,9 +66,6 @@ jobs:
             uart:
               - 'modules/uart/**'
               - 'test/lib_uart/**'
-      - run: |
-        echo "Eval of github.event.inputs.run_driver_tests: ${{ github.event.inputs.run_driver_tests }}"
-
   i2ctests:
     needs: changes
     name: I2C tests

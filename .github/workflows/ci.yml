@@ -26,7 +26,7 @@ on:
     inputs:
       run_driver_tests:
         description: 'Force Driver Testing? (yes/no)'
-        default: 'no'
+        default: 'yes'
 
 env:
   FWK_IO_TESTER_IMAGE: 'ghcr.io/xmos/fwk_io_tester:develop'

@@ -20,6 +20,7 @@ def test_i2c_basic_slave(build, capfd, request, nightly, speed):
 
     checker = I2CSlaveChecker("tile[0]:XS1_PORT_1A",
                             "tile[0]:XS1_PORT_1B",
+                            "tile[0]:XS1_PORT_1C",
                             tsequence =
                             [("w", 0x3c, [0x33, 0x44, 0x3]),
                             ("r", 0x3c, 3),
@@ -34,6 +35,9 @@ def test_i2c_basic_slave(build, capfd, request, nightly, speed):
                                             ordered = True)
 
     sim_args = ['--weak-external-drive']
+
+    # Use this to enable VCD tracing for debug
+    # sim_args = ['--weak-external-drive', '--vcd-tracing', '-tile tile[0] -ports -instructions -o trace.vcd']
 
     # The environment here should be set up with variables defined in the
     # CMakeLists.txt file to define the build. For this test, speed is only

@@ -19,6 +19,7 @@
 
 port_t p_scl = XS1_PORT_1A;
 port_t p_sda = XS1_PORT_1B;
+port_t p_ready = XS1_PORT_1C; // Used to signal FW is ready
 
 static int i = 0;
 static int ack_index = 0;
@@ -71,7 +72,6 @@ int i2c_shutdown(void *app_data) {
     return 0;
 }
 
-
 DECLARE_JOB(burn, (void));
 
 void burn(void) {
@@ -88,6 +88,10 @@ int main(void) {
         .shutdown = (shutdown_t) i2c_shutdown,
         .app_data = NULL,
     };
+
+    // Send ready signal to checker
+    port_enable(p_ready);
+    port_out(p_ready, 1);
 
     PAR_JOBS (
         PJOB(i2c_slave, (&i_i2c, p_scl, p_sda, DEVICE_ADDR)),

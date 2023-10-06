@@ -20,11 +20,13 @@ class I2CSlaveChecker(SimThread):
         self,
         scl_port: str,
         sda_port: str,
+        ready_port: str,
         speed: int,
         tsequence: Sequence[Tuple[Literal["r", "w"], Union[Sequence[int], int]]],
     ) -> None:
         self._scl_port = scl_port
         self._sda_port = sda_port
+        self._ready_port = ready_port
         self._tsequence = tsequence
         self._speed = speed
         self._bit_time = 1000000000 / speed
@@ -117,7 +119,11 @@ class I2CSlaveChecker(SimThread):
         xsi = self.xsi
         xsi.drive_port_pins(self._scl_port, 1)
         xsi.drive_port_pins(self._sda_port, 1)
-        self.wait_until(xsi.get_time() + 30000000)
+
+        # Wait for the device to bring up it's tx port, indicating it is ready
+        self.wait((lambda _x: self.xsi.is_port_driving(self._ready_port)))
+        self.wait_until(xsi.get_time() + 50 * 1000 * 1000) # Wait further 50us to ensure I2C slave is initialised and ready
+
         for (typ, addr, d) in self._tsequence:
             if typ == "w":
                 self.start_bit(xsi)

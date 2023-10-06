@@ -12,7 +12,7 @@ The following code snippet demonstrates the basic usage of an |I2S| slave device
 .. code-block:: c
 
    #include <xs1.h>
-   #include <i2s.h>
+   #include "i2s.h"
 
    // Setup ports and clocks
    port_t p_bclk  = XS1_PORT_1B;

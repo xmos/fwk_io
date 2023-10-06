@@ -1,6 +1,13 @@
 IO Framework change log
 =======================
 
+3.3.0
+-----
+
+  * CHANGE: Updated xmos_cmake_toolchain to v1.0.0
+  * CHANGE: Updated lib_xud to v2.2.4
+  * CHANGE: Updated test_support to v1.0.0
+
 3.2.0
 -----
 

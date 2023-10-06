@@ -30,7 +30,8 @@ All UART functions can be accessed via the ``uart.h`` header:
 
 .. code-block:: c
    
-   #include <uart.h>
+   #include "uart.h"
+
 
 .. toctree::
    :maxdepth: 2

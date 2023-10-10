@@ -11,7 +11,7 @@ The following code snippet demonstrates the basic usage of an |I2S| master devic
 .. code-block:: c
 
    #include <xs1.h>
-   #include <i2s.h>
+   #include "i2s.h"
 
    port_t p_i2s_dout[1];
    port_t p_bclk;

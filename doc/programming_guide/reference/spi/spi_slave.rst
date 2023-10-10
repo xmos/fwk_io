@@ -11,7 +11,7 @@ The following code snippet demonstrates the basic usage of an SPI slave device.
 .. code-block:: c
 
    #include <xs1.h>
-   #include <spi.h>
+   #include "spi.h"
 
    // Setup callbacks
    //  NOTE: See API or SDK examples for more on using the callbacks

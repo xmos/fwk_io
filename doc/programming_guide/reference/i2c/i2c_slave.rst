@@ -11,7 +11,7 @@ The following code snippet demonstrates the basic usage of an |I2C| slave device
 .. code-block:: c
 
    #include <xs1.h>
-   #include <i2c.h>
+   #include "i2c.h"
 
    port_t p_scl = XS1_PORT_1A;
    port_t p_sda = XS1_PORT_1B;

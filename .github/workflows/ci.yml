@@ -57,15 +57,31 @@ jobs:
             i2c:
               - 'modules/i2c/**'
               - 'test/lib_i2c/**'
+              - 'modules/xud/lib_xud/**'
+              - 'test/modules/test_support/**'
+              - 'xmos_cmake_toolchain/**'
+              - 'modules/mic_array/**'
             i2s:
               - 'modules/i2s/**'
               - 'test/lib_i2s/**'
+              - 'modules/xud/lib_xud/**'
+              - 'test/modules/test_support/**'
+              - 'xmos_cmake_toolchain/**'
+              - 'modules/mic_array/**'
             spi:
               - 'modules/spi/**'
               - 'test/lib_spi/**'
+              - 'modules/xud/lib_xud/**'
+              - 'test/modules/test_support/**'
+              - 'xmos_cmake_toolchain/**'
+              - 'modules/mic_array/**'
             uart:
               - 'modules/uart/**'
               - 'test/lib_uart/**'
+              - 'modules/xud/lib_xud/**'
+              - 'test/modules/test_support/**'
+              - 'xmos_cmake_toolchain/**'
+              - 'modules/mic_array/**'
   i2ctests:
     needs: changes
     name: I2C tests

@@ -11,7 +11,7 @@ The following code snippet demonstrates the basic usage of an |I2C| master devic
 .. code-block:: c
 
    #include <xs1.h>
-   #include <i2c.h>
+   #include "i2c.h"
 
    i2c_master_t i2c_ctx;
 

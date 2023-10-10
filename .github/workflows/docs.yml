@@ -25,7 +25,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  DOC_BUILDER_IMAGE: 'ghcr.io/xmos/xmosdoc:pr-67'
+  DOC_BUILDER_IMAGE: 'ghcr.io/xmos/xmosdoc:v4.0'
 
 jobs:
   build_documentation:

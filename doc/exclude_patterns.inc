@@ -1,5 +1,7 @@
 # The following patterns are to be excluded from the documentation build
-doc/README.rst
+**CHANGELOG*
+**LICENSE*
+**README*
 examples
 test
 tools

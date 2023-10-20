@@ -1,0 +1,14 @@
+---
+project: fwk_io
+title: XCORE Peripheral IO Framework
+version: 3.3.0
+
+documentation:
+  exclude_patterns_path: doc/exclude_patterns.inc
+  doxygen_projects:
+    fwk_io:
+      doxyfile_path: doc/Doxyfile.inc
+  pdfs:
+    doc/programming_guide/index:
+      pdf_title: "{{title}} - Programming Guide"
+      pdf_filename: "{{project}}_programming_guide_v{{version}}"

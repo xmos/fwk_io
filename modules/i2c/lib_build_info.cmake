@@ -1,4 +1,4 @@
-set(LIB_NAME lib_i2c)
+set(LIB_NAME i2c)
 set(LIB_VERSION 3.3.0)
 set(LIB_INCLUDES api)
 set(LIB_DEPENDENT_MODULES "")

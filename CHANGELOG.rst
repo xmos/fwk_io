@@ -1,6 +1,12 @@
 IO Framework change log
 =======================
 
+3.4.0
+-----
+
+  * CHANGE: Documentation infrastructure updates
+  * CHANGE: Updated test_support to v2.0.0
+
 3.3.0
 -----
 

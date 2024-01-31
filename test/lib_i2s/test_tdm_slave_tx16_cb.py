@@ -51,7 +51,7 @@ def test_tdm_slavetx16_cb(capfd, request, nightly, tx_offset):
                 timeout=100,
             )
 
-        tester.run(capfd.readouterr().out)
+        tester.run(capfd.readouterr().out.splitlines())
     else:
         tester = Pyxsim.testers.AssertiveComparisonTester(
             f"{cwd}/expected/tdm_slave_tx16_cb_test.expect",

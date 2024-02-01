@@ -38,6 +38,11 @@ if(NOT DEFINED ENV{RX_TX_INCS})
 else()
     set(RX_TX_INCS $ENV{RX_TX_INCS})
 endif()
+if(NOT DEFINED ENV{BITDEPTHS})
+    set(BITDEPTHS "32" "16")
+else()
+    set(BITDEPTHS $ENV{BITDEPTHS})
+endif()
 
 #**********************
 # Setup targets
@@ -47,25 +52,28 @@ math(EXPR num_inc_pairs "${RX_TX_INCS_LEN} / 2")
 
 foreach(i RANGE 1 ${num_inc_pairs})
     list(POP_FRONT RX_TX_INCS rx_inc tx_inc)
-    foreach(rate ${SAMPLE_RATES})
-        foreach(chan ${CHANS})
-            set(TARGET_NAME "test_hil_backpressure_test_${rate}_${chan}_${rx_inc}_${tx_inc}")
-            add_executable(${TARGET_NAME} EXCLUDE_FROM_ALL)
-            target_sources(${TARGET_NAME} PUBLIC ${APP_SOURCES})
-            target_include_directories(${TARGET_NAME} PUBLIC ${APP_INCLUDES})
-            target_compile_definitions(${TARGET_NAME}
-                PRIVATE
-                    ${APP_COMPILE_DEFINITIONS}
-                    SAMPLE_FREQUENCY=${rate}
-                    NUM_I2S_LINES=${chan}
-                    RECEIVE_DELAY_INCREMENT=${rx_inc}
-                    SEND_DELAY_INCREMENT=${tx_inc}
-            )
-            target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS})
-            target_link_libraries(${TARGET_NAME} PUBLIC lib_i2s framework_core_utils)
-            target_link_options(${TARGET_NAME} PRIVATE ${APP_LINK_OPTIONS})
-            set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
-            unset(TARGET_NAME)
+    foreach(bd ${BITDEPTHS})
+        foreach(rate ${SAMPLE_RATES})
+            foreach(chan ${CHANS})
+                set(TARGET_NAME "test_hil_backpressure_test_${bd}_${rate}_${chan}_${rx_inc}_${tx_inc}")
+                add_executable(${TARGET_NAME} EXCLUDE_FROM_ALL)
+                target_sources(${TARGET_NAME} PUBLIC ${APP_SOURCES})
+                target_include_directories(${TARGET_NAME} PUBLIC ${APP_INCLUDES})
+                target_compile_definitions(${TARGET_NAME}
+                    PRIVATE
+                        ${APP_COMPILE_DEFINITIONS}
+                        DATA_BITS=${bd}
+                        SAMPLE_FREQUENCY=${rate}
+                        NUM_I2S_LINES=${chan}
+                        RECEIVE_DELAY_INCREMENT=${rx_inc}
+                        SEND_DELAY_INCREMENT=${tx_inc}
+                )
+                target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS})
+                target_link_libraries(${TARGET_NAME} PUBLIC lib_i2s framework_core_utils)
+                target_link_options(${TARGET_NAME} PRIVATE ${APP_LINK_OPTIONS})
+                set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
+                unset(TARGET_NAME)
+            endforeach()
         endforeach()
     endforeach()
 endforeach()

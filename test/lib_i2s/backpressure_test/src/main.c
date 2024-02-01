@@ -25,6 +25,12 @@
 #ifndef SEND_DELAY_INCREMENT
 #define SEND_DELAY_INCREMENT 5
 #endif
+#ifndef DATA_BITS
+#define DATA_BITS 32
+#endif
+
+// Applications are expected to define this macro if they want non-32b I2S width
+#define I2S_DATA_BITS DATA_BITS
 
 #ifndef GENERATE_MCLK
 #define GENERATE_MCLK 0
@@ -54,7 +60,7 @@ static volatile int send_delay = 0;
 void i2s_init(void *app_data, i2s_config_t *i2s_config)
 {
     i2s_config->mode = I2S_MODE_I2S;
-    i2s_config->mclk_bclk_ratio = (MASTER_CLOCK_FREQUENCY/SAMPLE_FREQUENCY)/64;
+    i2s_config->mclk_bclk_ratio = MASTER_CLOCK_FREQUENCY/(SAMPLE_FREQUENCY*2*DATA_BITS);
 }
 
 void i2s_send(void *app_data, size_t n, int32_t *send_data)
@@ -79,7 +85,11 @@ i2s_restart_t i2s_restart_check(void *app_data)
     return I2S_NO_RESTART;
 }
 
+#if DATA_BITS == 32
 #define OVERHEAD_TICKS 185 // Some of the period needs to be allowed for the callbacks
+#else
+#define OVERHEAD_TICKS 185 // Non-32b data widths take longer to process
+#endif
 #define JITTER  1   //Allow for rounding so does not break when diff = period + 1
 #define N_CYCLES_AT_DELAY   1 //How many LR clock cycles to measure at each backpressure delay value
 #define DIFF_WRAP_16(new, old)  (new > old ? new - old : new + 0x10000 - old)

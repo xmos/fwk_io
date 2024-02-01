@@ -14,13 +14,16 @@ num_in_out_args = {
     "0ch_in,4ch_out": (0, 4),
 }
 
+bitdepth_args = {"16b": 16, "32b": 32}
 
+
+@pytest.mark.parametrize("bitdepth", bitdepth_args.values(), ids=bitdepth_args.keys())
 @pytest.mark.parametrize(
     ("num_in", "num_out"), num_in_out_args.values(), ids=num_in_out_args.keys()
 )
-def test_i2s_basic_master(build, capfd, nightly, request, num_in, num_out):
+def test_i2s_basic_master(build, capfd, nightly, request, bitdepth, num_in, num_out):
     test_level = "0" if nightly else "1"
-    id_string = f"{test_level}_{num_in}_{num_out}"
+    id_string = f"{bitdepth}_{test_level}_{num_in}_{num_out}"
     cwd = Path(request.fspath).parent
     binary = f"{cwd}/i2s_master_test/bin/test_hil_i2s_master_test_{id_string}.xe"
 
@@ -45,8 +48,8 @@ def test_i2s_basic_master(build, capfd, nightly, request, num_in, num_out):
         "tile[0]:XS1_PORT_16A",
         "tile[0]:XS1_PORT_1M",
         clk,
-        False,
-    )  # Don't check the bclk stops precisely as the hardware can't do that
+        False,  # Don't check the bclk stops precisely as the hardware can't do that
+    )
 
     tester = px.testers.AssertiveComparisonTester(
         f"{cwd}/expected/master_test.expect",
@@ -55,10 +58,16 @@ def test_i2s_basic_master(build, capfd, nightly, request, num_in, num_out):
         ignore=["CONFIG:.*?"],
     )
 
-    ## Temporarily building externally, see hil/build_lib_i2s_tests.sh
-    # build(directory = binary,
-    #         env = {"NUMS_IN_OUT":f'{num_in};{num_out}', "TEST_LEVEL":f'{test_level}'},
-    #         bin_child = id_string)
+    # # Temporarily building externally, see hil/build_lib_i2s_tests.sh
+    # build(
+    #     directory=binary,
+    #     env={
+    #         "BITDEPTHS": f"{bitdepth}",
+    #         "NUMS_IN_OUT": f"{num_in};{num_out}",
+    #         "TEST_LEVEL": f"{test_level}",
+    #     },
+    #     bin_child=id_string,
+    # )
 
     if DEBUG:
         with capfd.disabled():

@@ -15,7 +15,10 @@ rx_tx_inc_args = {
     "rx_delay_inc_100ns,tx_delay_inc_0ns": (10, 0),
 }
 
+bitdepth_args = {"16b": 16, "32b": 32}
 
+
+@pytest.mark.parametrize("bitdepth", bitdepth_args.values(), ids=bitdepth_args.keys())
 @pytest.mark.parametrize(
     "sample_rate", sample_rate_args.values(), ids=sample_rate_args.keys()
 )
@@ -36,11 +39,14 @@ def test_i2s_backpressure(
     num_channels,
     receive_increment,
     send_increment,
+    bitdepth,
 ):
     if (num_channels != 4) and not nightly:
         pytest.skip("Only run 4 channel tests unless it is a nightly")
 
-    id_string = f"{sample_rate}_{num_channels}_{receive_increment}_{send_increment}"
+    id_string = (
+        f"{bitdepth}_{sample_rate}_{num_channels}_{receive_increment}_{send_increment}"
+    )
 
     cwd = Path(request.fspath).parent
 
@@ -50,10 +56,17 @@ def test_i2s_backpressure(
         f"{cwd}/expected/backpressure_test.expect", regexp=True, ordered=True
     )
 
-    ## Temporarily building externally, see hil/build_lib_i2s_tests.sh
-    # build(directory = binary,
-    #         env = {"SAMPLE_RATES":sample_rate, "CHANS":num_channels, "RX_TX_INCS":f"{receive_increment};{send_increment}"},
-    #         bin_child = id_string)
+    # # Temporarily building externally, see hil/build_lib_i2s_tests.sh
+    # build(
+    #     directory=binary,
+    #     env={
+    #         "BITDEPTHS": bitdepth,
+    #         "SAMPLE_RATES": sample_rate,
+    #         "CHANS": num_channels,
+    #         "RX_TX_INCS": f"{receive_increment};{send_increment}",
+    #     },
+    #     bin_child=id_string,
+    # )
 
     subprocess.run(
         (

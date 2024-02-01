@@ -80,14 +80,15 @@ class I2SMasterChecker(px.SimThread):
         mclk_bclk_ratio: Number,
         num_outs: Number,
         num_ins: Number,
+        data_bits: Number,
         is_i2s_justified: bool,
         prefix: str = "",
     ) -> None:
         bclk_frequency = mclk_frequency / mclk_bclk_ratio
-        sr_frequency = bclk_frequency / 64
+        sr_frequency = bclk_frequency / (2 * data_bits)
 
         print(
-            f"{prefix}MCLK frequency: {mclk_frequency}, MCLK/BCLK ratio: {mclk_bclk_ratio}, BCLK frequency: {bclk_frequency},\tSample rate {sr_frequency}\tnum ins {num_outs},\tnum outs:{num_ins}, is i2s justified: {is_i2s_justified}"
+            f"{prefix}\tMCLK frequency: {mclk_frequency},\tMCLK/BCLK ratio: {mclk_bclk_ratio},\tBCLK frequency: {bclk_frequency},\tSample rate {sr_frequency},\tData bits:{data_bits},\tnum ins to checker: {num_outs},\tnum outs from checker: {num_ins}\tis i2s justified: {is_i2s_justified}"
         )
 
     def get_setup_data(
@@ -122,6 +123,9 @@ class I2SMasterChecker(px.SimThread):
             num_ins = self.get_setup_data(
                 xsi, self._setup_strobe_port, self._setup_data_port
             )
+            data_bits = self.get_setup_data(
+                xsi, self._setup_strobe_port, self._setup_data_port
+            )
             is_i2s_justified = self.get_setup_data(
                 xsi, self._setup_strobe_port, self._setup_data_port
             )
@@ -132,11 +136,13 @@ class I2SMasterChecker(px.SimThread):
                 mclk_bclk_ratio,
                 num_outs,
                 num_ins,
+                data_bits,
                 is_i2s_justified,
                 prefix="CONFIG: ",
             )
 
             bclk_frequency = mclk_frequency / mclk_bclk_ratio
+            data_bit_mask = int("1" * data_bits, base=2)
             max_num_in_or_outs = 4
             num_test_frames = 4
             error = False
@@ -197,13 +203,14 @@ class I2SMasterChecker(px.SimThread):
 
                 if frame_count > 0:
                     t = fall_time - rise_time
-                    if abs(t - half_period) > 4000000.0:
+                    if abs(t - half_period) > 4000000.0:  # 4ns
                         if not error:
                             self.print_setup(
                                 mclk_frequency,
                                 mclk_bclk_ratio,
                                 num_outs,
                                 num_ins,
+                                data_bits,
                                 is_i2s_justified,
                                 prefix="ERROR: ",
                             )
@@ -215,21 +222,23 @@ class I2SMasterChecker(px.SimThread):
 
                 # drive
                 for i in range(0, num_outs):
-                    xsi.drive_port_pins(self._dout[i], tx_word[i] >> 31)
+                    xsi.drive_port_pins(self._dout[i], tx_word[i] >> (data_bits - 1))
                     tx_word[i] = tx_word[i] << 1
 
                 self.wait_for_port_pins_change([self._bclk])
 
                 rise_time = xsi.get_time()
                 t = rise_time - fall_time
-                if abs(t - half_period) > 4000000.0:
+                if abs(t - half_period) > 4000000.0:  # 4ns
                     if not error:
                         self.print_setup(
                             mclk_frequency,
                             mclk_bclk_ratio,
                             num_outs,
                             num_ins,
+                            data_bits,
                             is_i2s_justified,
+                            prefix="ERROR: ",
                         )
                         print(
                             f"Timing error (rising edge): Frame: {frame_count} word: {word_count} bit: {bit_count}"
@@ -250,21 +259,23 @@ class I2SMasterChecker(px.SimThread):
                 left = xsi.sample_port_pins(self._lrclk)
 
                 bit_count += 1
-                if bit_count == 32:
+                if bit_count == data_bits:
                     bit_count = 0
 
                     if is_i2s_justified:
                         if lr_count != 1:
                             print("Bad I2S LR")
                     else:
-                        if lr_count != 32:
+                        if lr_count != data_bits:
                             if not error:
                                 self.print_setup(
                                     mclk_frequency,
                                     mclk_bclk_ratio,
                                     num_outs,
                                     num_ins,
+                                    data_bits,
                                     is_i2s_justified,
+                                    prefix="ERROR: ",
                                 )
                                 print("LR count error")
                             error = True
@@ -276,17 +287,19 @@ class I2SMasterChecker(px.SimThread):
                         else:
                             chan = i * 2 + left
 
-                        if rx_data[chan][frame_count] != rx_word[i]:
+                        if (data_bit_mask & rx_data[chan][frame_count]) != rx_word[i]:
                             if not error:
                                 self.print_setup(
                                     mclk_frequency,
                                     mclk_bclk_ratio,
                                     num_outs,
                                     num_ins,
+                                    data_bits,
                                     is_i2s_justified,
+                                    prefix="ERROR: ",
                                 )
                                 print(
-                                    f"rx error: expected:{rx_data[chan][frame_count]:08x} actual:{rx_word[i]:08x}"
+                                    f"rx error: expected:{data_bit_mask & rx_data[chan][frame_count]:08x} actual:{rx_word[i]:08x}"
                                 )
                             error = True
                         rx_word[i] = 0
@@ -301,7 +314,13 @@ class I2SMasterChecker(px.SimThread):
 
             if frame_count != num_test_frames:
                 self.print_setup(
-                    mclk_frequency, mclk_bclk_ratio, num_outs, num_ins, is_i2s_justified
+                    mclk_frequency,
+                    mclk_bclk_ratio,
+                    num_outs,
+                    num_ins,
+                    data_bits,
+                    is_i2s_justified,
+                    prefix="ERROR: ",
                 )
                 print(
                     f"Error: word lost: {frame_count} MCLK:{mclk_frequency} ratio:{mclk_bclk_ratio}"
@@ -326,7 +345,9 @@ class I2SMasterChecker(px.SimThread):
                             mclk_bclk_ratio,
                             num_outs,
                             num_ins,
+                            data_bits,
                             is_i2s_justified,
+                            prefix="ERROR: ",
                         )
                         print(
                             f"Unexpected bclk edge MCLK:{mclk_frequency} ratio:{mclk_bclk_ratio}"

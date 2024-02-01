@@ -4,8 +4,11 @@ from i2s_master_checker import Clock
 import Pyxsim as px
 from functools import partial
 
+HALF_SECOND_FS = 500000000000000
+ONE_SECOND_FS = HALF_SECOND_FS * 2
+
 # We need to disable output buffering for this test to work on MacOS; this has
-# no effect on Linux systems. Let's redefine print once to avoid putting the 
+# no effect on Linux systems. Let's redefine print once to avoid putting the
 # same argument everywhere.
 print = partial(print, flush=True)
 
@@ -53,7 +56,6 @@ class I2SSlaveChecker(px.SimThread):
         return xsi.sample_port_pins(setup_data_port)
 
     def run(self):
-
         xsi: px.pyxsim.Xsi = self.xsi
 
         bits_per_word = 32
@@ -94,7 +96,7 @@ class I2SSlaveChecker(px.SimThread):
             print(
                 f"CONFIG: bclk:{bclk_frequency} in:{num_ins} out:{num_outs} i2s_justified:{is_i2s_justified}"
             )
-            clock_half_period = float(1000000000000) / float(2 * bclk_frequency)
+            clock_half_period = float(ONE_SECOND_FS) / float(2 * bclk_frequency)
 
             if self._invert_bclk:
                 bclk0 = 1

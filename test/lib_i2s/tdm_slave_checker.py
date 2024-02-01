@@ -2,8 +2,10 @@
 # This Software is subject to the terms of the XMOS Public Licence: Version 1.
 import Pyxsim
 
-class TDMSlaveTX16Checker(Pyxsim.SimThread):
+ONE_SECOND_FS = 1000000000000
 
+
+class TDMSlaveTX16Checker(Pyxsim.SimThread):
     sample_on_falling = 0
     sample_on_rising = 1
 
@@ -16,7 +18,7 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         setup_data_port,
         setup_resp_port,
         sample_edge,
-        sclk_frequency
+        sclk_frequency,
     ):
         self._sclk = sclk
         self._fsync = fsync
@@ -27,10 +29,9 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         self._sample_edge = sample_edge
         self._sclk_frequency = sclk_frequency
 
-    def get_setup_data(self, 
-                       xsi: Pyxsim.pyxsim.Xsi, 
-                       setup_strobe_port: str, 
-                       setup_data_port: str) -> int:
+    def get_setup_data(
+        self, xsi: Pyxsim.pyxsim.Xsi, setup_strobe_port: str, setup_data_port: str
+    ) -> int:
         self.wait_for_port_pins_change([setup_strobe_port])
         self.wait_for_port_pins_change([setup_strobe_port])
         return xsi.sample_port_pins(setup_data_port)
@@ -39,7 +40,7 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
         xsi = self.xsi
         print("TDM Slave TX 16 Checker Started")
 
-        while True:            
+        while True:
             frame_count = 0
             bit_count = 0
             word_count = 0
@@ -49,26 +50,36 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
 
             blcks_per_frame = bits_per_word * ch_count
 
-            edge_str = "FALLING" if self._sample_edge==self.sample_on_falling else "RISING"
-            print(f"CONFIG: bclk:{self._sclk_frequency} sample_edge: {edge_str} fsynch_len: {fsync_len}")
-            clock_half_period = float(1000000000) / float(2 * (self._sclk_frequency/1000)) ## Want freq in Hz
+            edge_str = (
+                "FALLING" if self._sample_edge == self.sample_on_falling else "RISING"
+            )
+            print(
+                f"CONFIG: bclk:{self._sclk_frequency} sample_edge: {edge_str} fsynch_len: {fsync_len}"
+            )
+            clock_half_period = float(ONE_SECOND_FS) / float(
+                2 * (self._sclk_frequency / 1000)
+            )  ## Want freq in Hz
             clock_quarter_period = clock_half_period / 2
 
-            #first do the setup rx
+            # first do the setup rx
             strobe_val = xsi.sample_port_pins(self._setup_strobe_port)
             if strobe_val == 1:
                 xsi.drive_port_pins(self._sclk, 1)
                 xsi.drive_port_pins(self._fsync, 0)
                 self.wait_for_port_pins_change([self._setup_strobe_port])
 
-            tx_offset = self.get_setup_data(xsi, self._setup_strobe_port, self._setup_data_port)
-            
+            tx_offset = self.get_setup_data(
+                xsi, self._setup_strobe_port, self._setup_data_port
+            )
+
             print(f"Got Settings:tx_offset {tx_offset}")
 
             # drive initial values while slave starts up for the first time
-            xsi.drive_port_pins(self._sclk, 1 if self._sample_edge == self.sample_on_rising else 0)
+            xsi.drive_port_pins(
+                self._sclk, 1 if self._sample_edge == self.sample_on_rising else 0
+            )
             xsi.drive_port_pins(self._fsync, 0)
-            self.wait_until(xsi.get_time() + 1000000)
+            self.wait_until(xsi.get_time() + (ONE_SECOND_FS / 10))
 
             frame_cnt = 0
             # Start test
@@ -76,14 +87,16 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
                 bits_rx = 0
                 bclk_val = 0
 
-
                 # print(f"frame:{frame_cnt}")
                 for i in range(0, blcks_per_frame):
                     if i % bits_per_word == 0:
                         word_rx = 0
 
                     # bclk
-                    xsi.drive_port_pins(self._sclk, 0 if self._sample_edge == self.sample_on_rising else 1)
+                    xsi.drive_port_pins(
+                        self._sclk,
+                        0 if self._sample_edge == self.sample_on_rising else 1,
+                    )
 
                     # fsync
                     if bits_rx % blcks_per_frame == 0:
@@ -97,7 +110,10 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
                     self.wait_until(time)
 
                     # bclk
-                    xsi.drive_port_pins(self._sclk, 1 if self._sample_edge == self.sample_on_rising else 0)
+                    xsi.drive_port_pins(
+                        self._sclk,
+                        1 if self._sample_edge == self.sample_on_rising else 0,
+                    )
 
                     # fsync (unchanged)
                     if bits_rx % blcks_per_frame == 0:
@@ -113,21 +129,23 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
                     # sample
                     bit_val = xsi.sample_port_pins(self._dout)
                     word_rx |= bit_val << ((i - tx_offset) % bits_per_word)
-                    
-                    if frame_cnt >= 2: # Ignore init frame as data is 0's while slave syncs up
+
+                    if (
+                        frame_cnt >= 2
+                    ):  # Ignore init frame as data is 0's while slave syncs up
                         frame_arg = 0
                         bit_arg = 0
                         if tx_offset == 0:
-                            frame_arg = frame_cnt-1
+                            frame_arg = frame_cnt - 1
                             bit_arg = bits_rx
                         else:
                             if bits_rx < tx_offset:
-                                frame_arg = (frame_cnt-2) 
+                                frame_arg = frame_cnt - 2
                             else:
-                                frame_arg = (frame_cnt-1)
+                                frame_arg = frame_cnt - 1
 
-                            if frame_arg == (frame_cnt-1):
-                                bit_arg = bits_rx - tx_offset 
+                            if frame_arg == (frame_cnt - 1):
+                                bit_arg = bits_rx - tx_offset
                             else:
                                 bit_arg = (blcks_per_frame - 1) + (bits_rx - tx_offset)
 
@@ -138,14 +156,16 @@ class TDMSlaveTX16Checker(Pyxsim.SimThread):
                         if frame_cnt == 2 and bits_rx > tx_offset:
                             if bit_val != expect_rx:
                                 print(f"ERROR: bit[{bits_rx}]:{bit_val}:{expect_rx}")
-                    
+
                     bits_rx += 1
                     time = xsi.get_time()
                     time = time + clock_quarter_period
                     self.wait_until(time)
 
                     if i % bits_per_word == bits_per_word - 1:
-                        print(f"Received word: {frame_cnt} {i // bits_per_word} {hex(word_rx)}")
+                        print(
+                            f"Received word: {frame_cnt} {i // bits_per_word} {hex(word_rx)}"
+                        )
 
                 frame_cnt += 1
 

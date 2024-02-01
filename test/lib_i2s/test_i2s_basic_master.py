@@ -6,7 +6,6 @@ import Pyxsim as px
 import pytest
 
 DEBUG = False
-# DEBUG = True
 
 num_in_out_args = {
     "4ch_in,4ch_out": (4, 4),

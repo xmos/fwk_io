@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="101" time="247.296" timestamp="2024-02-06T17:07:56.269431" hostname="LT000874"><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-1ch-768kbps-16b]" time="1.177" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-3ch-768kbps-16b]" time="1.261" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-4ch-768kbps-16b]" time="9.296" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-2ch-768kbps-16b]" time="1.202" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-1ch-768kbps-32b]" time="1.176" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-2ch-768kbps-32b]" time="1.183" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-3ch-768kbps-32b]" time="1.208" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-1ch-384kbps-16b]" time="1.235" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-2ch-384kbps-16b]" time="1.269" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-3ch-384kbps-16b]" time="1.292" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-1ch-384kbps-32b]" time="1.214" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-2ch-384kbps-32b]" time="1.224" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-3ch-384kbps-32b]" time="1.226" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-1ch-192kbps-16b]" time="1.285" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-2ch-192kbps-16b]" time="1.332" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-3ch-192kbps-16b]" time="1.380" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-1ch-192kbps-32b]" time="1.242" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-2ch-192kbps-32b]" time="1.269" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-3ch-192kbps-32b]" time="1.280" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-1ch-768kbps-16b]" time="1.320" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-2ch-384kbps-16b]" time="1.330" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-3ch-384kbps-32b]" time="1.272" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-1ch-768kbps-32b]" time="1.279" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-2ch-384kbps-32b]" time="1.277" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-3ch-192kbps-16b]" time="1.404" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-4ch-768kbps-32b]" time="1.331" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-1ch-384kbps-16b]" time="1.370" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-2ch-192kbps-16b]" time="1.400" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-3ch-192kbps-32b]" time="1.325" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-4ch-384kbps-16b]" time="1.466" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-1ch-384kbps-32b]" time="1.290" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-2ch-192kbps-32b]" time="1.315" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-4ch-768kbps-16b]" time="10.515" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-4ch-384kbps-32b]" time="1.351" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-1ch-192kbps-16b]" time="1.374" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-3ch-768kbps-16b]" time="1.449" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-4ch-192kbps-16b]" time="1.482" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-1ch-192kbps-32b]" time="1.312" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-3ch-768kbps-32b]" time="1.328" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_50ns,tx_delay_inc_50ns-4ch-192kbps-32b]" time="1.384" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-2ch-768kbps-16b]" time="1.456" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-3ch-384kbps-16b]" time="1.451" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-4ch-384kbps-32b]" time="1.379" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-2ch-768kbps-32b]" time="1.364" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-1ch-384kbps-32b]" time="1.331" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-4ch-192kbps-16b]" time="1.479" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-2ch-384kbps-16b]" time="1.408" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-1ch-192kbps-16b]" time="1.397" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-4ch-192kbps-32b]" time="1.520" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-2ch-384kbps-32b]" time="1.508" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-1ch-192kbps-32b]" time="1.572" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-1ch-768kbps-16b]" time="1.688" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-2ch-192kbps-16b]" time="1.735" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-2ch-768kbps-16b]" time="1.724" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-4ch-768kbps-32b]" time="1.658" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-1ch-768kbps-32b]" time="1.629" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-2ch-192kbps-32b]" time="1.636" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-2ch-768kbps-32b]" time="1.623" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_0ns,tx_delay_inc_100ns-4ch-384kbps-16b]" time="1.754" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-1ch-384kbps-16b]" time="1.691" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-3ch-768kbps-16b]" time="1.763" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-3ch-192kbps-16b]" time="1.780" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-4ch-768kbps-32b]" time="1.664" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-4ch-192kbps-16b]" time="1.783" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-3ch-768kbps-32b]" time="1.627" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-3ch-192kbps-32b]" time="1.632" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-4ch-384kbps-16b]" time="1.753" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-4ch-192kbps-32b]" time="1.647" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-3ch-384kbps-16b]" time="1.760" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-4ch-768kbps-16b]" time="15.078" /><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-4ch-384kbps-32b]" time="1.763" /><testcase classname="lib_i2s.test_basic_master_external_clock" name="test_i2s_basic_master_external_clock[4ch_in,4ch_out-16b]" time="11.470"><failure message="AssertionError: Length of output (23 lines) greater than expected (1 lines) &#10;['I2S Master Checker Started', 'Bad I2S LR', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 1', 'rx error: expected:00000002 actual:00000066', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Error: test fail', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 0', 'LR count error', 'Error: test fail', 'Bad I2S LR', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 1', 'rx error: expected:00000002 actual:00000066', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Error: test fail', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 0', 'LR count error', 'Error: test fail'] &#10;['I2S Master Checker Started']">build = &lt;function build.&lt;locals&gt;._builder at 0x7f64a77c1940&gt;, capfd = &lt;_pytest.capture.CaptureFixture object at 0x7f64a7713620&gt;, nightly = True
+request = &lt;FixtureRequest for &lt;Function test_i2s_basic_master_external_clock[4ch_in,4ch_out-16b]&gt;&gt;, bitdepth = 16, num_in = 4, num_out = 4
+
+    @pytest.mark.parametrize("bitdepth", bitdepth_args.values(), ids=bitdepth_args.keys())
+    @pytest.mark.parametrize(
+        ("num_in", "num_out"), num_in_out_args.values(), ids=num_in_out_args.keys()
+    )
+    def test_i2s_basic_master_external_clock(
+        build, capfd, nightly, request, bitdepth, num_in, num_out
+    ):
+        test_level = "0" if nightly else "1"
+        id_string = f"{bitdepth}_{test_level}_{num_in}_{num_out}"
+        cwd = Path(request.fspath).parent
+        binary = f"{cwd}/i2s_master_external_clock_test/bin/test_hil_i2s_master_external_clock_test_{id_string}.xe"
+    
+        clk = Clock("tile[0]:XS1_PORT_1A")
+    
+        checker = I2SMasterChecker(
+            "tile[0]:XS1_PORT_1B",
+            "tile[0]:XS1_PORT_1C",
+            [
+                "tile[0]:XS1_PORT_1H",
+                "tile[0]:XS1_PORT_1I",
+                "tile[0]:XS1_PORT_1J",
+                "tile[0]:XS1_PORT_1K",
+            ],
+            [
+                "tile[0]:XS1_PORT_1D",
+                "tile[0]:XS1_PORT_1E",
+                "tile[0]:XS1_PORT_1F",
+                "tile[0]:XS1_PORT_1G",
+            ],
+            "tile[0]:XS1_PORT_1L",
+            "tile[0]:XS1_PORT_16A",
+            "tile[0]:XS1_PORT_1M",
+            clk,
+            False,
+        )  # Don't check the bclk stops precisely as the hardware can't do that
+    
+        tester = px.testers.AssertiveComparisonTester(
+            f"{cwd}/expected/master_test.expect",
+            regexp=True,
+            ordered=True,
+            ignore=["CONFIG:.*?"],
+        )
+    
+        # # Temporarily building externally, see hil/build_lib_i2s_tests.sh
+        # build(
+        #     directory=binary,
+        #     env={
+        #         "BITDEPTHS": f"{bitdepth}",
+        #         "NUMS_IN_OUT": f"{num_in};{num_out}",
+        #         "TEST_LEVEL": f"{test_level}",
+        #     },
+        #     bin_child=id_string,
+        # )
+    
+        px.run_with_pyxsim(binary, simthreads=[clk, checker])
+    
+&gt;       tester.run(capfd.readouterr().out.splitlines())
+
+lib_i2s/test_basic_master_external_clock.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;Pyxsim.testers.AssertiveComparisonTester object at 0x7f64a779f560&gt;
+capture = ['I2S Master Checker Started', 'Bad I2S LR', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency:... from checker: 4\tis i2s justified: 1', 'rx error: expected:00000002 actual:00000066', 'Bad I2S LR', 'Bad I2S LR', ...]
+
+    def run(self, capture: Union[str, Sequence[str]]):
+        regexp = self._regexp
+        ordered = self._ordered
+        ignore = self._ignore
+        golden = self._golden
+    
+        if type(golden) == str:
+            with open(self._golden) as golden:
+                expected = [x.strip() for x in golden.readlines()]
+        else:
+            expected = [x.strip() for x in golden]
+    
+        if expected:
+            if expected[0].strip() == "":
+                expected = expected[1:]
+        if expected:
+            if expected[-1].strip() == "":
+                expected = expected[:-1]
+    
+        # Apply filtering
+    
+        if self._smm:
+            capture = [x for x in capture if not x.startswith("Internal control pad and plugin driving in opposite directions")]
+        if ignore:
+            for pattern in ignore:
+                capture = [x for x in capture if not re.search(pattern, x)]
+        if capture:
+            if capture[0].strip() == "":
+                capture = capture[1:]
+        if capture:
+            if capture[-1].strip() == "":
+                capture = capture[:-1]
+    
+        # The essential principle here is that we don't want to loop over the
+        # data again until we really can't avoid it any longer.
+    
+        # Test that the capture is not too short
+        assert len(capture) &gt;= len(expected), f"Length of output ({len(capture)} lines) less than expected ({len(expected)} lines) \n{capture} \n{expected}"
+    
+        # Test that the capture is not too long
+&gt;       assert len(capture) &lt;= len(expected), f"Length of output ({len(capture)} lines) greater than expected ({len(expected)} lines) \n{capture} \n{expected}"
+E       AssertionError: Length of output (23 lines) greater than expected (1 lines) 
+E       ['I2S Master Checker Started', 'Bad I2S LR', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 1', 'rx error: expected:00000002 actual:00000066', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Error: test fail', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 0', 'LR count error', 'Error: test fail', 'Bad I2S LR', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 1', 'rx error: expected:00000002 actual:00000066', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Error: test fail', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 0', 'LR count error', 'Error: test fail'] 
+E       ['I2S Master Checker Started']
+
+modules/test_support/lib/python/Pyxsim/testers.py:218: AssertionError</failure></testcase><testcase classname="lib_i2s.test_backpressure" name="test_i2s_backpressure[rx_delay_inc_100ns,tx_delay_inc_0ns-3ch-384kbps-32b]" time="1.823" /><testcase classname="lib_i2s.test_basic_master_external_clock" name="test_i2s_basic_master_external_clock[4ch_in,0ch_out-16b]" time="9.998" /><testcase classname="lib_i2s.test_basic_master_external_clock" name="test_i2s_basic_master_external_clock[0ch_in,4ch_out-16b]" time="9.689" /><testcase classname="lib_i2s.test_basic_master_external_clock" name="test_i2s_basic_master_external_clock[4ch_in,4ch_out-32b]" time="11.671" /><testcase classname="lib_i2s.test_basic_master_external_clock" name="test_i2s_basic_master_external_clock[4ch_in,0ch_out-32b]" time="11.497" /><testcase classname="lib_i2s.test_basic_master_external_clock" name="test_i2s_basic_master_external_clock[0ch_in,4ch_out-32b]" time="11.518" /><testcase classname="lib_i2s.test_basic_master_external_clock" name="test_i2s_basic_master_external_clock[1ch_in,1ch_out-16b]" time="9.869" /><testcase classname="lib_i2s.test_i2s_basic_master" name="test_i2s_basic_master[4ch_in,4ch_out-32b]" time="26.975" /><testcase classname="lib_i2s.test_i2s_basic_master" name="test_i2s_basic_master[4ch_in,4ch_out-16b]" time="17.335"><failure message="AssertionError: Length of output (9 lines) greater than expected (1 lines) &#10;['I2S Master Checker Started', 'Bad I2S LR', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 1', 'rx error: expected:00000002 actual:00000066', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Error: test fail'] &#10;['I2S Master Checker Started']">build = &lt;function build.&lt;locals&gt;._builder at 0x7f64a6f139c0&gt;, capfd = &lt;_pytest.capture.CaptureFixture object at 0x7f64a78c1550&gt;, nightly = True, request = &lt;FixtureRequest for &lt;Function test_i2s_basic_master[4ch_in,4ch_out-16b]&gt;&gt;
+bitdepth = 16, num_in = 4, num_out = 4
+
+    @pytest.mark.parametrize("bitdepth", bitdepth_args.values(), ids=bitdepth_args.keys())
+    @pytest.mark.parametrize(
+        ("num_in", "num_out"), num_in_out_args.values(), ids=num_in_out_args.keys()
+    )
+    def test_i2s_basic_master(build, capfd, nightly, request, bitdepth, num_in, num_out):
+        test_level = "0" if nightly else "1"
+        id_string = f"{bitdepth}_{test_level}_{num_in}_{num_out}"
+        cwd = Path(request.fspath).parent
+        binary = f"{cwd}/i2s_master_test/bin/test_hil_i2s_master_test_{id_string}.xe"
+    
+        clk = Clock("tile[0]:XS1_PORT_1A")
+    
+        checker = I2SMasterChecker(
+            "tile[0]:XS1_PORT_1B",
+            "tile[0]:XS1_PORT_1C",
+            [
+                "tile[0]:XS1_PORT_1H",
+                "tile[0]:XS1_PORT_1I",
+                "tile[0]:XS1_PORT_1J",
+                "tile[0]:XS1_PORT_1K",
+            ],
+            [
+                "tile[0]:XS1_PORT_1D",
+                "tile[0]:XS1_PORT_1E",
+                "tile[0]:XS1_PORT_1F",
+                "tile[0]:XS1_PORT_1G",
+            ],
+            "tile[0]:XS1_PORT_1L",
+            "tile[0]:XS1_PORT_16A",
+            "tile[0]:XS1_PORT_1M",
+            clk,
+            False,  # Don't check the bclk stops precisely as the hardware can't do that
+        )
+    
+        tester = px.testers.AssertiveComparisonTester(
+            f"{cwd}/expected/master_test.expect",
+            regexp=True,
+            ordered=True,
+            ignore=["CONFIG:.*?"],
+        )
+    
+        # # Temporarily building externally, see hil/build_lib_i2s_tests.sh
+        # build(
+        #     directory=binary,
+        #     env={
+        #         "BITDEPTHS": f"{bitdepth}",
+        #         "NUMS_IN_OUT": f"{num_in};{num_out}",
+        #         "TEST_LEVEL": f"{test_level}",
+        #     },
+        #     bin_child=id_string,
+        # )
+    
+        if DEBUG:
+            with capfd.disabled():
+                px.run_with_pyxsim(
+                    binary,
+                    simthreads=[clk, checker],
+                    simargs=[
+                        "--vcd-tracing",
+                        f"-o i2s_trace_{num_in}_{num_out}.vcd -tile tile[0] -cycles -ports -ports-detailed -cores -instructions",
+                    ],
+                )
+        else:
+            px.run_with_pyxsim(binary, simthreads=[clk, checker])
+    
+&gt;       tester.run(capfd.readouterr().out.splitlines())
+
+lib_i2s/test_i2s_basic_master.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;Pyxsim.testers.AssertiveComparisonTester object at 0x7f64a77d7200&gt;
+capture = ['I2S Master Checker Started', 'Bad I2S LR', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency:... from checker: 4\tis i2s justified: 1', 'rx error: expected:00000002 actual:00000066', 'Bad I2S LR', 'Bad I2S LR', ...]
+
+    def run(self, capture: Union[str, Sequence[str]]):
+        regexp = self._regexp
+        ordered = self._ordered
+        ignore = self._ignore
+        golden = self._golden
+    
+        if type(golden) == str:
+            with open(self._golden) as golden:
+                expected = [x.strip() for x in golden.readlines()]
+        else:
+            expected = [x.strip() for x in golden]
+    
+        if expected:
+            if expected[0].strip() == "":
+                expected = expected[1:]
+        if expected:
+            if expected[-1].strip() == "":
+                expected = expected[:-1]
+    
+        # Apply filtering
+    
+        if self._smm:
+            capture = [x for x in capture if not x.startswith("Internal control pad and plugin driving in opposite directions")]
+        if ignore:
+            for pattern in ignore:
+                capture = [x for x in capture if not re.search(pattern, x)]
+        if capture:
+            if capture[0].strip() == "":
+                capture = capture[1:]
+        if capture:
+            if capture[-1].strip() == "":
+                capture = capture[:-1]
+    
+        # The essential principle here is that we don't want to loop over the
+        # data again until we really can't avoid it any longer.
+    
+        # Test that the capture is not too short
+        assert len(capture) &gt;= len(expected), f"Length of output ({len(capture)} lines) less than expected ({len(expected)} lines) \n{capture} \n{expected}"
+    
+        # Test that the capture is not too long
+&gt;       assert len(capture) &lt;= len(expected), f"Length of output ({len(capture)} lines) greater than expected ({len(expected)} lines) \n{capture} \n{expected}"
+E       AssertionError: Length of output (9 lines) greater than expected (1 lines) 
+E       ['I2S Master Checker Started', 'Bad I2S LR', 'ERROR: \tMCLK frequency: 12288000,\tMCLK/BCLK ratio: 2,\tBCLK frequency: 6144000.0,\tSample rate 192000.0,\tData bits:16,\tnum ins to checker: 4,\tnum outs from checker: 4\tis i2s justified: 1', 'rx error: expected:00000002 actual:00000066', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Bad I2S LR', 'Error: test fail'] 
+E       ['I2S Master Checker Started']
+
+modules/test_support/lib/python/Pyxsim/testers.py:218: AssertionError</failure></testcase><testcase classname="lib_i2s.test_i2s_basic_master" name="test_i2s_basic_master[1ch_in,1ch_out-16b]" time="11.781" /><testcase classname="lib_i2s.test_basic_master_external_clock" name="test_i2s_basic_master_external_clock[1ch_in,1ch_out-32b]" time="10.688" /><testcase classname="lib_i2s.test_i2s_basic_master" name="test_i2s_basic_master[0ch_in,4ch_out-16b]" time="15.898" /><testcase classname="lib_i2s.test_i2s_basic_master" name="test_i2s_basic_master[4ch_in,0ch_out-32b]" time="25.361" /><testcase classname="lib_i2s.test_i2s_basic_master" name="test_i2s_basic_master[4ch_in,0ch_out-16b]" time="15.759" /><testcase classname="lib_i2s.test_i2s_basic_master" name="test_i2s_basic_master[1ch_in,1ch_out-32b]" time="16.728" /><testcase classname="lib_i2s.test_i2s_basic_master" name="test_i2s_basic_master[0ch_in,4ch_out-32b]" time="26.421" /><testcase classname="lib_i2s.test_i2s_basic_slave" name="test_i2s_basic_slave[4ch_in,4ch_out-32b]" time="71.670" /><testcase classname="lib_i2s.test_i2s_basic_slave" name="test_i2s_basic_slave[4ch_in,4ch_out-16b]" time="40.842" /><testcase classname="lib_i2s.test_i2s_basic_slave" name="test_i2s_basic_slave[1ch_in,1ch_out-16b]" time="40.236" /><testcase classname="lib_i2s.test_i2s_basic_slave" name="test_i2s_basic_slave[1ch_in,1ch_out-32b]" time="70.340" /><testcase classname="lib_i2s.test_i2s_basic_slave" name="test_i2s_basic_slave[4ch_in,0ch_out-32b]" time="70.324" /><testcase classname="lib_i2s.test_i2s_basic_slave" name="test_i2s_basic_slave[0ch_in,4ch_out-16b]" time="40.185" /><testcase classname="lib_i2s.test_i2s_basic_slave" name="test_i2s_basic_slave[4ch_in,0ch_out-16b]" time="40.156" /><testcase classname="lib_i2s.test_slave_bclk_invert" name="test_i2s_slave_bclk_invert[2ch_in,2ch_out-32b]" time="63.536" /><testcase classname="lib_i2s.test_i2s_basic_slave" name="test_i2s_basic_slave[0ch_in,4ch_out-32b]" time="63.906" /><testcase classname="lib_i2s.test_tdm_slave_tx16_cb" name="test_tdm_slavetx16_cb[0]" time="8.582" /><testcase classname="lib_i2s.test_slave_bclk_invert" name="test_i2s_slave_bclk_invert[2ch_in,2ch_out-16b]" time="34.931" /><testcase classname="lib_i2s.test_tdm_slave_tx16_cb" name="test_tdm_slavetx16_cb[1]" time="6.649" /><testcase classname="lib_i2s.test_tdm_slave_tx16_cb" name="test_tdm_slavetx16_cb[2]" time="6.565" /></testsuite></testsuites>

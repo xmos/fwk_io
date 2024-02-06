@@ -60,7 +60,7 @@ foreach(i RANGE 1 ${num_pairs})
                     SMOKE=${test_level}
                     SLAVE_INVERT_BCLK=0
             )
-            target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS})
+            target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS} -DI2S_DATA_WIDTH=${bd})
             target_link_libraries(${TARGET_NAME} PUBLIC lib_i2s framework_core_utils)
             target_link_options(${TARGET_NAME} PRIVATE ${APP_LINK_OPTIONS})
             set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
@@ -79,7 +79,7 @@ foreach(i RANGE 1 ${num_pairs})
                     SMOKE=${test_level}
                     SLAVE_INVERT_BCLK=1
             )
-            target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS})
+            target_compile_options(${TARGET_NAME} PRIVATE ${APP_COMPILER_FLAGS} -DI2S_DATA_WIDTH=${bd})
             target_link_libraries(${TARGET_NAME} PUBLIC lib_i2s framework_core_utils)
             target_link_options(${TARGET_NAME} PRIVATE ${APP_LINK_OPTIONS})
             set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)

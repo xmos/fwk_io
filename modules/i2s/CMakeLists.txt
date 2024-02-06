@@ -27,21 +27,19 @@ if((${CMAKE_SYSTEM_NAME} STREQUAL XCORE_XS3A) OR (${CMAKE_SYSTEM_NAME} STREQUAL 
     list(APPEND LIB_PRIVATE_SOURCES ${${CMAKE_SYSTEM_NAME}_SOURCES})
 
     ## Create library target
-    add_library(lib_i2s STATIC)
+    add_library(lib_i2s INTERFACE)
     target_sources(lib_i2s
-        PUBLIC
+        INTERFACE
             ${LIB_PUBLIC_SOURCES}
-        PRIVATE
             ${LIB_PRIVATE_SOURCES}
     )
     target_include_directories(lib_i2s
-        PUBLIC
+        INTERFACE
             ${LIB_PUBLIC_INCLUDES}
-        PRIVATE
             ${LIB_PRIVATE_INCLUDES}
     )
     target_compile_options(lib_i2s
-        PRIVATE
+        INTERFACE
             ${LIB_COMPILE_FLAGS}
     )
 endif()

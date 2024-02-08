@@ -6,6 +6,8 @@ from pathlib import Path
 import pytest
 import Pyxsim as px
 
+DEBUG = False
+
 num_in_out_args = {
     "4ch_in,4ch_out": (4, 4),
     "1ch_in,1ch_out": (1, 1),
@@ -67,6 +69,19 @@ def test_i2s_basic_slave(build, capfd, nightly, request, bitdepth, num_in, num_o
     #     bin_child=id_string,
     # )
 
-    px.run_with_pyxsim(binary, simthreads=[clk, checker])
+    if DEBUG:
+        with capfd.disabled():
+            px.run_with_pyxsim(
+                binary,
+                simthreads=[clk, checker],
+                simargs=[
+                    "--vcd-tracing",
+                    f"-o i2s_trace_{num_in}_{num_out}.vcd -tile tile[0] -cycles -ports -ports-detailed -cores -instructions",
+                    "--trace-to",
+                    f"i2s_trace_{num_in}_{num_out}.txt",
+                ],
+            )
+    else:
+        px.run_with_pyxsim(binary, simthreads=[clk, checker])
 
     tester.run(capfd.readouterr().out.splitlines())

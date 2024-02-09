@@ -1,11 +1,14 @@
-# Copyright 2015-2021 XMOS LIMITED.
+# Copyright 2015-2024 XMOS LIMITED.
 # This Software is subject to the terms of the XMOS Public Licence: Version 1.
 from i2s_master_checker import Clock
 import Pyxsim as px
 from functools import partial
 
+HALF_SECOND_FS = 500000000000000
+ONE_SECOND_FS = HALF_SECOND_FS * 2
+
 # We need to disable output buffering for this test to work on MacOS; this has
-# no effect on Linux systems. Let's redefine print once to avoid putting the 
+# no effect on Linux systems. Let's redefine print once to avoid putting the
 # same argument everywhere.
 print = partial(print, flush=True)
 
@@ -53,10 +56,8 @@ class I2SSlaveChecker(px.SimThread):
         return xsi.sample_port_pins(setup_data_port)
 
     def run(self):
-
         xsi: px.pyxsim.Xsi = self.xsi
 
-        bits_per_word = 32
         num_frames = 4
         bclk0 = 0
         bclk1 = 1
@@ -84,6 +85,9 @@ class I2SSlaveChecker(px.SimThread):
             num_outs = self.get_setup_data(
                 xsi, self._setup_strobe_port, self._setup_data_port
             )
+            data_bits = self.get_setup_data(
+                xsi, self._setup_strobe_port, self._setup_data_port
+            )
             is_i2s_justified = self.get_setup_data(
                 xsi, self._setup_strobe_port, self._setup_data_port
             )
@@ -92,9 +96,9 @@ class I2SSlaveChecker(px.SimThread):
 
             bclk_frequency = (bclk_frequency_u << 16) + bclk_frequency_l
             print(
-                f"CONFIG: bclk:{bclk_frequency} in:{num_ins} out:{num_outs} i2s_justified:{is_i2s_justified}"
+                f"CONFIG: bclk:{bclk_frequency} in:{num_ins} out:{num_outs} data_bits: {data_bits} i2s_justified:{is_i2s_justified}"
             )
-            clock_half_period = float(1000000000000) / float(2 * bclk_frequency)
+            clock_half_period = float(ONE_SECOND_FS) / float(2 * bclk_frequency)
 
             if self._invert_bclk:
                 bclk0 = 1
@@ -130,28 +134,40 @@ class I2SSlaveChecker(px.SimThread):
             ]
 
             # there is one frame lead in for the slave to sync to
+            # The logic of this section is slightly convoluted, but essentially
+            #     we are counting samples in the /whole/ LR period:
+            #
+            # - Set lr_counter to db + db/2 + (0 or 1 depending on I2S mode)
+            # - lr_counter may exist in the range 0:(2*db - 1)
+            # - If it is <db, output 0 on lr_clock
+            # - Otherwise, output 1
+            # - For example, for a db of 32, lr_counter starts at 48 + (0,1),
+            #       ranges up to 63, loops back to 0 and starts again. While in
+            #       the range 32 - 63, lr_clock outputs 1, else it outputs 0.
             time = float(xsi.get_time())
 
-            lr_counter = 32 + 16 + (is_i2s_justified)
-            for i in range(0, 16):
-                xsi.drive_port_pins(self._lrclk, lr_counter >= 32)
-                lr_counter = (lr_counter + 1) & 0x3F
+            lr_counter = data_bits + (data_bits // 2) + (is_i2s_justified)
+            lr_count_max = (2 * data_bits) - 1
+
+            for i in range(0, (data_bits // 2)):
+                xsi.drive_port_pins(self._lrclk, lr_counter >= data_bits)
+                lr_counter = lr_counter + 1 if lr_counter < lr_count_max else 0
                 xsi.drive_port_pins(self._bclk, bclk0)
                 time = self.wait_until_ret(time + clock_half_period)
                 xsi.drive_port_pins(self._bclk, bclk1)
                 time = self.wait_until_ret(time + clock_half_period)
 
-            for i in range(0, 32):
-                xsi.drive_port_pins(self._lrclk, lr_counter >= 32)
-                lr_counter = (lr_counter + 1) & 0x3F
+            for i in range(0, data_bits):
+                xsi.drive_port_pins(self._lrclk, lr_counter >= data_bits)
+                lr_counter = lr_counter + 1 if lr_counter < lr_count_max else 0
                 xsi.drive_port_pins(self._bclk, bclk0)
                 time = self.wait_until_ret(time + clock_half_period)
                 xsi.drive_port_pins(self._bclk, bclk1)
                 time = self.wait_until_ret(time + clock_half_period)
 
-            for i in range(0, 32):
-                xsi.drive_port_pins(self._lrclk, lr_counter >= 32)
-                lr_counter = (lr_counter + 1) & 0x3F
+            for i in range(0, data_bits):
+                xsi.drive_port_pins(self._lrclk, lr_counter >= data_bits)
+                lr_counter = lr_counter + 1 if lr_counter < lr_count_max else 0
                 xsi.drive_port_pins(self._bclk, bclk0)
                 time = self.wait_until_ret(time + clock_half_period)
                 xsi.drive_port_pins(self._bclk, bclk1)
@@ -165,13 +181,15 @@ class I2SSlaveChecker(px.SimThread):
                     rx_word[i] = 0
                     tx_word[i] = tx_data[i * 2][frame_count]
 
-                for i in range(0, bits_per_word):
-                    xsi.drive_port_pins(self._lrclk, lr_counter >= 32)
-                    lr_counter = (lr_counter + 1) & 0x3F
+                for i in range(0, data_bits):
+                    xsi.drive_port_pins(self._lrclk, lr_counter >= data_bits)
+                    lr_counter = lr_counter + 1 if lr_counter < lr_count_max else 0
                     xsi.drive_port_pins(self._bclk, bclk0)
 
                     for p in range(0, num_ins):
-                        xsi.drive_port_pins(self._dout[p], tx_word[p] >> 31)
+                        xsi.drive_port_pins(
+                            self._dout[p], tx_word[p] >> (data_bits - 1)
+                        )
                         tx_word[p] = tx_word[p] << 1
 
                     if din_sample_offset < 0:
@@ -195,11 +213,13 @@ class I2SSlaveChecker(px.SimThread):
                         time = self.wait_until_ret(
                             time + clock_half_period - din_sample_offset
                         )
+            
+                data_bit_mask = int("1" * data_bits, base=2)
 
                 for p in range(0, num_outs):
-                    if rx_data[p * 2][frame_count] != rx_word[p]:
+                    if (data_bit_mask & rx_data[p * 2][frame_count]) != rx_word[p]:
                         print(
-                            f"ERROR: first half {frame_count}: actual ({rx_word[p]}) expected ({rx_data[p * 2][frame_count]}"
+                            f"ERROR: first half {frame_count}: actual ({rx_word[p]}) expected ({data_bit_mask & rx_data[p * 2][frame_count]})"
                         )
                         error = True
 
@@ -207,14 +227,16 @@ class I2SSlaveChecker(px.SimThread):
                     rx_word[i] = 0
                     tx_word[i] = tx_data[i * 2 + 1][frame_count]
 
-                for i in range(0, bits_per_word):
-                    xsi.drive_port_pins(self._lrclk, lr_counter >= 32)
-                    lr_counter = (lr_counter + 1) & 0x3F
+                for i in range(0, data_bits):
+                    xsi.drive_port_pins(self._lrclk, lr_counter >= data_bits)
+                    lr_counter = lr_counter + 1 if lr_counter < lr_count_max else 0
 
                     xsi.drive_port_pins(self._bclk, bclk0)
 
                     for p in range(0, num_ins):
-                        xsi.drive_port_pins(self._dout[p], tx_word[p] >> 31)
+                        xsi.drive_port_pins(
+                            self._dout[p], tx_word[p] >> (data_bits - 1)
+                        )
                         tx_word[p] = tx_word[p] << 1
 
                     if din_sample_offset < 0:
@@ -240,15 +262,15 @@ class I2SSlaveChecker(px.SimThread):
                         )
 
                 for p in range(0, num_outs):
-                    if rx_data[p * 2 + 1][frame_count] != rx_word[p]:
+                    if (data_bit_mask & rx_data[p * 2 + 1][frame_count]) != rx_word[p]:
                         print(
-                            f"ERROR: second half frame {frame_count}: actual ({rx_word[p]}) expected ({rx_data[p * 2 + 1][frame_count]})"
+                            f"ERROR: second half frame {frame_count}: actual ({rx_word[p]}) expected ({data_bit_mask & rx_data[p * 2 + 1][frame_count]})"
                         )
                         error = True
 
-            for i in range(0, 32):
-                xsi.drive_port_pins(self._lrclk, lr_counter >= 32)
-                lr_counter = (lr_counter + 1) & 0x3F
+            for i in range(0, data_bits):
+                xsi.drive_port_pins(self._lrclk, lr_counter >= data_bits)
+                lr_counter = lr_counter + 1 if lr_counter < lr_count_max else 0
                 xsi.drive_port_pins(self._bclk, bclk0)
                 time = self.wait_until_ret(time + clock_half_period)
                 xsi.drive_port_pins(self._bclk, bclk1)

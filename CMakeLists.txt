@@ -24,8 +24,8 @@ if(PROJECT_IS_TOP_LEVEL)
     include(tools/ci/fetch_ci_deps.cmake)
 endif()
 
-add_subdirectory(modules)
-
 if(FWK_IO_TESTS)
     include(test/tests.cmake)
 endif()
+
+add_subdirectory(modules)

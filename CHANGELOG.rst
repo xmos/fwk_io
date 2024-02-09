@@ -1,6 +1,11 @@
 IO Framework change log
 =======================
 
+3.5.0
+-----
+
+  * ADDED: I2S now supports 16b data widths
+
 3.4.0
 -----
 

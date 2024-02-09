@@ -99,7 +99,6 @@ class I2SSlaveChecker(px.SimThread):
                 f"CONFIG: bclk:{bclk_frequency} in:{num_ins} out:{num_outs} data_bits: {data_bits} i2s_justified:{is_i2s_justified}"
             )
             clock_half_period = float(ONE_SECOND_FS) / float(2 * bclk_frequency)
-            data_bit_mask = int("1" * data_bits, base=2)
 
             if self._invert_bclk:
                 bclk0 = 1
@@ -214,6 +213,8 @@ class I2SSlaveChecker(px.SimThread):
                         time = self.wait_until_ret(
                             time + clock_half_period - din_sample_offset
                         )
+            
+                data_bit_mask = int("1" * data_bits, base=2)
 
                 for p in range(0, num_outs):
                     if (data_bit_mask & rx_data[p * 2][frame_count]) != rx_word[p]:

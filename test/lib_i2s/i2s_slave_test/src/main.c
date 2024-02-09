@@ -36,6 +36,12 @@ static const unsigned bclk_freq_lut[NUM_BCLKS] = {
   22050, 96000, 176400, 88200, 48000, 24000, 352800
 };
 #endif
+#ifndef DATA_BITS
+#define DATA_BITS 32
+#endif
+
+// Applications are expected to define this macro if they want non-32b I2S width
+#define I2S_DATA_BITS DATA_BITS
 
 int32_t tx_data[MAX_CHANNELS][8] = {
         {  1,   2,   3,   4,   5,   6,   7,   8},
@@ -78,13 +84,14 @@ static void send_data_to_tester(
 }
 
 static void broadcast(unsigned bclk_freq,
-        unsigned num_in, unsigned num_out, int is_i2s_justified)
+        unsigned num_in, unsigned num_out, unsigned bitdepth, int is_i2s_justified)
 {
     port_out(setup_strobe_port, 0);
     send_data_to_tester(setup_strobe_port, setup_data_port, bclk_freq >> 16);
     send_data_to_tester(setup_strobe_port, setup_data_port, bclk_freq);
     send_data_to_tester(setup_strobe_port, setup_data_port, num_in);
     send_data_to_tester(setup_strobe_port, setup_data_port, num_out);
+    send_data_to_tester(setup_strobe_port, setup_data_port, bitdepth);
     send_data_to_tester(setup_strobe_port, setup_data_port, is_i2s_justified);
 }
 
@@ -119,7 +126,12 @@ void i2s_receive(void *app_data, size_t n, int32_t *receive_data)
 {
     for(size_t c=0; c<n; c++){
         unsigned i = rx_data_counter[c];
-        error |= (receive_data[c] != rx_data[c][i]);
+        /*
+         * We shift here to pick up the case where the value we are
+         * testing with e.g. 401 cannot be represented in the given bit
+         * depth e.g. 8 bit
+         */
+        error |= (receive_data[c] << (32-DATA_BITS)) != (rx_data[c][i] << (32-DATA_BITS));
         rx_data_counter[c] = i+1;
     }
 }
@@ -186,7 +198,7 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
 
     broadcast(bclk_freq_lut[bclk_freq_index],
               NUM_IN,
-              NUM_OUT, i2s_config->mode == I2S_MODE_I2S);
+              NUM_OUT, DATA_BITS, i2s_config->mode == I2S_MODE_I2S);
 
 }
 

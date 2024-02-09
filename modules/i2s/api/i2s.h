@@ -13,6 +13,7 @@
  * \addtogroup hil_i2s_core hil_i2s_core
  *
  * The public API for using the HIL I2S core.
+ * 
  * @{
  */
 

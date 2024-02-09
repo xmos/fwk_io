@@ -20,6 +20,13 @@ else
         )
 fi
 
+if [ "$2" == "--nightly" ]
+then
+    declare -l testlevel="--nightly"
+else
+    declare -l testlevel=""
+fi
+
 #****************************
 # Run tests and copy results
 #****************************
@@ -38,7 +45,7 @@ for lib in ${hil_test_libs[@]}; do
     echo "************************"
     #https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
     #Looks like runners are 2 cores (maybe 2 HT) so run 4 at a time for speedup
-    pytest -n 4 --junitxml="test_results_${lib}.xml" ${lib}/test_*.py
+    pytest -n 4 --junitxml="test_results_${lib}.xml" ${lib}/test_*.py ${testlevel}
     popd
 done
 

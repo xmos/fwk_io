@@ -6,7 +6,13 @@ from pathlib import Path
 import pytest
 import Pyxsim as px
 
-num_in_out_args = {"2ch_in,2ch_out": (2, 2)}
+num_in_out_args = {
+    "4ch_in,4ch_out": (4, 4),
+    "2ch_in,2ch_out": (2, 2),
+    "1ch_in,1ch_out": (1, 1),
+    "4ch_in,0ch_out": (4, 0),
+    "0ch_in,4ch_out": (0, 4),
+}
 
 bitdepth_args = {"16b": 16, "32b": 32}
 

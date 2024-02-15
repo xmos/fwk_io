@@ -25,15 +25,14 @@ xclock_t bclk = XS1_CLKBLK_1;
 #if SMOKE == 1
 #define NUM_BCLKS 1
 #define NUM_BCLKS_TO_CHECK 1
-static const unsigned bclk_freq_lut[NUM_BCLKS] = {
-  12288000
+static const unsigned lr_freq_lut[NUM_BCLKS] = {
+  192000
 };
 #else
 #define NUM_BCLKS 12
 #define NUM_BCLKS_TO_CHECK 3
-static const unsigned bclk_freq_lut[NUM_BCLKS] = {
-  1228800, 614400, 384000, 192000, 44100,
-  22050, 96000, 176400, 88200, 48000, 24000, 352800
+static const unsigned lr_freq_lut[NUM_BCLKS] = {
+  192000, 176400, 96000, 88200, 48000, 44100
 };
 #endif
 #ifndef DATA_BITS
@@ -111,7 +110,7 @@ static int request_response(
     return r;
 }
 
-static unsigned bclk_freq_index = 0;
+static unsigned lr_freq_index = 0;
 static unsigned frames_sent = 0;
 static unsigned rx_data_counter[MAX_CHANNELS] = {0};
 static unsigned tx_data_counter[MAX_CHANNELS] = {0};
@@ -174,15 +173,15 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
             printf("Error\n");
         }
 
-        if (bclk_freq_index == NUM_BCLKS_TO_CHECK - 1) {
+        if (lr_freq_index == NUM_BCLKS_TO_CHECK - 1) {
             if (current_mode == I2S_MODE_I2S) {
                 current_mode = I2S_MODE_LEFT_JUSTIFIED;
-                bclk_freq_index = 0;
+                lr_freq_index = 0;
             } else {
                 _Exit(1);
             }
         } else {
-            bclk_freq_index++;
+            lr_freq_index++;
         }
     }
 
@@ -197,11 +196,7 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
         rx_data_counter[i] = 0;
     }
 
-    unsigned bclk_freq = bclk_freq_lut[bclk_freq_index];
-    if(DATA_BITS == 16)
-    {
-        bclk_freq = bclk_freq / 2;
-    }
+    unsigned bclk_freq = lr_freq_lut[lr_freq_index] * DATA_BITS * I2S_CHANS_PER_FRAME;
 
     broadcast(bclk_freq,
               NUM_IN,

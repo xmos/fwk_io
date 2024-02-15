@@ -16,6 +16,13 @@ set(APP_LINK_OPTIONS
     -target=XCORE-AI-EXPLORER
 )
 
+set(APP_COMPILER_FLAGS_DATA_PLANE
+    -O3
+)
+
+# Compile main.c which contains the i2s_callback_group_t functions in O3 mode
+set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/src/main.c  PROPERTIES COMPILE_FLAGS "${APP_COMPILER_FLAGS_DATA_PLANE}")
+
 #**********************
 # Tile Targets
 #**********************

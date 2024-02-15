@@ -92,7 +92,7 @@ class I2SSlaveChecker(px.SimThread):
                 xsi, self._setup_strobe_port, self._setup_data_port
             )
             xsi.drive_port_pins(self._bclk, bclk1)
-            xsi.drive_port_pins(self._lrclk, 1)
+            xsi.drive_port_pins(self._lrclk, 0)
 
             bclk_frequency = (bclk_frequency_u << 16) + bclk_frequency_l
             print(
@@ -146,6 +146,9 @@ class I2SSlaveChecker(px.SimThread):
             #       the range 32 - 63, lr_clock outputs 1, else it outputs 0.
             time = float(xsi.get_time())
 
+            time = self.wait_until_ret(time + (clock_half_period*64))
+
+
             lr_counter = data_bits + (data_bits // 2) + (is_i2s_justified)
             lr_count_max = (2 * data_bits) - 1
 
@@ -172,6 +175,8 @@ class I2SSlaveChecker(px.SimThread):
                 time = self.wait_until_ret(time + clock_half_period)
                 xsi.drive_port_pins(self._bclk, bclk1)
                 time = self.wait_until_ret(time + clock_half_period)
+
+
 
             error = False
 
@@ -213,7 +218,7 @@ class I2SSlaveChecker(px.SimThread):
                         time = self.wait_until_ret(
                             time + clock_half_period - din_sample_offset
                         )
-            
+
                 data_bit_mask = int("1" * data_bits, base=2)
 
                 for p in range(0, num_outs):

@@ -26,7 +26,7 @@ xclock_t bclk = XS1_CLKBLK_1;
 #define NUM_BCLKS 1
 #define NUM_BCLKS_TO_CHECK 1
 static const unsigned bclk_freq_lut[NUM_BCLKS] = {
-  1228800
+  12288000
 };
 #else
 #define NUM_BCLKS 12
@@ -150,8 +150,9 @@ i2s_restart_t i2s_restart_check(void *app_data)
     i2s_restart_t restart;
 
     frames_sent++;
-    if (frames_sent == 4)
+    if (frames_sent == 4) {
       restart = I2S_RESTART;
+    }
     else
       restart = I2S_NO_RESTART;
 
@@ -196,7 +197,13 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
         rx_data_counter[i] = 0;
     }
 
-    broadcast(bclk_freq_lut[bclk_freq_index],
+    unsigned bclk_freq = bclk_freq_lut[bclk_freq_index];
+    if(DATA_BITS == 16)
+    {
+        bclk_freq = bclk_freq / 2;
+    }
+
+    broadcast(bclk_freq,
               NUM_IN,
               NUM_OUT, DATA_BITS, i2s_config->mode == I2S_MODE_I2S);
 

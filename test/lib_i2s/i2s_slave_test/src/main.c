@@ -23,15 +23,15 @@ xclock_t bclk = XS1_CLKBLK_1;
 #define I2S_LOOPBACK_LATENCY 1
 
 #if SMOKE == 1
-#define NUM_BCLKS 1
-#define NUM_BCLKS_TO_CHECK 1
-static const unsigned lr_freq_lut[NUM_BCLKS] = {
+#define NUM_LRCLKS 1
+#define NUM_LRCLKS_TO_CHECK 1
+static const unsigned lr_freq_lut[NUM_LRCLKS] = {
   192000
 };
 #else
-#define NUM_BCLKS 12
-#define NUM_BCLKS_TO_CHECK 3
-static const unsigned lr_freq_lut[NUM_BCLKS] = {
+#define NUM_LRCLKS 12
+#define NUM_LRCLKS_TO_CHECK 3
+static const unsigned lr_freq_lut[NUM_LRCLKS] = {
   192000, 176400, 96000, 88200, 48000, 44100
 };
 #endif
@@ -173,7 +173,7 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
             printf("Error\n");
         }
 
-        if (lr_freq_index == NUM_BCLKS_TO_CHECK - 1) {
+        if (lr_freq_index == NUM_LRCLKS_TO_CHECK - 1) {
             if (current_mode == I2S_MODE_I2S) {
                 current_mode = I2S_MODE_LEFT_JUSTIFIED;
                 lr_freq_index = 0;

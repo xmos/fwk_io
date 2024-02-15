@@ -146,7 +146,7 @@ class I2SSlaveChecker(px.SimThread):
             #       the range 32 - 63, lr_clock outputs 1, else it outputs 0.
             time = float(xsi.get_time())
 
-            time = self.wait_until_ret(time + (clock_half_period*64))
+            time = self.wait_until_ret(time + (clock_half_period*64)) # Add extra delay to ensure that the i2s_slave device sees the LRCLK transitions in the first for loop below
 
 
             lr_counter = data_bits + (data_bits // 2) + (is_i2s_justified)

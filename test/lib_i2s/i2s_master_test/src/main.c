@@ -24,36 +24,36 @@ port_t setup_resp_port = XS1_PORT_1M;
 #define MAX_CHANNELS 8
 
 #if defined(SMOKE)
-#if NUM_OUT > 1 || NUM_IN > 1
 #define NUM_MCLKS 1
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        12288000,
-};
-#else
-#define NUM_MCLKS 1
-static const unsigned mclock_freq[NUM_MCLKS] = {
+// Choose mclk freq such that mclk_bclk_ratio is atleast 2 for the worst case sampling freq (192KHz), since
+// mclk_bclk_ratio = 1 doesn't seem to be supported.
+static const unsigned mclock_freq_32[NUM_MCLKS] = {
         24576000,
 };
-#endif
-#else
-#if NUM_OUT > 1 || NUM_IN > 1
-#define NUM_MCLKS 2
-static const unsigned mclock_freq[NUM_MCLKS] = {
+static const unsigned mclock_freq_16[NUM_MCLKS] = {
         12288000,
-        11289600,
 };
 #else
-#define NUM_MCLKS 4
-static const unsigned mclock_freq[NUM_MCLKS] = {
+#define NUM_MCLKS 2
+static const unsigned mclock_freq_32[NUM_MCLKS] = {
         24576000,
         22579200,
+};
+static const unsigned mclock_freq_16[NUM_MCLKS] = {
         12288000,
         11289600,
 };
-#endif
 #endif
 #ifndef DATA_BITS
 #define DATA_BITS 32
+#endif
+
+#if DATA_BITS == 32
+    unsigned const *mclock_freq_ptr = mclock_freq_32;
+#elif DATA_BITS == 16
+    unsigned const *mclock_freq_ptr = mclock_freq_16;
+#else
+    #error "Invalid DATA_BITS define"
 #endif
 
 // Applications are expected to define this macro if they want non-32b I2S width
@@ -173,17 +173,6 @@ i2s_restart_t i2s_restart_check(void *app_data)
 
 void i2s_init(void *app_data, i2s_config_t *i2s_config)
 {
-    /*
-     * We're going to manually disable the 16b 192 kHz 8i8o test as it does not
-     * pass in this implementation (but does in lib_i2s!). This is the first
-     * thing tested in this sequence, so must first advance ratio_log2
-     * by one to start with.
-     */
-    if (DATA_BITS == 16 && NUM_IN == 4 && NUM_OUT == 4 && first_time)
-    {
-        ratio_log2++;
-    }
-
     if (!first_time) {
         unsigned x = request_response(setup_strobe_port, setup_resp_port);
         error |= x;
@@ -208,18 +197,12 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
             } else {
                 ratio_log2++;
             }
-            
-            uint32_t new_sample_rate = mclock_freq[mclock_freq_index] / ((1 << ratio_log2) * (2 * DATA_BITS));
+
+            uint32_t new_sample_rate = mclock_freq_ptr[mclock_freq_index] / ((1 << ratio_log2) * (2 * DATA_BITS));
 
             if (new_sample_rate >= 48000)
             {
                 s = 1;
-            }
-
-            // And then we need to skip the second time it comes up in testing
-            if (new_sample_rate == 192000 && DATA_BITS == 16 && NUM_IN == 4 && NUM_OUT == 4)
-            {
-                s = 0;
             }
         }
     }
@@ -237,7 +220,7 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
         rx_data_counter[i] = 0;
     }
 
-    broadcast(mclock_freq[mclock_freq_index],
+    broadcast(mclock_freq_ptr[mclock_freq_index],
               i2s_config->mclk_bclk_ratio,
               NUM_IN, NUM_OUT, DATA_BITS,
               i2s_config->mode == I2S_MODE_I2S);

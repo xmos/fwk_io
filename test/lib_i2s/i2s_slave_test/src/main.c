@@ -23,15 +23,13 @@ xclock_t bclk = XS1_CLKBLK_1;
 #define I2S_LOOPBACK_LATENCY 1
 
 #if SMOKE == 1
-#define NUM_LRCLKS 1
 #define NUM_LRCLKS_TO_CHECK 1
-static const unsigned lr_freq_lut[NUM_LRCLKS] = {
+static const unsigned lr_freq_lut[] = {
   192000
 };
 #else
-#define NUM_LRCLKS 12
-#define NUM_LRCLKS_TO_CHECK 3
-static const unsigned lr_freq_lut[NUM_LRCLKS] = {
+#define NUM_LRCLKS_TO_CHECK 6
+static const unsigned lr_freq_lut[] = {
   192000, 176400, 96000, 88200, 48000, 44100
 };
 #endif

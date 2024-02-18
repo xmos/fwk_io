@@ -21,7 +21,7 @@ def uncollect_if(bitdepth, num_in, num_out):
     if bitdepth == 16 and num_in == 4 and num_out == 4:
         return True
 
-@pytest.mark.uncollect_if(func=uncollect_if)
+#@pytest.mark.uncollect_if(func=uncollect_if)
 @pytest.mark.parametrize("bitdepth", bitdepth_args.values(), ids=bitdepth_args.keys())
 @pytest.mark.parametrize(
     ("num_in", "num_out"), num_in_out_args.values(), ids=num_in_out_args.keys()

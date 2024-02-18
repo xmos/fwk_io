@@ -19,42 +19,46 @@ port_t setup_strobe_port = XS1_PORT_1L;
 port_t setup_data_port = XS1_PORT_16A;
 port_t setup_resp_port = XS1_PORT_1M;
 
-#define MAX_RATIO 4
+#define MAX_RATIO 3 // 192, 96 and 48KHz
 
 #define MAX_CHANNELS 8
 
-#if defined(SMOKE)
-#define NUM_MCLKS 1
-// Choose mclk freq such that mclk_bclk_ratio is atleast 2 for the worst case sampling freq (192KHz), since
-// mclk_bclk_ratio = 1 doesn't seem to be supported.
-static const unsigned mclock_freq_32[NUM_MCLKS] = {
-        24576000,
-};
-static const unsigned mclock_freq_16[NUM_MCLKS] = {
-        12288000,
-};
-#else
-#define NUM_MCLKS 2
-static const unsigned mclock_freq_32[NUM_MCLKS] = {
-        24576000,
-        22579200,
-};
-static const unsigned mclock_freq_16[NUM_MCLKS] = {
-        12288000,
-        11289600,
-};
-#endif
 #ifndef DATA_BITS
 #define DATA_BITS 32
 #endif
 
+#if SMOKE
+#define NUM_MCLKS 1
 #if DATA_BITS == 32
-    unsigned const *mclock_freq_ptr = mclock_freq_32;
+// Choose mclk freq such that mclk_bclk_ratio is atleast 2 for the worst case sampling freq (192KHz), since
+// mclk_bclk_ratio = 1 doesn't seem to be supported.
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        24576000,
+};
 #elif DATA_BITS == 16
-    unsigned const *mclock_freq_ptr = mclock_freq_16;
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        12288000,
+};
 #else
     #error "Invalid DATA_BITS define"
 #endif
+#else   // SMOKE = 0
+#define NUM_MCLKS 2
+#if DATA_BITS == 32
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        24576000,
+        22579200,
+};
+#elif DATA_BITS == 16
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        12288000,
+        11289600,
+};
+#else
+    #error "Invalid DATA_BITS define"
+#endif
+#endif
+
 
 // Applications are expected to define this macro if they want non-32b I2S width
 #define I2S_DATA_BITS DATA_BITS
@@ -180,30 +184,20 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
             printf("Error: test fail\n");
         }
 
-        int s = 0;
-        while (!s) {
-            if (ratio_log2 == MAX_RATIO) {
-                ratio_log2 = 1;
-                if (mclock_freq_index == NUM_MCLKS - 1) {
-                    mclock_freq_index = 0;
-                    if (current_mode == I2S_MODE_I2S) {
-                        current_mode = I2S_MODE_LEFT_JUSTIFIED;
-                    } else {
-                        _Exit(1);
-                    }
+        if (ratio_log2 == MAX_RATIO) {
+            ratio_log2 = 1;
+            if (mclock_freq_index == NUM_MCLKS - 1) {
+                mclock_freq_index = 0;
+                if (current_mode == I2S_MODE_I2S) {
+                    current_mode = I2S_MODE_LEFT_JUSTIFIED;
                 } else {
-                    mclock_freq_index++;
+                    _Exit(1);
                 }
             } else {
-                ratio_log2++;
+                mclock_freq_index++;
             }
-
-            uint32_t new_sample_rate = mclock_freq_ptr[mclock_freq_index] / ((1 << ratio_log2) * (2 * DATA_BITS));
-
-            if (new_sample_rate >= 48000)
-            {
-                s = 1;
-            }
+        } else {
+            ratio_log2++;
         }
     }
 
@@ -220,7 +214,7 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
         rx_data_counter[i] = 0;
     }
 
-    broadcast(mclock_freq_ptr[mclock_freq_index],
+    broadcast(mclock_freq[mclock_freq_index],
               i2s_config->mclk_bclk_ratio,
               NUM_IN, NUM_OUT, DATA_BITS,
               i2s_config->mode == I2S_MODE_I2S);

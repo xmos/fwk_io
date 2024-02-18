@@ -19,40 +19,48 @@ port_t setup_strobe_port = XS1_PORT_1L;
 port_t setup_data_port = XS1_PORT_16A;
 port_t  setup_resp_port = XS1_PORT_1M;
 
-#define MAX_RATIO 4
+#define MAX_RATIO 3 // 192, 96 and 48KHz
 
 #define MAX_CHANNELS 8
 
 #define MAX_NUM_RESTARTS (4)
 
-#if defined(SMOKE)
-#if NUM_OUT > 1 || NUM_IN > 1
-#define NUM_MCLKS 1
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        12288000,
-};
-#else
-#define NUM_MCLKS 1
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        24576000,
-};
-#endif
-#else
-#if NUM_OUT > 1 || NUM_IN > 1
-#define NUM_MCLKS 1
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        12288000,
-};
-#else
-#define NUM_MCLKS 1
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        24576000,
-};
-#endif
-#endif
 #ifndef DATA_BITS
 #define DATA_BITS 32
 #endif
+
+#if SMOKE
+#define NUM_MCLKS 1
+#if DATA_BITS == 32
+// Choose mclk freq such that mclk_bclk_ratio is atleast 2 for the worst case sampling freq (192KHz), since
+// mclk_bclk_ratio = 1 doesn't seem to be supported.
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        24576000,
+};
+#elif DATA_BITS == 16
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        12288000,
+};
+#else
+    #error "Invalid DATA_BITS define"
+#endif
+#else   // SMOKE = 0
+#define NUM_MCLKS 2
+#if DATA_BITS == 32
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        24576000,
+        22579200,
+};
+#elif DATA_BITS == 16
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        12288000,
+        11289600,
+};
+#else
+    #error "Invalid DATA_BITS define"
+#endif
+#endif
+
 
 // Applications are expected to define this macro if they want non-32b I2S width
 #define I2S_DATA_BITS DATA_BITS
@@ -177,26 +185,42 @@ i2s_restart_t i2s_restart_check(void *app_data)
     return restart;
 }
 
+void setup_bclock()
+{
+    mclk_bclk_ratio = (1 << ratio_log2);
+
+    broadcast(mclock_freq[mclock_freq_index],
+              mclk_bclk_ratio,
+              NUM_IN, NUM_OUT, DATA_BITS,
+              current_mode == I2S_MODE_I2S);
+
+    clock_enable(bclk);
+    clock_set_source_port(bclk, p_mclk);
+    clock_set_divide(bclk, mclk_bclk_ratio >> 1);
+}
+
 void i2s_init(void *app_data, i2s_config_t *i2s_config)
 {
-    //bclock frequency is not changed in restart when using i2s_frame_master_external_clock.
-    //The clock needs to be set externally once, before starting i2s_frame_master_external_clock.
-
     if (!first_time) {
         unsigned x = request_response(setup_strobe_port, setup_resp_port);
         error |= x;
         if (error) {
             printf("Error: test fail\n");
         }
-
-        if (current_mode == I2S_MODE_I2S) {
-            current_mode = I2S_MODE_LEFT_JUSTIFIED;
+        if (ratio_log2 == MAX_RATIO) {
+            ratio_log2 = 1;
+            if (mclock_freq_index == NUM_MCLKS - 1) {
+                mclock_freq_index = 0;
+                if (current_mode == I2S_MODE_I2S) {
+                    current_mode = I2S_MODE_LEFT_JUSTIFIED;
+                } else {
+                    _Exit(1);
+                }
+            } else {
+                mclock_freq_index++;
+            }
         } else {
-            current_mode = I2S_MODE_I2S;
-        }
-
-        if (num_restarts >= MAX_NUM_RESTARTS) {
-            _Exit(1);
+            ratio_log2++;
         }
     }
 
@@ -211,27 +235,7 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
         rx_data_counter[i] = 0;
     }
 
-    broadcast(mclock_freq[mclock_freq_index],
-              mclk_bclk_ratio,
-              NUM_IN, NUM_OUT, DATA_BITS,
-              i2s_config->mode == I2S_MODE_I2S);
-}
-
-void setup_bclock()
-{
-    mclock_freq_index = 0;
-    ratio_log2 = 1;
-    mclk_bclk_ratio = (1 << ratio_log2);
-    current_mode = I2S_MODE_I2S;
-
-    broadcast(mclock_freq[mclock_freq_index],
-              mclk_bclk_ratio,
-              NUM_IN, NUM_OUT, DATA_BITS,
-              current_mode == I2S_MODE_I2S);
-
-    clock_enable(bclk);
-    clock_set_source_port(bclk, p_mclk);
-    clock_set_divide(bclk, mclk_bclk_ratio >> 1);
+    setup_bclock();
 }
 
 DECLARE_JOB(spin, (void));
@@ -255,8 +259,6 @@ int main(){
     port_enable(setup_resp_port);
     port_enable(p_mclk);
     port_enable(p_bclk);
-
-    setup_bclock();
 
     PAR_JOBS (
         PJOB(i2s_master_external_clock, (

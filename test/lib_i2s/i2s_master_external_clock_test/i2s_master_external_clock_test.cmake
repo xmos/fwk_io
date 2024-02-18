@@ -15,6 +15,8 @@ set(APP_LINK_OPTIONS
     -report
     -target=XCORE-AI-EXPLORER
 )
+# Compile main.c which contains the i2s_callback_group_t functions in O3 mode
+set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/src/main.c  PROPERTIES COMPILE_FLAGS "-O3")
 
 #**********************
 # Tile Targets

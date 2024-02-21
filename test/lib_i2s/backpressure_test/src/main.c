@@ -68,26 +68,29 @@ static int acceptable_delay_ticks[NUM_SAMPLE_RATES][NUM_I2S_LINES_4+1][NUM_BIT_D
 
 static inline void populate_acceptable_delay_ticks()
 {
-    // These numbers are logged by running the test and logging the delay at the point at which the
-    // backpressure test starts failing.
+    // These numbers are logged by running the test and logging the delay at the last passing iteration
+    // before the backpressure test starts failing. So, on top of the bare minimum code in the i2s_send()
+    // and i2s_receive() functions in this file plus their calling overheads, we have acceptable_delay_ticks number
+    // of cycles per send and receive callback function call to add any extra processing.
 
     // 192 KHz
-    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_1][BITDEPTH_16] = 185;
-    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_1][BITDEPTH_32] = 200;
-    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_2][BITDEPTH_16] = 155;
-    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_2][BITDEPTH_32] = 170;
-    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_3][BITDEPTH_16] = 130;
-    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_3][BITDEPTH_32] = 150;
-    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_4][BITDEPTH_16] = 100;
-    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_4][BITDEPTH_32] = 125;
+    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_1][BITDEPTH_16] = 170;
+    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_1][BITDEPTH_32] = 185;
+    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_2][BITDEPTH_16] = 140;
+    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_2][BITDEPTH_32] = 155;
+    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_3][BITDEPTH_16] = 105;
+    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_3][BITDEPTH_32] = 125;
+    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_4][BITDEPTH_16] = 70;
+    acceptable_delay_ticks[SAMPLE_RATE_192000][NUM_I2S_LINES_4][BITDEPTH_32] = 90;
 
     // 384 KHz
-    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_1][BITDEPTH_16] = 60;
-    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_1][BITDEPTH_32] = 70;
-    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_2][BITDEPTH_16] = 35;
-    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_2][BITDEPTH_32] = 45;
-    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_3][BITDEPTH_16] = 5;
-    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_3][BITDEPTH_32] = 20;
+    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_1][BITDEPTH_16] = 50;
+    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_1][BITDEPTH_32] = 55;
+    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_2][BITDEPTH_16] = 15;
+    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_2][BITDEPTH_32] = 25;
+    // For 384 KHz, we have non-zero backpressure only up to 2 channels
+    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_3][BITDEPTH_16] = 0;
+    acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_3][BITDEPTH_32] = 0;
     acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_4][BITDEPTH_16] = 0;
     acceptable_delay_ticks[SAMPLE_RATE_384000][NUM_I2S_LINES_4][BITDEPTH_32] = 0;
 }
@@ -130,20 +133,29 @@ void get_acceptable_delay()
     }
     int delay = acceptable_delay_ticks[sample_rate][NUM_I2S_LINES-1][bit_depth];
 
+    if(delay <= 0)
+    {
+        printf("ERROR: Invalid delay %d. Check if testing an unsupported configuration\n", delay);
+        _Exit(1);
+    }
+
     // get the send and receive delay based on the
     if((RECEIVE_DELAY_INCREMENT == 5) && (SEND_DELAY_INCREMENT == 5))
     {
-        acceptable_receive_delay = delay;
-        acceptable_send_delay = delay;
+        // Backpressure passes at delay, so add another increment number of ticks to get to the first fail instance
+        acceptable_receive_delay = delay + 5;
+        acceptable_send_delay = delay + 5;
     }
     else if((RECEIVE_DELAY_INCREMENT == 0) && (SEND_DELAY_INCREMENT == 10))
     {
+        // Backpressure passes at 2*delay, so add another increment number of ticks to get to the first fail instance
         acceptable_receive_delay = 0;
-        acceptable_send_delay = 2*delay;
+        acceptable_send_delay = 2*delay + 10;
     }
     else if((RECEIVE_DELAY_INCREMENT == 10) && (SEND_DELAY_INCREMENT == 0))
     {
-        acceptable_receive_delay = 2*delay;
+        // Backpressure passes at 2*delay, so add another increment number of ticks to get to the first fail instance
+        acceptable_receive_delay = 2*delay + 10;
         acceptable_send_delay = 0;
     }
     else
@@ -165,6 +177,7 @@ xclock_t bclk = XS1_CLKBLK_2;
 
 static volatile int receive_delay = 0;
 static volatile int send_delay = 0;
+static volatile int32_t receive_data_store[8];
 
 void i2s_init(void *app_data, i2s_config_t *i2s_config)
 {
@@ -184,6 +197,9 @@ void i2s_send(void *app_data, size_t n, int32_t *send_data)
 
 void i2s_receive(void *app_data, size_t n, int32_t *receive_data)
 {
+    for (size_t c = 0; c < n; c++) {
+        receive_data_store[c] = receive_data[c];
+    }
     if (receive_delay) {
         delay_ticks(receive_delay);
     }

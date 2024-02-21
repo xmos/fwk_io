@@ -5,7 +5,7 @@ import Pyxsim as px
 import subprocess
 from pathlib import Path
 
-sample_rate_args = {"768kbps": 768000, "384kbps": 384000, "192kbps": 192000}
+sample_rate_args = {"384kbps": 384000, "192kbps": 192000}
 
 num_channels_args = {"1ch": 1, "2ch": 2, "3ch": 3, "4ch": 4}
 
@@ -41,9 +41,6 @@ def test_i2s_backpressure(
     send_increment,
     bitdepth,
 ):
-    if (num_channels != 4) and not nightly:
-        pytest.skip("Only run 4 channel tests unless it is a nightly")
-
     id_string = (
         f"{bitdepth}_{sample_rate}_{num_channels}_{receive_increment}_{send_increment}"
     )

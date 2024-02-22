@@ -56,8 +56,7 @@ pipeline {
           // build everything
           withVenv {
             withTools(params.TOOLS_VERSION) {
-                sh "build_hil_tests.sh"
-              }
+              sh "build_hil_tests.sh"
             }
           }
         }
@@ -70,3 +69,4 @@ pipeline {
     }
   } // stages
 }
+

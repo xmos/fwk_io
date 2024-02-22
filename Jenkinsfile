@@ -61,12 +61,12 @@ pipeline {
           }
         }
       } // steps
+      post {
+        cleanup {
+          xcoreCleanSandbox()
+        }
+      } // post
     } // stage
-    post {
-      cleanup {
-        xcoreCleanSandbox()
-      }
-    }
   } // stages
 }
 

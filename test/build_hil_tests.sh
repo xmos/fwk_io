@@ -3,7 +3,7 @@ set -e
 
 FRAMEWORK_IO_ROOT=`git rev-parse --show-toplevel`
 
-source ${FRAMEWORK_IO_ROOT}/tools/ci/helper_functions.sh
+. ${FRAMEWORK_IO_ROOT}/tools/ci/helper_functions.sh
 
 # perform builds
 ## TODO replace with build and running tests

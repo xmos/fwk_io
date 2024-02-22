@@ -39,11 +39,11 @@ pipeline {
           sh 'git submodule update --init --recursive'
         }
         createVenv("fwk_io/test/requirements.txt")
-        dir("fwk_io") {
+        dir("fwk_io/test") {
           // build everything
           withVenv {
             withTools(params.TOOLS_VERSION) {
-              sh "pip install -Ur test/requirements.txt"
+              sh "pip install -Ur requirements.txt"
             }
           }
         }

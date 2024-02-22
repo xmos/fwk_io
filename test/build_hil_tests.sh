@@ -1,4 +1,4 @@
-
+#!/bin/sh
 set -e
 
 FRAMEWORK_IO_ROOT=`git rev-parse --show-toplevel`

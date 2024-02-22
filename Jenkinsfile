@@ -51,7 +51,6 @@ pipeline {
       } // steps
     } // Setup
 
-  stages {
     stage('Build HIL tests') {
       steps {
         dir("fwk_io/test") {

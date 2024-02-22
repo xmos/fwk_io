@@ -43,13 +43,12 @@ pipeline {
           // build everything
           withVenv {
             withTools(params.TOOLS_VERSION) {
-                sh "pip install -Ur test/requirements.txt"
-              }
+              sh "pip install -Ur test/requirements.txt"
             }
           }
         }
-      } // steps
-    } // Setup
+      } //steps
+    } // stage
 
     stage('Build HIL tests') {
       steps {
@@ -63,12 +62,11 @@ pipeline {
           }
         }
       } // steps
-    } // Setup
-
-  } // stages
-  post {
-    cleanup {
-      xcoreCleanSandbox()
+    } // stage
+    post {
+      cleanup {
+        xcoreCleanSandbox()
+      }
     }
-  }
+  } // stages
 }

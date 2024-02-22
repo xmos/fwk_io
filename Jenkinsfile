@@ -56,7 +56,7 @@ pipeline {
           // build everything
           withVenv {
             withTools(params.TOOLS_VERSION) {
-              sh "build_hil_tests.sh"
+              sh "sh ./build_hil_tests.sh"
             }
           }
         }

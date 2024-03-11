@@ -88,6 +88,7 @@ typedef enum {
 typedef struct {
     uart_state_t state;
     port_t tx_port;
+    uint32_t tx_port_high_val;
     uint32_t bit_time_ticks;
     uint32_t next_event_time_ticks;
     uart_parity_t parity;

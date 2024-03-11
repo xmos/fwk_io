@@ -37,6 +37,7 @@ void uart_tx_init(
         ){
 
     uart_cfg->tx_port = tx_port;
+    uart_cfg->tx_port_high_val = 0x01; // Default value. May be overridden post-init
     uart_cfg->bit_time_ticks = XS1_TIMER_HZ / baud_rate;
 
     uart_cfg->next_event_time_ticks = 0;
@@ -73,7 +74,7 @@ void uart_tx_init(
     }
 
     port_enable(tx_port);
-    port_out(tx_port, 1); //Set to idle
+    port_out(tx_port, uart_cfg->tx_port_high_val); //Set to idle
 }
 
 
@@ -144,7 +145,7 @@ DEFINE_INTERRUPT_CALLBACK(UART_TX_INTERRUPTABLE_FUNCTIONS, uart_tx_handle_event,
 
         case UART_DATA: {    
             uint32_t port_val = (uart_cfg->uart_data >> uart_cfg->current_data_bit) & 0x1;
-            port_out(uart_cfg->tx_port, port_val);
+            port_out(uart_cfg->tx_port, port_val ? uart_cfg->tx_port_high_val : 0);
             uart_cfg->current_data_bit++;
             uart_cfg->next_event_time_ticks += uart_cfg->bit_time_ticks;
             if(uart_cfg->current_data_bit == uart_cfg->num_data_bits){
@@ -162,14 +163,14 @@ DEFINE_INTERRUPT_CALLBACK(UART_TX_INTERRUPTABLE_FUNCTIONS, uart_tx_handle_event,
             uint32_t parity = (unsigned)uart_cfg->uart_data;
             // crc32(parity, parity_setting, 1); //http://bugzilla/show_bug.cgi?id=18663
             asm volatile("crc32 %0, %2, %3" : "=r" (parity) : "0" (parity), "r" (parity_setting), "r" (1));
-            port_out(uart_cfg->tx_port, parity);
+            port_out(uart_cfg->tx_port, parity ? uart_cfg->tx_port_high_val : 0);
             uart_cfg->state = UART_STOP;
             uart_cfg->next_event_time_ticks += uart_cfg->bit_time_ticks;
             break;
         }
      
         case UART_STOP: {   
-            port_out(uart_cfg->tx_port, 1);
+            port_out(uart_cfg->tx_port, uart_cfg->tx_port_high_val);
             uart_cfg->current_stop_bit += 1;
             uart_cfg->next_event_time_ticks += uart_cfg->bit_time_ticks; //do before buffered_uart_tx_char_finished
 

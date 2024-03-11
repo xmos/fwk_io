@@ -110,7 +110,9 @@ typedef struct {
  * buffered mode with ISR for use in bare-metal applications.
  *
  * \param uart          The uart_tx_t context to initialise.
- * \param tx_port       The port used transmit the UART frames.
+ * \param tx_port       The port used transmit the UART frames. May be a one or 
+ *                      multi bit port. Please set uart.tx_port_high_val post init
+ *                      to the idle value if any other than bit 0 is the UART Tx port.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.
@@ -232,7 +234,7 @@ typedef struct {
  * buffered mode with ISR for use in bare-metal applications.
  *
  * \param uart          The uart_rx_t context to initialise.
- * \param rx_port       The port used receive the UART frames.
+ * \param rx_port       The port used receive the UART frames. Must be a one bit port.
  * \param baud_rate     The baud rate of the UART in bits per second.
  * \param data_bits     The number of data bits per frame sent.
  * \param parity        The type of parity used. See uart_parity_t above.

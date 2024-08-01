@@ -150,9 +150,9 @@ i2s_restart_t i2s_restart_check(void *app_data)
     if (frames_sent == 4) {
       restart = I2S_RESTART;
     }
-    else
+    else {
       restart = I2S_NO_RESTART;
-
+    }
     return restart;
 }
 

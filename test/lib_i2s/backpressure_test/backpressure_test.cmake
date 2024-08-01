@@ -24,7 +24,7 @@ set(APP_LINK_OPTIONS
 # Tile Targets
 #**********************
 if(NOT DEFINED ENV{SAMPLE_RATES})
-    set(SAMPLE_RATES 768000 384000 192000)
+    set(SAMPLE_RATES 384000 192000)
 else()
     set(SAMPLE_RATES $ENV{SAMPLE_RATES})
 endif()

@@ -1,4 +1,4 @@
-// Copyright 2015-2022 XMOS LIMITED.
+// Copyright 2015-2024 XMOS LIMITED.
 // This Software is subject to the terms of the XMOS Public Licence: Version 1.
 #include <xs1.h>
 #include <i2s.h>
@@ -19,42 +19,46 @@ port_t setup_strobe_port = XS1_PORT_1L;
 port_t setup_data_port = XS1_PORT_16A;
 port_t setup_resp_port = XS1_PORT_1M;
 
-#define MAX_RATIO 4
+#define MAX_RATIO 3 // 192, 96 and 48KHz
 
 #define MAX_CHANNELS 8
 
-#if defined(SMOKE)
-#if NUM_OUT > 1 || NUM_IN > 1
-#define NUM_MCLKS 1
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        12288000,
-};
-#else
-#define NUM_MCLKS 1
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        24576000,
-};
-#endif
-#else
-#if NUM_OUT > 1 || NUM_IN > 1
-#define NUM_MCLKS 2
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        12288000,
-        11289600,
-};
-#else
-#define NUM_MCLKS 4
-static const unsigned mclock_freq[NUM_MCLKS] = {
-        24576000,
-        22579200,
-        12288000,
-        11289600,
-};
-#endif
-#endif
 #ifndef DATA_BITS
 #define DATA_BITS 32
 #endif
+
+#if SMOKE
+#define NUM_MCLKS 1
+#if DATA_BITS == 32
+// Choose mclk freq such that mclk_bclk_ratio is atleast 2 for the worst case sampling freq (192KHz), since
+// mclk_bclk_ratio = 1 doesn't seem to be supported.
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        24576000,
+};
+#elif DATA_BITS == 16
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        12288000,
+};
+#else
+    #error "Invalid DATA_BITS define"
+#endif
+#else   // SMOKE = 0
+#define NUM_MCLKS 2
+#if DATA_BITS == 32
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        24576000,
+        22579200,
+};
+#elif DATA_BITS == 16
+static const unsigned mclock_freq[NUM_MCLKS] = {
+        12288000,
+        11289600,
+};
+#else
+    #error "Invalid DATA_BITS define"
+#endif
+#endif
+
 
 // Applications are expected to define this macro if they want non-32b I2S width
 #define I2S_DATA_BITS DATA_BITS
@@ -173,17 +177,6 @@ i2s_restart_t i2s_restart_check(void *app_data)
 
 void i2s_init(void *app_data, i2s_config_t *i2s_config)
 {
-    /*
-     * We're going to manually disable the 16b 192 kHz 8i8o test as it does not
-     * pass in this implementation (but does in lib_i2s!). This is the first
-     * thing tested in this sequence, so must first advance ratio_log2
-     * by one to start with.
-     */
-    if (DATA_BITS == 16 && NUM_IN == 4 && NUM_OUT == 4 && first_time)
-    {
-        ratio_log2++;
-    }
-
     if (!first_time) {
         unsigned x = request_response(setup_strobe_port, setup_resp_port);
         error |= x;
@@ -191,36 +184,20 @@ void i2s_init(void *app_data, i2s_config_t *i2s_config)
             printf("Error: test fail\n");
         }
 
-        int s = 0;
-        while (!s) {
-            if (ratio_log2 == MAX_RATIO) {
-                ratio_log2 = 1;
-                if (mclock_freq_index == NUM_MCLKS - 1) {
-                    mclock_freq_index = 0;
-                    if (current_mode == I2S_MODE_I2S) {
-                        current_mode = I2S_MODE_LEFT_JUSTIFIED;
-                    } else {
-                        _Exit(1);
-                    }
+        if (ratio_log2 == MAX_RATIO) {
+            ratio_log2 = 1;
+            if (mclock_freq_index == NUM_MCLKS - 1) {
+                mclock_freq_index = 0;
+                if (current_mode == I2S_MODE_I2S) {
+                    current_mode = I2S_MODE_LEFT_JUSTIFIED;
                 } else {
-                    mclock_freq_index++;
+                    _Exit(1);
                 }
             } else {
-                ratio_log2++;
+                mclock_freq_index++;
             }
-            
-            uint32_t new_sample_rate = mclock_freq[mclock_freq_index] / ((1 << ratio_log2) * (2 * DATA_BITS));
-
-            if (new_sample_rate >= 48000)
-            {
-                s = 1;
-            }
-
-            // And then we need to skip the second time it comes up in testing
-            if (new_sample_rate == 192000 && DATA_BITS == 16 && NUM_IN == 4 && NUM_OUT == 4)
-            {
-                s = 0;
-            }
+        } else {
+            ratio_log2++;
         }
     }
 

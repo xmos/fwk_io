@@ -1,6 +1,11 @@
 IO Framework change log
 =======================
 
+3.5.1
+-----
+
+  * CHANGE: Updated lib_mic_array to v5.3.0
+
 3.5.0
 -----
 

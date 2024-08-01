@@ -76,7 +76,7 @@ def test_i2s_basic_master(build, capfd, nightly, request, bitdepth, num_in, num_
                 simthreads=[clk, checker],
                 simargs=[
                     "--vcd-tracing",
-                    f"-o i2s_trace_{num_in}_{num_out}.vcd -tile tile[0] -cycles -ports -ports-detailed -cores -instructions",
+                    f"-o i2s_trace_{num_in}_{num_out}.vcd -tile tile[0] -cycles -ports -ports-detailed -cores -instructions -clock-blocks",
                     "--trace-to",
                     f"i2s_trace_{num_in}_{num_out}.txt",
                 ],

@@ -51,7 +51,7 @@ def test_spi_slave_rx_tx(build, capfd, request, full_load, miso_enabled, mosi_en
                               "tile[0]:XS1_PORT_16B",
                               "tile[0]:XS1_PORT_1F")
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/slave.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/slave.expect',
                                             regexp = True,
                                             ordered = True,
                                             suppress_multidrive_messages = False)
@@ -75,4 +75,4 @@ def test_spi_slave_rx_tx(build, capfd, request, full_load, miso_enabled, mosi_en
                            simthreads = [checker]
                            )
 
-        tester.run(capfd.readouterr().out)
+        tester.run(capfd.readouterr().out.splitlines())

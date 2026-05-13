@@ -63,7 +63,7 @@ def test_uart_tx(request, capfd, buffered, baud, bpb, parity, stop):
     rx_port = None
     checker = UARTTxChecker(rx_port, tx_port, parity, baud, length_of_test, stop, bpb)
     
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/test_tx_uart_{bpb}b.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/test_tx_uart_{bpb}b.expect',
                                             regexp = False,
                                             ordered = True,
                                             ignore = ["TEST CONFIG:.*"])
@@ -72,4 +72,4 @@ def test_uart_tx(request, capfd, buffered, baud, bpb, parity, stop):
     simargs = []  #For speed when not debugging
     px.run_with_pyxsim(binary, simthreads = [checker], simargs=simargs)
     capture = capfd.readouterr().out[:-1] #Tester appends an extra line feed which we don't need
-    tester.run(capture)
+    tester.run(capture.splitlines())

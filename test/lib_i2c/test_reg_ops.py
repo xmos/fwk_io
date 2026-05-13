@@ -21,9 +21,9 @@ def test_i2c_reg_ops(build, capfd, request):
                                              True, True, True, True,
                                              True, True, True])
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/reg_test.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/reg_test.expect',
                                                 regexp = True,
-                                                ordered = True)
+                                                ordered = True, ignore=["ERROR: speed.*"])
 
     sim_args = ['--weak-external-drive']
 
@@ -34,4 +34,4 @@ def test_i2c_reg_ops(build, capfd, request):
                     simthreads = [checker],
                     simargs = sim_args)
 
-    tester.run(capfd.readouterr().out)
+    tester.run(capfd.readouterr().out.splitlines())

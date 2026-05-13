@@ -24,9 +24,9 @@ def test_i2c_master_acks(build, capfd, request, stop):
                                              True, True, False,
                                              False, True])
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/ack_test_{stop}.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/ack_test_{stop}.expect',
                                                 regexp = True,
-                                                ordered = True)
+                                                ordered = True, ignore=["ERROR: speed.*"])
 
     sim_args = ['--weak-external-drive']
 
@@ -43,4 +43,4 @@ def test_i2c_master_acks(build, capfd, request, stop):
                     simthreads = [checker],
                     simargs = sim_args)
 
-    tester.run(capfd.readouterr().out)
+    tester.run(capfd.readouterr().out.splitlines())

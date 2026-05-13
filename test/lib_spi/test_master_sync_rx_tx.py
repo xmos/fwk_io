@@ -52,7 +52,7 @@ def test_spi_master_sync_rx_tx(build, capfd, nightly, request, full_load, miso_e
                                "tile[0]:XS1_PORT_1E",
                                "tile[0]:XS1_PORT_16B")
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/master_sync.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/master_sync.expect',
                                             regexp = True,
                                             ordered = True)
 
@@ -68,4 +68,4 @@ def test_spi_master_sync_rx_tx(build, capfd, nightly, request, full_load, miso_e
     px.run_with_pyxsim(binary,
                        simthreads = [checker])
 
-    tester.run(capfd.readouterr().out)
+    tester.run(capfd.readouterr().out.splitlines())

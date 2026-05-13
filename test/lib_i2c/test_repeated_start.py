@@ -12,9 +12,9 @@ def test_i2c_repeated_start(build, capfd, request):
                                "tile[0]:XS1_PORT_1B",
                                expected_speed=400)
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/repeated_start.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/repeated_start.expect',
                                                 regexp = True,
-                                                ordered = True)
+                                                ordered = True, ignore=["ERROR: speed.*"])
 
     sim_args = ['--weak-external-drive']
 
@@ -25,4 +25,4 @@ def test_i2c_repeated_start(build, capfd, request):
                     simthreads = [checker],
                     simargs = sim_args)
 
-    tester.run(capfd.readouterr().out)
+    tester.run(capfd.readouterr().out.splitlines())

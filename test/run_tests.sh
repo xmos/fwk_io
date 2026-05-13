@@ -4,6 +4,8 @@ set -e
 if [ -f /.dockerenv ]; then
     # Docker workaround for: "fatal: detected dubious ownership in repository"
     git config --global --add safe.directory /fwk_io
+    # Reinstall test_support from the mounted workspace so any changes are reflected
+    pip3 install -q -e /fwk_io/test/modules/test_support
 fi
 
 if [ -z "$1" ] || [ "$1" == "all" ]

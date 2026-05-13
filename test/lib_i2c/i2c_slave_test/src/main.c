@@ -17,6 +17,9 @@
 
 #define DEVICE_ADDR  0x3c
 
+DECLARE_JOB(burn, (void));
+DECLARE_JOB(i2c_slave, (const i2c_callback_group_t *, port_t, port_t, uint8_t));
+
 port_t p_scl = XS1_PORT_1A;
 port_t p_sda = XS1_PORT_1B;
 port_t p_ready = XS1_PORT_1C; // Used to signal FW is ready
@@ -71,8 +74,6 @@ I2C_CALLBACK_ATTR
 int i2c_shutdown(void *app_data) {
     return 0;
 }
-
-DECLARE_JOB(burn, (void));
 
 void burn(void) {
     for(;;);

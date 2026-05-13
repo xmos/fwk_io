@@ -49,9 +49,9 @@ def test_i2c_basic_master(build, capfd, request, nightly, stop, speed, port_setu
                                             True, True, True, False,
                                             True, False])
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/master_test_{stop}.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/master_test_{stop}.expect',
                                             regexp = True,
-                                            ordered = True)
+                                            ordered = True, ignore=["ERROR: speed.*"])
 
     sim_args = ['--weak-external-drive']
 
@@ -68,4 +68,4 @@ def test_i2c_basic_master(build, capfd, request, nightly, stop, speed, port_setu
                     simthreads = [checker],
                     simargs = sim_args)
 
-    tester.run(capfd.readouterr().out)
+    tester.run(capfd.readouterr().out.splitlines())

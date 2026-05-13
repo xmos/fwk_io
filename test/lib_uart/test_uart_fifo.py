@@ -10,7 +10,7 @@ import pytest
 def test_fifo_function(request, capfd):
     cwd = Path(request.fspath).parent
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/test_fifo_uart.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/test_fifo_uart.expect',
                                             regexp = False,
                                             ordered = True,
                                             ignore = ["TEST CONFIG:.*"])
@@ -21,13 +21,13 @@ def test_fifo_function(request, capfd):
     capture = capfd.readouterr().out[:-1] #Tester appends an extra line feed which we don't need
 
 
-    tester.run(capture)
+    tester.run(capture.splitlines())
 
 
 def test_fifo_thread_safety(request, capfd):
     cwd = Path(request.fspath).parent
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/test_fifo_uart_thread_safe.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/test_fifo_uart_thread_safe.expect',
                                             regexp = False,
                                             ordered = True,
                                             ignore = ["Interesting stats.*"])
@@ -38,4 +38,4 @@ def test_fifo_thread_safety(request, capfd):
     capture = capfd.readouterr().out[:-1] #Tester appends an extra line feed which we don't need
 
 
-    tester.run(capture)
+    tester.run(capture.splitlines())

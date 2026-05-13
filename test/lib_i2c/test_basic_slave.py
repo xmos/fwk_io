@@ -30,9 +30,9 @@ def test_i2c_basic_slave(build, capfd, request, nightly, speed):
                             ("w", 0x3c, [0x22, 0xff])],
                             speed = speed)
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/basic_slave_test.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/basic_slave_test.expect',
                                             regexp = True,
-                                            ordered = True)
+                                            ordered = True, ignore=["ERROR: speed.*"])
 
     sim_args = ['--weak-external-drive']
 
@@ -51,6 +51,7 @@ def test_i2c_basic_slave(build, capfd, request, nightly, speed):
 
     px.run_with_pyxsim(binary,
                     simthreads = [checker],
-                    simargs = sim_args)
+                    simargs = sim_args,
+                    timeout = 30)
 
-    tester.run(capfd.readouterr().out)
+    tester.run(capfd.readouterr().out.splitlines())

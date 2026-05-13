@@ -1,7 +1,8 @@
+# This file relates to internal XMOS infrastructure and should be ignored by external users
 ---
 project: fwk_io
 title: XCORE Peripheral IO Framework
-version: 3.3.0
+version: 3.6.0
 
 documentation:
   exclude_patterns_path: doc/exclude_patterns.inc

@@ -29,17 +29,29 @@ extern i2c_regop_res_t write_reg16(i2c_master_t *ctx, uint8_t device_addr, uint1
 #define JITTER_TICKS    0
 #define WAKEUP_TICKS    20
 
+
 static uint32_t interrupt_state_get(void)
 {
     uint32_t state;
-
+    
+    #if defined(__XS2A__) || defined(__XS3A__)
     asm volatile(
         "getsr r11, %1\n"
         "mov %0, r11"
         : "=r"(state)
         : "n"(XS1_SR_IEBLE_MASK)
-        : /* clobbers */ "r11"
+        : "r11"
     );
+    #elif defined(__VX4A__) || defined(__VX4B__)
+    asm volatile(
+        "csrr %0, mstatus\n"  // Load the status register into the temporary register
+        "and %0, %0, %1\n"     // Apply the mask to the status register
+        : "=r"(state)          // Output: state is written to
+        : "i"(XS1_SR_IEBLE_MASK) // Input: immediate mask
+    );
+    #else
+    #error "Unsupported architecture"
+    #endif
 
     return state;
 }

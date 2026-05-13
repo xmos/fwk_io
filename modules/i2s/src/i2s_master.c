@@ -319,7 +319,13 @@ static i2s_restart_t i2s_ratio_n(
             {
                 // Prevent the clock from being stopped before the last word
                 // has been sent if there are no RX ports.
-                asm volatile("syncr res[%0]" : : "r"(p_dout[0]));
+                #if defined(__XS2A__) || defined(__XS3A__)
+                asm volatile("syncr res[%0]" : : "r" (p_dout[0]));
+                #elif defined (__VX4A__) || defined(__VX4B__)
+                asm volatile("xm.syncr %0" : : "r" (p_dout[0]));
+                #else
+                #error "Unsupported architecture"
+                #endif
             }
             clock_stop(bclk);
             return restart;

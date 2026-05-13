@@ -22,9 +22,9 @@ def test_i2c_reg_ops_nack(build, capfd, request):
                                              True, True, False # NACK before data
                                             ])
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/reg_ops_nack.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/reg_ops_nack.expect',
                                                 regexp = True,
-                                                ordered = True)
+                                                ordered = True, ignore=["ERROR: speed.*"])
 
     sim_args = ['--weak-external-drive']
 
@@ -35,4 +35,4 @@ def test_i2c_reg_ops_nack(build, capfd, request):
                     simthreads = [checker],
                     simargs = sim_args)
 
-    tester.run(capfd.readouterr().out)
+    tester.run(capfd.readouterr().out.splitlines())

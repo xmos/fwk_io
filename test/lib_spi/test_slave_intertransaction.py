@@ -60,7 +60,7 @@ def test_spi_slave_intertransaction(build, capfd, request, full_load, miso_enabl
                               3000000,
                               10000)
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/slave_intertransaction.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/slave_intertransaction.expect',
                                             regexp = True,
                                             ordered = True,
                                             suppress_multidrive_messages = False)
@@ -88,4 +88,4 @@ def test_spi_slave_intertransaction(build, capfd, request, full_load, miso_enabl
         f_out.write(out)
         f_out.close()
 
-        tester.run(out)
+        tester.run(out.splitlines())

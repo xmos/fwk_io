@@ -25,7 +25,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  DOC_BUILDER_IMAGE: 'ghcr.io/xmos/xmosdoc:v4.0'
+  DOC_BUILDER_IMAGE: 'ghcr.io/xmos/xmosdoc:v8.0.3'
 
 jobs:
   build_documentation:
@@ -43,10 +43,10 @@ jobs:
       
       - name: Build documentation
         run: |
-          docker run --rm -t -u "$(id -u):$(id -g)" -v ${{ github.workspace }}:/build ${DOC_BUILDER_IMAGE} -vv
+          docker run --rm -t -u "$(id -u):$(id -g)" -v ${{ github.workspace }}:/build ${DOC_BUILDER_IMAGE}
 
       - name: Save documentation artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: fwk_io_docs
           path: ./doc/_build

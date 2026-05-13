@@ -49,7 +49,7 @@ def test_spi_master_sync_multi_device(build, capfd, request, full_load, miso_ena
                                "tile[0]:XS1_PORT_1E",
                                "tile[0]:XS1_PORT_16B")
 
-    tester = px.testers.PytestComparisonTester(f'{cwd}/expected/master_multi_device.expect',
+    tester = px.testers.AssertiveComparisonTester(f'{cwd}/expected/master_multi_device.expect',
                                             regexp = True,
                                             ordered = True)
 
@@ -65,4 +65,4 @@ def test_spi_master_sync_multi_device(build, capfd, request, full_load, miso_ena
     px.run_with_pyxsim(binary,
                        simthreads = [checker])
 
-    tester.run(capfd.readouterr().out)
+    tester.run(capfd.readouterr().out.splitlines())
